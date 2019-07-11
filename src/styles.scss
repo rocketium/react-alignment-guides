@@ -1,7 +1,7 @@
 .boundingBox {
 	padding: 0;
 	position: fixed;
-	background-color: #342FD4;
+	background-color: #EC7F4B;
 }
 
 .box {
@@ -15,13 +15,9 @@
 	background-color: hsl(205, 100%, 80%);
 }
 
-// TODO: Remove this class. This was created only for testing.
-.boundingBoxGuides {
+// TODO: Remove these classes. This was created only for testing.
+.boundingBoxGuides, .draggableBoxGuides {
 	display: none;
-}
-
-.draggableBoxGuides {
-	display: block;
 }
 
 .guide {
