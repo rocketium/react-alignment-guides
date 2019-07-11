@@ -7,35 +7,41 @@ module.exports = {
 	mode: "development",
 	entry: "./index.js",
 	output: {
-		filename: 'bundle.js',
+		filename: 'app.js',
 		path: path.resolve(__dirname, 'dist')
 	},
 	devtool: "inline-source-map",
 	module: {
 		rules: [
 			{
+				enforce: 'pre',
 				test: /\.js$/,
 				exclude: /node_modules/,
 				use: "eslint-loader"
 			},
 			{
-				test: /\.s[ac]ss$/,
-				use: [
-					"css-loader",
-					"sass-loader"
-				]
-			},
-			{
-				test: /\.css$/,
-				use: [
-					"style-loader",
-					"css-loader"
-				]
-			},
-			{
 				test: /\.js$/,
 				exclude: /node_modules/,
 				use: "babel-loader"
+			},
+			{
+				test: /\.s[ac]ss$/,
+				use: [
+					"style-loader",
+					{
+						loader: "css-loader",
+						options: {
+							importLoaders: 1,
+							localsConvention: 'asIs',
+							modules: {
+								mode: 'local',
+								localIdentName: '[local]__[hash:base64:5]'
+							},
+							sourceMap: true
+						}
+					},
+					"sass-loader"
+				]
 			}
 		]
 	},
@@ -50,5 +56,10 @@ module.exports = {
 			chunkFilename: "[id].css"
 		}),
 		new webpack.HotModuleReplacementPlugin()
-	]
+	],
+	devServer: {
+		contentBase: path.join(__dirname, 'dist'),
+		compress: true,
+		port: 4000
+	}
 }

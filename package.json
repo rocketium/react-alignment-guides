@@ -4,18 +4,22 @@
   "description": "React Smart Guides is a grids and guides system for draggable elements in an enclosed space",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=development webpack-dev-server --config webpack.config.dev.js --hot --progress",
-    "build": "cross-env NODE_ENV=production webpack --config webpack.config.prod.js --progress --display-chunks --colors",
+    "start": "webpack-dev-server --config webpack.config.dev.js --hot --progress",
+    "build": "webpack --config webpack.config.prod.js --progress --display-chunks --colors",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
     "react": "^16.8.6",
-    "react-dom": "^16.8.6"
+    "react-dom": "^16.8.6",
+    "react-draggable": "^3.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.4",
+    "@babel/plugin-proposal-export-default-from": "^7.5.2",
+    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
     "babel-loader": "^8.0.6",
@@ -47,6 +51,11 @@
     "presets": [
       "@babel/preset-env",
       "@babel/preset-react"
+    ],
+    "plugins": [
+      "@babel/plugin-proposal-object-rest-spread",
+      "@babel/plugin-proposal-export-default-from",
+      "@babel/plugin-proposal-export-namespace-from"
     ]
   },
   "prettier": {
