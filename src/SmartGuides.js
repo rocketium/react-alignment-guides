@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import shortid from 'shortid';
 import DraggableBox from './DraggableBox';
 import styles from './styles.scss';
 
@@ -6,7 +7,7 @@ import styles from './styles.scss';
 const POS_DATA = [
 	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
 	{ x: 650, y: 300, width: 300, height: 150, top: 300, left: 650 },
-	{ x: 300, y: 200, width: 50, height: 50, top: 200, left: 300 }
+	{ x: 300, y: 250, width: 50, height: 50, top: 200, left: 300 }
 ];
 
 class SmartGuides extends Component {
@@ -69,12 +70,12 @@ class SmartGuides extends Component {
 		const xAxisGuidePositions = [0, parseInt(boundingBoxWidth / 2, 10), boundingBoxWidth];
 		const yAxisGuidePositions = [0, parseInt(boundingBoxHeight / 2, 10), boundingBoxHeight];
 
-		const xAxisGuides = xAxisGuidePositions.map((position, index) => {
-			return <div key={index} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />
+		const xAxisGuides = xAxisGuidePositions.map(position => {
+			return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />
 		});
 
-		const yAxisGuides = yAxisGuidePositions.map((position, index) => {
-			return <div key={index} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+		const yAxisGuides = yAxisGuidePositions.map(position => {
+			return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 		});
 
 		// Create 3 guides (start, middle and end) on each axis (x and y) for each draggable box
@@ -95,23 +96,20 @@ class SmartGuides extends Component {
 		})
 
 		const xAxisGuidesForBoxes = xAxisGuidePositionsForBoxes.reduce((result, currentBoxPositions) => {
-			const xAxisGuidesForCurrentBox = currentBoxPositions.map((position, index) => {
-				return <div key={index} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+			const xAxisGuidesForCurrentBox = currentBoxPositions.map(position => {
+				return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
 			});
 
 			return result.concat(xAxisGuidesForCurrentBox);
 		}, []);
 
 		const yAxisGuidesForBoxes = yAxisGuidePositionsForBoxes.reduce((result, currentBoxPositions) => {
-			const yAxisGuidesForCurrentBox = currentBoxPositions.map((position, index) => {
-				return <div key={index} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+			const yAxisGuidesForCurrentBox = currentBoxPositions.map(position => {
+				return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 			});
 
 			return result.concat(yAxisGuidesForCurrentBox);
 		}, []);
-
-		console.log(xAxisGuidePositionsForBoxes);
-		console.log(yAxisGuidePositionsForBoxes);
 
 		return <div ref={this.boundingBox} className={styles.boundingBox} style={{ width: '70vw', height: '70vh' }}>
 			{draggableBoxes}
