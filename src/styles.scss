@@ -1,0 +1,44 @@
+.boundingBox {
+	padding: 0;
+	position: fixed;
+	background-color: #342FD4;
+}
+
+.box {
+	background-color: #2D88CD;
+	height: 150px;
+	width: 300px;
+	position: absolute;
+}
+
+.selected {
+	background-color: hsl(205, 100%, 80%);
+}
+
+// TODO: Remove this class. This was created only for testing.
+.boundingBoxGuides {
+	display: none;
+}
+
+.draggableBoxGuides {
+	display: block;
+}
+
+.guide {
+	background: #EFE253;
+	color: #EFE253;
+	left: 0;
+	position: absolute;
+	top: 0;
+	z-index: 2;
+}
+
+.xAxis {
+	height: 100%;
+	width: 1px;
+}
+
+.yAxis {
+	height: 1px;
+	width: 100%;
+}
