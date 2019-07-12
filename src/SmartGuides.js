@@ -7,7 +7,7 @@ import styles from './styles.scss';
 const POS_DATA = [
 	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
 	{ x: 650, y: 300, width: 300, height: 150, top: 300, left: 650 },
-	{ x: 300, y: 250, width: 50, height: 50, top: 200, left: 300 }
+	{ x: 300, y: 250, width: 50, height: 50, top: 250, left: 300 }
 ];
 
 class SmartGuides extends Component {
@@ -16,8 +16,10 @@ class SmartGuides extends Component {
 		this.boundingBox = React.createRef();
 		this.state = {
 			boundingBoxDimensions: null,
-			boxes: {}
+			boxes: {},
+			guides: {}
 		};
+		this.calculateGuidePositions = this.calculateGuidePositions.bind(this);
 		this.onDragHandler = this.onDragHandler.bind(this);
 	}
 
@@ -26,28 +28,64 @@ class SmartGuides extends Component {
 		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
 			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
+			const guides = {};
+
+			// Adding the guides for the bounding box to the guides object
+			guides.boundingBox = {
+				x: this.calculateGuidePositions(boundingBoxDimensions, 'x'),
+				y: this.calculateGuidePositions(boundingBoxDimensions, 'y')
+			};
+
 			// POS_DATA is only for testing. The position array will be supplied by the user.
-			POS_DATA.forEach((position, index) => {
-				boxes[`box${index}`] = Object.assign({}, position);
+			POS_DATA.forEach((dimensions, index) => {
+				boxes[`box${index}`] = Object.assign({}, dimensions);
+				guides[`box${index}`] = {
+					x: this.calculateGuidePositions(dimensions, 'x'),
+					y: this.calculateGuidePositions(dimensions, 'y')
+				};
 			});
 
 			this.setState({
 				boundingBoxDimensions,
-				boxes
+				boxes,
+				guides
 			});
 		}
 	}
 
+	calculateGuidePositions(boxDimensions, axis) {
+		if (axis === 'x') {
+			const start = boxDimensions.left;
+			const middle = boxDimensions.left + parseInt(boxDimensions.width / 2, 10);
+			const end = boxDimensions.left + boxDimensions.width;
+
+			return [ start, middle, end ];
+		} else {
+			const start = boxDimensions.top;
+			const middle = boxDimensions.top + parseInt(boxDimensions.height / 2, 10);
+			const end = boxDimensions.top + boxDimensions.height;
+
+			return [ start, middle, end ];
+		}
+	}
+
 	onDragHandler(e, data) {
+		const dimensions = data.node.getBoundingClientRect().toJSON();
 		this.setState({
 			boxes: Object.assign({}, this.state.boxes, {
-				[data.node.id]: data.node.getBoundingClientRect().toJSON()
+				[data.node.id]: dimensions
+			}),
+			guides: Object.assign({}, this.state.guides, {
+				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+					x: this.calculateGuidePositions(dimensions, 'x'),
+					y: this.calculateGuidePositions(dimensions, 'y')
+				})
 			})
 		})
 	}
 
 	render() {
-		const { boundingBoxDimensions, boxes } = this.state;
+		const { guides } = this.state;
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = POS_DATA.map((position, index) => {
@@ -64,48 +102,26 @@ class SmartGuides extends Component {
 			/>
 		});
 
-		// Create 3 guides (start, middle and end) on each axis (x and y) for the bounding box
-		const boundingBoxWidth = boundingBoxDimensions !== null ? parseInt(boundingBoxDimensions.width) : 0;
-		const boundingBoxHeight = boundingBoxDimensions !== null ? parseInt(boundingBoxDimensions.height) : 0;
-		const xAxisGuidePositions = [0, parseInt(boundingBoxWidth / 2, 10), boundingBoxWidth];
-		const yAxisGuidePositions = [0, parseInt(boundingBoxHeight / 2, 10), boundingBoxHeight];
-
-		const xAxisGuides = xAxisGuidePositions.map(position => {
-			return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />
-		});
-
-		const yAxisGuides = yAxisGuidePositions.map(position => {
-			return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
-		});
-
-		// Create 3 guides (start, middle and end) on each axis (x and y) for each draggable box
-		const xAxisGuidePositionsForBoxes = Object.keys(this.state.boxes).map((box, index) => {
-			const currentBox = this.state.boxes[box];
-			const start = currentBox.left;
-			const midPoint = currentBox.left + parseInt(currentBox.width / 2, 10);
-			const end = currentBox.left + currentBox.width;
-			return [start, midPoint, end];
-		});
-
-		const yAxisGuidePositionsForBoxes = Object.keys(this.state.boxes).map((box, index) => {
-			const currentBox = this.state.boxes[box];
-			const start = currentBox.top;
-			const midPoint = currentBox.top + parseInt(currentBox.height / 2, 10);
-			const end = currentBox.top + currentBox.height;
-			return [start, midPoint, end];
-		})
-
-		const xAxisGuidesForBoxes = xAxisGuidePositionsForBoxes.reduce((result, currentBoxPositions) => {
-			const xAxisGuidesForCurrentBox = currentBoxPositions.map(position => {
-				return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+		// Create 3 guides (start, middle and end) on each axis (x and y) for each draggable box and the bounding box
+		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
+			const xAxisGuidesForCurrentBox = guides[box].x.map(position => {
+				if (box === 'boundingBox') {
+					return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />
+				} else {
+					return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+				}
 			});
 
 			return result.concat(xAxisGuidesForCurrentBox);
 		}, []);
 
-		const yAxisGuidesForBoxes = yAxisGuidePositionsForBoxes.reduce((result, currentBoxPositions) => {
-			const yAxisGuidesForCurrentBox = currentBoxPositions.map(position => {
-				return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
+			const yAxisGuidesForCurrentBox = guides[box].y.map(position => {
+				if (box === 'boundingBox') {
+					return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+				} else {
+					return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+				}
 			});
 
 			return result.concat(yAxisGuidesForCurrentBox);
@@ -114,9 +130,7 @@ class SmartGuides extends Component {
 		return <div ref={this.boundingBox} className={styles.boundingBox} style={{ width: '70vw', height: '70vh' }}>
 			{draggableBoxes}
 			{xAxisGuides}
-			{xAxisGuidesForBoxes}
 			{yAxisGuides}
-			{yAxisGuidesForBoxes}
 		</div>;
 	}
 }
