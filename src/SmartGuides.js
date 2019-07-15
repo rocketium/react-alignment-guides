@@ -21,6 +21,7 @@ class SmartGuides extends Component {
 			match: {}
 		};
 		this.onDragHandler = this.onDragHandler.bind(this);
+		this.selectBox = this.selectBox.bind(this);
 	}
 
 	componentDidMount() {
@@ -68,6 +69,12 @@ class SmartGuides extends Component {
 		});
 	}
 
+	selectBox(e) {
+		this.setState({
+			active: e.target.id
+		});
+	}
+
 	render() {
 		const { active, guides } = this.state;
 
@@ -84,6 +91,7 @@ class SmartGuides extends Component {
 				isSelected={active === id}
 				key={index}
 				onDragHandler={this.onDragHandler}
+				selectBox={this.selectBox}
 			/>
 		});
 
