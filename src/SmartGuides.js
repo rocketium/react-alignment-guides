@@ -87,17 +87,16 @@ class SmartGuides extends Component {
 			/>
 		});
 
-		// Create 3 guides (start, middle and end) on each axis (x and y) for each draggable box and the bounding box
+		// Create a guide(s) when the following conditions are met:
+		// 1. A box aligns with another (top, center or bottom)
+		// 2. An edge of a box touches any of the edges of another box
+		// 3. A box aligns vertically or horizontally with the bounding box
 		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const xAxisGuidesForCurrentBox = guides[box].x.map(position => {
-				if (box === 'boundingBox') {
-					return null;
+				if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
+					return <div key={shortid.generate()} className={`${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
 				} else {
-					if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
-						return <div key={shortid.generate()} className={`${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
-					} else {
-						return null;
-					}
+					return null;
 				}
 			});
 
@@ -106,14 +105,10 @@ class SmartGuides extends Component {
 
 		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const yAxisGuidesForCurrentBox = guides[box].y.map(position => {
-				if (box === 'boundingBox') {
-					return null;
+				if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
+					return <div key={shortid.generate()} className={`${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 				} else {
-					if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
-						return <div key={shortid.generate()} className={`${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
-					} else {
-						return null;
-					}
+					return null;
 				}
 			});
 
