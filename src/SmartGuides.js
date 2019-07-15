@@ -18,7 +18,8 @@ class SmartGuides extends Component {
 		this.state = {
 			boundingBoxDimensions: null,
 			boxes: {},
-			guides: {}
+			guides: {},
+			match: {}
 		};
 		this.onDragHandler = this.onDragHandler.bind(this);
 	}
@@ -64,7 +65,10 @@ class SmartGuides extends Component {
 				})
 			})
 		}, () => {
-			matchListener(this.state.active, this.state.guides);
+			const match = matchListener(this.state.active, this.state.guides);
+			this.setState({
+				match
+			});
 		});
 	}
 
@@ -93,7 +97,11 @@ class SmartGuides extends Component {
 				if (box === 'boundingBox') {
 					return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />
 				} else {
-					return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+					if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
+						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis} ${styles.activeGuide}`} style={{ left: position }} />;
+					} else {
+						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+					}
 				}
 			});
 
@@ -105,14 +113,18 @@ class SmartGuides extends Component {
 				if (box === 'boundingBox') {
 					return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 				} else {
-					return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+					if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
+						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis} ${styles.activeGuide}`} style={{ top: position }} />
+					} else {
+						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+					}
 				}
 			});
 
 			return result.concat(yAxisGuidesForCurrentBox);
 		}, []);
 
-		return <div ref={this.boundingBox} className={styles.boundingBox} style={{ width: '70vw', height: '70vh' }}>
+		return <div ref={this.boundingBox} className={styles.boundingBox} style={{ width: '100vw', height: '100vh' }}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
