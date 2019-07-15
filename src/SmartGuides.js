@@ -17,7 +17,6 @@ class SmartGuides extends Component {
 		this.boundingBox = React.createRef();
 		this.state = {
 			boundingBoxDimensions: null,
-			boxes: {},
 			guides: {},
 			match: {}
 		};
@@ -28,7 +27,6 @@ class SmartGuides extends Component {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
 		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
 			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
-			const boxes = {};
 			const guides = {};
 
 			// Adding the guides for the bounding box to the guides object
@@ -39,7 +37,6 @@ class SmartGuides extends Component {
 
 			// POS_DATA is only for testing. The position array will be supplied by the user.
 			POS_DATA.forEach((dimensions, index) => {
-				boxes[`box${index}`] = Object.assign({}, dimensions);
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
 					y: calculateGuidePositions(dimensions, 'y')
@@ -48,7 +45,6 @@ class SmartGuides extends Component {
 
 			this.setState({
 				boundingBoxDimensions,
-				boxes,
 				guides
 			});
 		}
@@ -95,12 +91,12 @@ class SmartGuides extends Component {
 		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const xAxisGuidesForCurrentBox = guides[box].x.map(position => {
 				if (box === 'boundingBox') {
-					return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />
+					return null;
 				} else {
 					if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
-						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis} ${styles.activeGuide}`} style={{ left: position }} />;
+						return <div key={shortid.generate()} className={`${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
 					} else {
-						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+						return null;
 					}
 				}
 			});
@@ -111,12 +107,12 @@ class SmartGuides extends Component {
 		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const yAxisGuidesForCurrentBox = guides[box].y.map(position => {
 				if (box === 'boundingBox') {
-					return <div key={shortid.generate()} className={`${styles.boundingBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+					return null;
 				} else {
 					if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
-						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis} ${styles.activeGuide}`} style={{ top: position }} />
+						return <div key={shortid.generate()} className={`${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 					} else {
-						return <div key={shortid.generate()} className={`${styles.draggableBoxGuides} ${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+						return null;
 					}
 				}
 			});

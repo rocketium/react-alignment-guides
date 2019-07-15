@@ -15,14 +15,10 @@
 	background-color: hsl(205, 100%, 80%);
 }
 
-// TODO: Remove these classes. This was created only for testing.
-.boundingBoxGuides, .draggableBoxGuides {
-	display: none;
-}
-
 .guide {
 	background: #EFE253;
 	color: #EFE253;
+	display: block;
 	left: 0;
 	position: absolute;
 	top: 0;
@@ -37,8 +33,4 @@
 .yAxis {
 	height: 1px;
 	width: 100%;
-}
-
-.activeGuide {
-	display: block;
 }
