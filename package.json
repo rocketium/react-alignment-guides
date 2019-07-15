@@ -11,6 +11,7 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "lodash": "^4.17.14",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-draggable": "^3.3.0",
@@ -41,7 +42,7 @@
   },
   "eslintConfig": {
     "parserOptions": {
-      "ecmaVersion": 6,
+      "ecmaVersion": 2018,
       "sourceType": "module",
       "ecmaFeatures": {
         "jsx": true
