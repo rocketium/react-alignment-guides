@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import shortid from 'shortid';
 import DraggableBox from './DraggableBox';
+import { calculateGuidePositions, matchListener } from './_helpers';
 import styles from './styles.scss';
 
 // Dummy position data to generate the boxes
@@ -19,7 +20,6 @@ class SmartGuides extends Component {
 			boxes: {},
 			guides: {}
 		};
-		this.calculateGuidePositions = this.calculateGuidePositions.bind(this);
 		this.onDragHandler = this.onDragHandler.bind(this);
 	}
 
@@ -32,16 +32,16 @@ class SmartGuides extends Component {
 
 			// Adding the guides for the bounding box to the guides object
 			guides.boundingBox = {
-				x: this.calculateGuidePositions(boundingBoxDimensions, 'x'),
-				y: this.calculateGuidePositions(boundingBoxDimensions, 'y')
+				x: calculateGuidePositions(boundingBoxDimensions, 'x'),
+				y: calculateGuidePositions(boundingBoxDimensions, 'y')
 			};
 
 			// POS_DATA is only for testing. The position array will be supplied by the user.
 			POS_DATA.forEach((dimensions, index) => {
 				boxes[`box${index}`] = Object.assign({}, dimensions);
 				guides[`box${index}`] = {
-					x: this.calculateGuidePositions(dimensions, 'x'),
-					y: this.calculateGuidePositions(dimensions, 'y')
+					x: calculateGuidePositions(dimensions, 'x'),
+					y: calculateGuidePositions(dimensions, 'y')
 				};
 			});
 
@@ -53,50 +53,35 @@ class SmartGuides extends Component {
 		}
 	}
 
-	calculateGuidePositions(boxDimensions, axis) {
-		if (axis === 'x') {
-			const start = boxDimensions.left;
-			const middle = boxDimensions.left + parseInt(boxDimensions.width / 2, 10);
-			const end = boxDimensions.left + boxDimensions.width;
-
-			return [ start, middle, end ];
-		} else {
-			const start = boxDimensions.top;
-			const middle = boxDimensions.top + parseInt(boxDimensions.height / 2, 10);
-			const end = boxDimensions.top + boxDimensions.height;
-
-			return [ start, middle, end ];
-		}
-	}
-
 	onDragHandler(e, data) {
 		const dimensions = data.node.getBoundingClientRect().toJSON();
 		this.setState({
-			boxes: Object.assign({}, this.state.boxes, {
-				[data.node.id]: dimensions
-			}),
+			active: data.node.id,
 			guides: Object.assign({}, this.state.guides, {
 				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-					x: this.calculateGuidePositions(dimensions, 'x'),
-					y: this.calculateGuidePositions(dimensions, 'y')
+					x: calculateGuidePositions(dimensions, 'x'),
+					y: calculateGuidePositions(dimensions, 'y')
 				})
 			})
-		})
+		}, () => {
+			matchListener(this.state.active, this.state.guides);
+		});
 	}
 
 	render() {
-		const { guides } = this.state;
+		const { active, guides } = this.state;
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = POS_DATA.map((position, index) => {
 			const defaultPosition = { x: position.x, y: position.y };
 			const dimensions = { width: position.width, height: position.height };
+			const id = `box${index}`;
 
 			return <DraggableBox
 				defaultPosition={defaultPosition}
 				dimensions={dimensions}
-				id={`box${index}`}
-				isSelected={false}
+				id={id}
+				isSelected={active === id}
 				key={index}
 				onDragHandler={this.onDragHandler}
 			/>
