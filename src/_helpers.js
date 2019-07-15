@@ -1,3 +1,5 @@
+import _ from 'lodash';
+
 export const calculateGuidePositions = (dimensions, axis) => {
 	if (axis === 'x') {
 		const start = dimensions.left;
@@ -18,6 +20,48 @@ export const matchListener = (active, allGuides) => {
 	const xAxisGuidesForActiveBox = allGuides[active].x;
 	const yAxisGuidesForActiveBox = allGuides[active].y;
 
-	console.log(xAxisGuidesForActiveBox);
-	console.log(yAxisGuidesForActiveBox);
+	const xAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, xAxisGuidesForActiveBox, 'x');
+	const yAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, yAxisGuidesForActiveBox, 'y');
+	const xAxisMatchedGuides = checkValueMatches(xAxisGuidesForActiveBox, xAxisAllGuides);
+	const yAxisMatchedGuides = checkValueMatches(yAxisGuidesForActiveBox, yAxisAllGuides);
+
+	if (xAxisMatchedGuides.intersection.length > 0) {
+		return {
+			...xAxisMatchedGuides,
+			activeBoxGuides: xAxisGuidesForActiveBox,
+			axis: 'x'
+		};
+	} else if (yAxisMatchedGuides.intersection.length > 0) {
+		return {
+			...yAxisMatchedGuides,
+			activeBoxGuides: yAxisGuidesForActiveBox,
+			axis: 'y'
+		};
+	}
+};
+
+export const getAllGuidesForGivenAxisExceptActiveBox = (allGuides, guidesForActiveBoxAlongGivenAxis, axis) => {
+	const result = Object.keys(allGuides).map(box => {
+		const currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
+		if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
+			return currentBoxGuidesAlongGivenAxis;
+		}
+	});
+
+	return result.filter(guides => guides !== undefined);
+};
+
+export const checkValueMatches = (activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis) => {
+	let intersection = null;
+	let matchedArray = [];
+	for (let i = 0; i < allOtherGuidesInOneAxis.length; i += 1) {
+		intersection = _.intersection(activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis[i]);
+
+		if (intersection.length > 0) {
+			matchedArray = allOtherGuidesInOneAxis[i];
+			break;
+		}
+	}
+
+	return { matchedArray, intersection: intersection };
 };
