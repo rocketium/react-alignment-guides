@@ -15,6 +15,7 @@
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "react-draggable": "^3.3.0",
+    "react-hotkeys": "^2.0.0",
     "shortid": "^2.2.14"
   },
   "devDependencies": {
