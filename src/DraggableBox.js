@@ -21,7 +21,7 @@ class DraggableBox extends Component {
 			height: `${dimensions.height}px`
 		};
 
-		return <Draggable defaultPosition={defaultPosition} bounds='parent' onStop={this.onDragHandler}>
+		return <Draggable defaultPosition={defaultPosition} bounds='parent' onDrag={this.onDragHandler}>
 			<div id={id} className={boxClassNames} style={boxStyles} />
 		</Draggable>
 	}
