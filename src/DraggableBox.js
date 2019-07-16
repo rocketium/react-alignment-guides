@@ -31,7 +31,7 @@ class DraggableBox extends Component {
 		this.props.onDragHandler(e, data);
 	}
 
-	moveLeftBy1Pixel(event) {
+	moveLeftBy1Pixel() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -40,7 +40,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveRightBy1Pixel(event) {
+	moveRightBy1Pixel() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -49,7 +49,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveUpBy1Pixel(event) {
+	moveUpBy1Pixel() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -58,7 +58,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveDownBy1Pixel(event) {
+	moveDownBy1Pixel() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -67,7 +67,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveLeftBy10Pixels(event) {
+	moveLeftBy10Pixels() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -76,7 +76,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveRightBy10Pixels(event) {
+	moveRightBy10Pixels() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -85,7 +85,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveUpBy10Pixels(event) {
+	moveUpBy10Pixels() {
 		this.setState({
 			position: {
 				...this.state.position,
@@ -94,7 +94,7 @@ class DraggableBox extends Component {
 		});
 	}
 
-	moveDownBy10Pixels(event) {
+	moveDownBy10Pixels() {
 		this.setState({
 			position: {
 				...this.state.position,
