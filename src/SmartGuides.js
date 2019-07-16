@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import shortid from 'shortid';
 import DraggableBox from './DraggableBox';
 import { calculateGuidePositions, matchListener } from './_helpers';
+import { KEY_MAP } from './constants';
 import styles from './styles.scss';
 
 // Dummy position data to generate the boxes

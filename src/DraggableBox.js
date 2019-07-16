@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import Draggable from 'react-draggable';
-import { HotKeys } from "react-hotkeys";
-import { KEY_MAP } from './constants';
 import styles from './styles.scss';
 
 class DraggableBox extends Component {
@@ -111,22 +109,9 @@ class DraggableBox extends Component {
 			height: `${dimensions.height}px`
 		};
 
-		const HANDLERS = {
-			'moveLeftBy1Pixel': this.moveLeftBy1Pixel,
-			'moveRightBy1Pixel': this.moveRightBy1Pixel,
-			'moveUpBy1Pixel': this.moveUpBy1Pixel,
-			'moveDownBy1Pixel': this.moveDownBy1Pixel,
-			'moveLeftBy10Pixels': this.moveLeftBy10Pixels,
-			'moveRightBy10Pixels': this.moveRightBy10Pixels,
-			'moveUpBy10Pixels': this.moveUpBy10Pixels,
-			'moveDownBy10Pixels': this.moveDownBy10Pixels
-		};
-
-		return <HotKeys keyMap={KEY_MAP} handlers={HANDLERS}>
-			<Draggable defaultPosition={defaultPosition} position={this.state.position} bounds='parent' onDrag={this.onDragHandler}>
-				<div id={id} className={boxClassNames} style={boxStyles} onClick={this.props.selectBox} />
-			</Draggable>
-		</HotKeys>;
+		return <Draggable defaultPosition={defaultPosition} bounds='parent' onDrag={this.onDragHandler}>
+			<div id={id} className={boxClassNames} style={boxStyles} onClick={this.props.selectBox} />
+		</Draggable>;
 	}
 }
 
