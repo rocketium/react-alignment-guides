@@ -103,7 +103,14 @@ class SmartGuides extends Component {
 		// 3. A box aligns vertically or horizontally with the bounding box
 		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const xAxisGuidesForCurrentBox = guides[box].x.map(position => {
-				if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
+				if (
+					this.state.active &&
+					this.state.active === box &&
+					this.state.match &&
+					this.state.match.x &&
+					this.state.match.x.intersection &&
+					this.state.match.x.intersection[0] === position
+				) {
 					return <div key={shortid.generate()} className={`${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
 				} else {
 					return null;
@@ -115,7 +122,14 @@ class SmartGuides extends Component {
 
 		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const yAxisGuidesForCurrentBox = guides[box].y.map(position => {
-				if (this.state.active && this.state.active === box && this.state.match && this.state.match.intersection && this.state.match.intersection[0] === position) {
+				if (
+					this.state.active &&
+					this.state.active === box &&
+					this.state.match &&
+					this.state.match.y &&
+					this.state.match.y.intersection &&
+					this.state.match.y.intersection[0] === position
+				) {
 					return <div key={shortid.generate()} className={`${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 				} else {
 					return null;

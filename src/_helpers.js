@@ -25,19 +25,23 @@ export const matchListener = (active, allGuides) => {
 	const xAxisMatchedGuides = checkValueMatches(xAxisGuidesForActiveBox, xAxisAllGuides);
 	const yAxisMatchedGuides = checkValueMatches(yAxisGuidesForActiveBox, yAxisAllGuides);
 
+	const allMatchedGuides = {};
+
 	if (xAxisMatchedGuides.intersection.length > 0) {
-		return {
+		allMatchedGuides.x = {
 			...xAxisMatchedGuides,
-			activeBoxGuides: xAxisGuidesForActiveBox,
-			axis: 'x'
-		};
-	} else if (yAxisMatchedGuides.intersection.length > 0) {
-		return {
-			...yAxisMatchedGuides,
-			activeBoxGuides: yAxisGuidesForActiveBox,
-			axis: 'y'
+			activeBoxGuides: xAxisGuidesForActiveBox
 		};
 	}
+
+	if (yAxisMatchedGuides.intersection.length > 0) {
+		allMatchedGuides.y = {
+			...yAxisMatchedGuides,
+			activeBoxGuides: yAxisGuidesForActiveBox,
+		};
+	}
+
+	return allMatchedGuides;
 };
 
 export const getAllGuidesForGivenAxisExceptActiveBox = (allGuides, guidesForActiveBoxAlongGivenAxis, axis) => {
