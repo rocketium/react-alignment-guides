@@ -14,6 +14,7 @@
 
 .selected {
 	background-color: hsl(205, 100%, 80%);
+	border: 1px solid #EFE253;
 }
 
 .guide {
@@ -34,4 +35,72 @@
 .yAxis {
 	height: 1px;
 	width: 100%;
+}
+
+// Resize Handles
+.resizeHandle {
+	width: 10px;
+	height: 10px;
+	background-color: #EFE253;
+	position: absolute;
+}
+
+.resize-t {
+	top: -5px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.resize-r {
+	right: -5px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.resize-b {
+	bottom: -5px;
+	left: 50%;
+	transform: translateX(-50%);
+}
+
+.resize-l {
+	left: -5px;
+	top: 50%;
+	transform: translateY(-50%);
+}
+
+.resize-tr {
+	top: -5px;
+	right: -5px;
+}
+
+.resize-tl {
+	top: -5px;
+	left: -5px;
+}
+
+.resize-br {
+	bottom: -5px;
+	right: -5px;
+}
+
+.resize-bl {
+	bottom: -5px;
+	left: -5px;
+}
+
+.resize-t, .resize-b {
+	cursor: ns-resize;
+}
+
+.resize-r, .resize-l {
+	cursor: ew-resize;
+}
+
+.resize-tr, .resize-bl {
+	cursor: nesw-resize;
+}
+
+.resize-tl, .resize-br {
+	cursor: nwse-resize;
 }

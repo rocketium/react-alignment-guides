@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import shortid from 'shortid';
 import Box from './Box';
 import { calculateGuidePositions, matchListener } from './utils/helpers';
-import { KEY_MAP } from './utils/constants';
 import styles from './styles.scss';
 
 // Dummy position data to generate the boxes
@@ -83,14 +82,11 @@ class SmartGuides extends Component {
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = POS_DATA.map((position, index) => {
-			const defaultPosition = { x: position.x, y: position.y };
-			const dimensions = { width: position.width, height: position.height };
 			const id = `box${index}`;
 
 			return <Box
 				{...this.props}
-				defaultPosition={defaultPosition}
-				dimensions={dimensions}
+				defaultPosition={position}
 				id={id}
 				isSelected={active === id}
 				key={index}

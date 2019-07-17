@@ -10,3 +10,9 @@ export const KEY_MAP = {
 	MOVE_UP_10_PX: 'shift+up',
 	MOVE_DOWN_10_PX: 'shift+down'
 };
+
+// Positions for resize handles
+export const RESIZE_HANDLES = ['tr', 'tl', 'br', 'bl'];
+
+// Positions for rotate handles
+export const ROTATE_HANDLES = ['tr', 'tl', 'br', 'bl'];

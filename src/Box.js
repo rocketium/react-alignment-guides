@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import shortid from 'shortid';
+import { getLength } from './utils/helpers';
+import { RESIZE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
 class Box extends Component {
@@ -7,8 +10,13 @@ class Box extends Component {
 		super(props);
 		this.state = {
 			dragging: false,
+			resizing: false,
 			x: props.position ? props.position.x : props.defaultPosition.x,
 			y: props.position ? props.position.y : props.defaultPosition.y,
+			width: props.position ? props.position.width : props.defaultPosition.width,
+			height: props.position ? props.position.height : props.defaultPosition.height,
+			top: props.position ? props.position.top : props.defaultPosition.top,
+			left: props.position ? props.position.left : props.defaultPosition.left
 		};
 
 		this.distX = 0;
@@ -17,6 +25,7 @@ class Box extends Component {
 		this.box = React.createRef();
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
+		this.onResizeStart = this.onResizeStart.bind(this);
 	}
 
 	onDragStart(e) {
@@ -33,6 +42,7 @@ class Box extends Component {
 			const onDrag = (e) => {
 				if (!this.state.dragging) return false;
 
+				e.stopPropagation();
 				const currentPosition = {
 					x: e.clientX - this.distX,
 					y: e.clientY - this.distY
@@ -107,14 +117,125 @@ class Box extends Component {
 		}
 	}
 
+	onResizeStart(e) {
+		const { target } = e;
+		e.stopPropagation();
+		const data = { node: target.parentNode };
+		const startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
+		this.props.onResizeStart && this.props.onResizeStart(e, data);
+
+		this.setState({
+			resizing: true
+		}, () => {
+			const onResize = (e) => {
+				if (!this.state.resizing) return false;
+
+				const { target } = e;
+				if (target.id === 'br') {
+					const currentDimensions = {
+						width: e.clientX - startingDimensions.left,
+						height: e.clientY - startingDimensions.top
+					};
+
+					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.setState({
+						width: currentDimensions.width,
+						height: currentDimensions.height
+					}, () => {
+						this.props.onResize && this.props.onResize(e, data);
+					})
+				} else if (target.id === 'bl') {
+					const deltaX = startingDimensions.left - e.clientX;
+					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
+					const currentDimensions = {
+						width: startingDimensions.width + deltaX,
+						height: startingDimensions.height - deltaY
+					};
+
+					const currentPosition = {
+						top: startingDimensions.top,
+						left: startingDimensions.left - deltaX
+					};
+
+					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.setState({
+						width: currentDimensions.width,
+						height: currentDimensions.height,
+						top: currentPosition.top,
+						left: currentPosition.left
+					}, () => {
+						this.props.onResize && this.props.onResize(e, data);
+					});
+				} else if (target.id === 'tr') {
+					const deltaX = e.clientX - startingDimensions.left;
+					const deltaY = startingDimensions.top - e.clientY;
+					const currentDimensions = {
+						width: deltaX,
+						height: startingDimensions.height + deltaY
+					};
+
+					const currentPosition = {
+						top: startingDimensions.top - deltaY,
+						left: startingDimensions.left
+					};
+
+					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.setState({
+						width: currentDimensions.width,
+						height: currentDimensions.height,
+						top: currentPosition.top,
+						left: currentPosition.left
+					}, () => {
+						this.props.onResize && this.props.onResize(e, data);
+					});
+				} else if (target.id === 'tl') {
+					const deltaX = startingDimensions.left - e.clientX;
+					const deltaY = startingDimensions.top - e.clientY;
+					const currentDimensions = {
+						width: startingDimensions.width + deltaX,
+						height: startingDimensions.height + deltaY
+					};
+
+					const currentPosition = {
+						top: startingDimensions.top - deltaY,
+						left: startingDimensions.left - deltaX
+					};
+					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.setState({
+						width: currentDimensions.width,
+						height: currentDimensions.height,
+						top: currentPosition.top,
+						left: currentPosition.left
+					}, () => {
+						this.props.onResize && this.props.onResize(e, data);
+					});
+				}
+			};
+
+			const onResizeEnd = (e) => {
+				document.removeEventListener('mousemove', onResize);
+				document.removeEventListener('mouseup', onResizeEnd);
+
+				this.setState({
+					resizing: false
+				}, () => {
+					this.props.onResizeEnd && this.props.onResizeEnd();
+				})
+			};
+
+			document.addEventListener('mousemove', onResize);
+			document.addEventListener('mouseup', onResizeEnd);
+		});
+	}
+
 	render() {
-		const { dimensions, id, isSelected } = this.props;
+		const { id, isSelected } = this.props;
 		const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
 		const boxStyles = {
-			width: `${dimensions.width}px`,
-			height: `${dimensions.height}px`,
-			top: `${this.state.y}px`,
-			left: `${this.state.x}px`
+			width: `${this.state.width}px`,
+			height: `${this.state.height}px`,
+			top: `${this.state.top}px`,
+			left: `${this.state.left}px`
 		};
 
 		return <div
@@ -127,13 +248,21 @@ class Box extends Component {
 			ref={this.box}
 			style={boxStyles}
 			tabIndex="0"
-		/>;
+		>
+			{
+				isSelected ?
+					RESIZE_HANDLES.map(handle => {
+						const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
+						return <div key={shortid.generate()} className={className} onMouseDown={this.onResizeStart} id={handle} />
+					}) :
+					null
+			}
+		</div>;
 	}
 }
 
 Box.propTypes = {
 	defaultPosition: PropTypes.object.isRequired,
-	dimensions: PropTypes.object.isRequired,
 	id: PropTypes.string,
 	isSelected: PropTypes.bool,
 	drag: PropTypes.bool,
