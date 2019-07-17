@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import shortid from 'shortid';
-import DraggableBox from './DraggableBox';
-import { calculateGuidePositions, matchListener } from './_helpers';
-import { KEY_MAP } from './constants';
+import Box from './Box';
+import { calculateGuidePositions, matchListener } from './utils/helpers';
+import { KEY_MAP } from './utils/constants';
 import styles from './styles.scss';
 
 // Dummy position data to generate the boxes
@@ -55,6 +55,7 @@ class SmartGuides extends Component {
 
 	onDragHandler(e, data) {
 		const dimensions = data.node.getBoundingClientRect().toJSON();
+		this.props.onDrag && this.props.onDrag(e, data);
 		this.setState({
 			active: data.node.id,
 			guides: Object.assign({}, this.state.guides, {
@@ -86,13 +87,14 @@ class SmartGuides extends Component {
 			const dimensions = { width: position.width, height: position.height };
 			const id = `box${index}`;
 
-			return <DraggableBox
+			return <Box
+				{...this.props}
 				defaultPosition={defaultPosition}
 				dimensions={dimensions}
 				id={id}
 				isSelected={active === id}
 				key={index}
-				onDragHandler={this.onDragHandler}
+				onDrag={this.onDragHandler}
 				selectBox={this.selectBox}
 			/>
 		});
@@ -146,5 +148,21 @@ class SmartGuides extends Component {
 		</div>;
 	}
 }
+
+SmartGuides.propTypes = {
+	drag: PropTypes.bool,
+	resize: PropTypes.bool,
+	rotate: PropTypes.bool,
+	keybindings: PropTypes.bool,
+	onRotateStart: PropTypes.func,
+	onRotate: PropTypes.func,
+	onRotateEnd: PropTypes.func,
+	onResizeStart: PropTypes.func,
+	onResize: PropTypes.func,
+	onResizeEnd: PropTypes.func,
+	onDragStart: PropTypes.func,
+	onDrag: PropTypes.func,
+	onDragEnd: PropTypes.func
+};
 
 export default SmartGuides;

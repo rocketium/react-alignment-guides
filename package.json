@@ -4,9 +4,9 @@
   "description": "React Smart Guides is a grids and guides system for draggable elements in an enclosed space",
   "main": "index.js",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.dev.js --hot --progress",
-    "build": "webpack --config webpack.config.prod.js --progress --display-chunks --colors",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "webpack-dev-server --config webpack.config.js --hot --progress",
+    "build": "babel src/ -d lib/",
+    "prepublish": "yarn run build"
   },
   "author": "",
   "license": "MIT",
@@ -25,6 +25,7 @@
     "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
+    "babel-cli": "^6.26.0",
     "babel-loader": "^8.0.6",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
