@@ -5,13 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js --hot --progress",
-    "build": "babel src/ -d lib/",
-    "prepublish": "yarn run build"
+    "build": "babel src/ -d lib/"
   },
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "lodash": "^4.17.14",
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
