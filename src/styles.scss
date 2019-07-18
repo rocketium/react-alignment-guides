@@ -1,3 +1,7 @@
+* {
+	box-sizing: border-box;
+}
+
 .boundingBox {
 	padding: 0;
 	position: fixed;
@@ -10,11 +14,15 @@
 	width: 300px;
 	position: absolute;
 	outline: none;
+
+	&:hover {
+		border: 2px solid #EFE253;
+	}
 }
 
 .selected {
 	background-color: hsl(205, 100%, 80%);
-	border: 1px solid #EFE253;
+	border: 2px solid #EFE253;
 }
 
 .guide {
@@ -41,7 +49,8 @@
 .resizeHandle {
 	width: 10px;
 	height: 10px;
-	background-color: #EFE253;
+	background-color: #FFF;
+	border: 2px solid #EFE253;
 	position: absolute;
 }
 
