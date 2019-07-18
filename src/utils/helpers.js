@@ -1,5 +1,3 @@
-import _ from 'lodash';
-
 export const calculateGuidePositions = (dimensions, axis) => {
 	if (axis === 'x') {
 		const start = dimensions.left;
@@ -16,25 +14,25 @@ export const calculateGuidePositions = (dimensions, axis) => {
 	}
 };
 
-export const matchListener = (active, allGuides) => {
+export const proximityListener = (active, allGuides) => {
 	const xAxisGuidesForActiveBox = allGuides[active].x;
 	const yAxisGuidesForActiveBox = allGuides[active].y;
 
 	const xAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, xAxisGuidesForActiveBox, 'x');
 	const yAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, yAxisGuidesForActiveBox, 'y');
-	const xAxisMatchedGuides = checkValueMatches(xAxisGuidesForActiveBox, xAxisAllGuides);
-	const yAxisMatchedGuides = checkValueMatches(yAxisGuidesForActiveBox, yAxisAllGuides);
+	const xAxisMatchedGuides = checkValueProximities(xAxisGuidesForActiveBox, xAxisAllGuides);
+	const yAxisMatchedGuides = checkValueProximities(yAxisGuidesForActiveBox, yAxisAllGuides);
 
 	const allMatchedGuides = {};
 
-	if (xAxisMatchedGuides.intersection.length > 0) {
+	if (xAxisMatchedGuides.proximity) {
 		allMatchedGuides.x = {
 			...xAxisMatchedGuides,
 			activeBoxGuides: xAxisGuidesForActiveBox
 		};
 	}
 
-	if (yAxisMatchedGuides.intersection.length > 0) {
+	if (yAxisMatchedGuides.proximity) {
 		allMatchedGuides.y = {
 			...yAxisMatchedGuides,
 			activeBoxGuides: yAxisGuidesForActiveBox,
@@ -55,17 +53,30 @@ export const getAllGuidesForGivenAxisExceptActiveBox = (allGuides, guidesForActi
 	return result.filter(guides => guides !== undefined);
 };
 
-export const checkValueMatches = (activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis) => {
+export const checkValueProximities = (activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis) => {
+	let proximity = null;
 	let intersection = null;
 	let matchedArray = [];
-	for (let i = 0; i < allOtherGuidesInOneAxis.length; i += 1) {
-		intersection = _.intersection(activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis[i]);
+	const snapThreshold = 5;
+	for (let index = 0; index < allOtherGuidesInOneAxis.length; index += 1) {
+		let index2 = 0;
+		let index3 = 0;
 
-		if (intersection.length > 0) {
-			matchedArray = allOtherGuidesInOneAxis[i];
-			break;
+		while (index2 < activeBoxGuidesInOneAxis.length && index3 < allOtherGuidesInOneAxis[index].length) {
+			const diff = Math.abs(activeBoxGuidesInOneAxis[index2] - allOtherGuidesInOneAxis[index][index3]);
+			if (diff <= snapThreshold) {
+				proximity = { value: diff, activeBoxIndex: index2, matchedBoxIndex: index3 };
+				matchedArray = allOtherGuidesInOneAxis[index];
+				intersection = allOtherGuidesInOneAxis[index][index3];
+			}
+
+			if (activeBoxGuidesInOneAxis[index2] < allOtherGuidesInOneAxis[index][index3]) {
+				index2 += 1;
+			} else {
+				index3 += 1;
+			}
 		}
 	}
 
-	return { matchedArray, intersection: intersection };
+	return { matchedArray, proximity, intersection };
 };

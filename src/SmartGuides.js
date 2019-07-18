@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import shortid from 'shortid';
 import Box from './Box';
-import { calculateGuidePositions, matchListener } from './utils/helpers';
+import { calculateGuidePositions, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
 
 // Dummy position data to generate the boxes
@@ -18,6 +18,7 @@ class SmartGuides extends Component {
 		this.boundingBox = React.createRef();
 		this.state = {
 			boundingBoxDimensions: null,
+			boxes: {},
 			guides: {},
 			match: {}
 		};
@@ -29,6 +30,7 @@ class SmartGuides extends Component {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
 		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
 			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+			const boxes = {};
 			const guides = {};
 
 			// Adding the guides for the bounding box to the guides object
@@ -39,6 +41,7 @@ class SmartGuides extends Component {
 
 			// POS_DATA is only for testing. The position array will be supplied by the user.
 			POS_DATA.forEach((dimensions, index) => {
+				boxes[`box${index}`] = dimensions;
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
 					y: calculateGuidePositions(dimensions, 'y')
@@ -47,16 +50,25 @@ class SmartGuides extends Component {
 
 			this.setState({
 				boundingBoxDimensions,
+				boxes,
 				guides
 			});
 		}
 	}
 
 	onDragHandler(e, data) {
-		const dimensions = data.node.getBoundingClientRect().toJSON();
+		const dimensions = Object.assign({}, this.state.boxes[data.node.id], {
+			left: data.currentX,
+			top: data.currentY
+		});
 		this.props.onDrag && this.props.onDrag(e, data);
 		this.setState({
-			active: data.node.id,
+			boxes: Object.assign({}, this.state.boxes, {
+				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+					left: data.currentX,
+					top: data.currentY
+				})
+			}),
 			guides: Object.assign({}, this.state.guides, {
 				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
 					x: calculateGuidePositions(dimensions, 'x'),
@@ -64,8 +76,43 @@ class SmartGuides extends Component {
 				})
 			})
 		}, () => {
-			const match = matchListener(this.state.active, this.state.guides);
+			const match = proximityListener(this.state.active, this.state.guides);
+			let newActiveBoxLeft = this.state.boxes[this.state.active].left;
+			let newActiveBoxTop = this.state.boxes[this.state.active].top;
+			for (let axis in match) {
+				const { activeBoxGuides, matchedArray, proximity } = match[axis];
+				const activeBoxProximityIndex = proximity.activeBoxIndex;
+				const matchedBoxProximityIndex = proximity.matchedBoxIndex;
+
+				if (axis === 'x') {
+					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+						newActiveBoxLeft = this.state.boxes[this.state.active].left - proximity.value;
+					} else {
+						newActiveBoxLeft = this.state.boxes[this.state.active].left + proximity.value;
+					}
+				} else {
+					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+						newActiveBoxTop = this.state.boxes[this.state.active].top - proximity.value;
+					} else {
+						newActiveBoxTop = this.state.boxes[this.state.active].top + proximity.value;
+					}
+				}
+			}
+			const boxes = Object.assign({}, this.state.boxes, {
+				[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
+					left: newActiveBoxLeft,
+					top: newActiveBoxTop
+				})
+			});
+			const guides = Object.assign({}, this.state.guides, {
+				[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
+					x: calculateGuidePositions(boxes[this.state.active], 'x'),
+					y: calculateGuidePositions(boxes[this.state.active], 'y')
+				})
+			})
 			this.setState({
+				boxes,
+				guides,
 				match
 			});
 		});
@@ -78,10 +125,11 @@ class SmartGuides extends Component {
 	}
 
 	render() {
-		const { active, guides } = this.state;
+		const { active, boxes, guides } = this.state;
 
 		// Create the draggable boxes from the position data
-		const draggableBoxes = POS_DATA.map((position, index) => {
+		const draggableBoxes = Object.keys(boxes).map((box, index) => {
+			const position = boxes[box];
 			const id = `box${index}`;
 
 			return <Box
@@ -89,7 +137,8 @@ class SmartGuides extends Component {
 				defaultPosition={position}
 				id={id}
 				isSelected={active === id}
-				key={index}
+				key={shortid.generate()}
+				onDragStart={this.selectBox}
 				onDrag={this.onDragHandler}
 				selectBox={this.selectBox}
 			/>
@@ -107,7 +156,7 @@ class SmartGuides extends Component {
 					this.state.match &&
 					this.state.match.x &&
 					this.state.match.x.intersection &&
-					this.state.match.x.intersection[0] === position
+					this.state.match.x.intersection === position
 				) {
 					return <div key={shortid.generate()} className={`${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
 				} else {
@@ -126,7 +175,7 @@ class SmartGuides extends Component {
 					this.state.match &&
 					this.state.match.y &&
 					this.state.match.y.intersection &&
-					this.state.match.y.intersection[0] === position
+					this.state.match.y.intersection === position
 				) {
 					return <div key={shortid.generate()} className={`${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
 				} else {
