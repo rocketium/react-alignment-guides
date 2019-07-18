@@ -16,18 +16,18 @@
 	outline: none;
 
 	&:hover {
-		border: 2px solid #EFE253;
+		border: 2px solid #EB4B48;
 	}
 }
 
 .selected {
-	background-color: hsl(205, 100%, 80%);
-	border: 2px solid #EFE253;
+	background-color: #342FD4;
+	border: 2px solid #EB4B48;
 }
 
 .guide {
-	background: #EFE253;
-	color: #EFE253;
+	background: #EB4B48;
+	color: #EB4B48;
 	display: block;
 	left: 0;
 	position: absolute;
@@ -50,32 +50,8 @@
 	width: 10px;
 	height: 10px;
 	background-color: #FFF;
-	border: 2px solid #EFE253;
+	border: 2px solid #EB4B48;
 	position: absolute;
-}
-
-.resize-t {
-	top: -5px;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.resize-r {
-	right: -5px;
-	top: 50%;
-	transform: translateY(-50%);
-}
-
-.resize-b {
-	bottom: -5px;
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.resize-l {
-	left: -5px;
-	top: 50%;
-	transform: translateY(-50%);
 }
 
 .resize-tr {
@@ -96,14 +72,6 @@
 .resize-bl {
 	bottom: -5px;
 	left: -5px;
-}
-
-.resize-t, .resize-b {
-	cursor: ns-resize;
-}
-
-.resize-r, .resize-l {
-	cursor: ew-resize;
 }
 
 .resize-tr, .resize-bl {
