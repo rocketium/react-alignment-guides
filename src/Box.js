@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import shortid from 'shortid';
-import { getLength } from './utils/helpers';
 import { RESIZE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
@@ -9,18 +8,14 @@ class Box extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			dragging: false,
-			resizing: false,
-			x: props.position ? props.position.x : props.defaultPosition.x,
-			y: props.position ? props.position.y : props.defaultPosition.y,
 			width: props.position ? props.position.width : props.defaultPosition.width,
 			height: props.position ? props.position.height : props.defaultPosition.height,
 			top: props.position ? props.position.top : props.defaultPosition.top,
 			left: props.position ? props.position.left : props.defaultPosition.left
 		};
 
-		this.distX = 0;
-		this.distY = 0;
+		this.dragging = false;
+		this.resizing = false;
 
 		this.box = React.createRef();
 		this.onDragStart = this.onDragStart.bind(this);
@@ -32,105 +27,92 @@ class Box extends Component {
 		const { target } = e;
 		const startingPosition = target.getBoundingClientRect().toJSON();
 		const data = { startX: startingPosition.x, startY: startingPosition.y, node: target };
-		this.distX = Math.abs(target.offsetLeft - e.clientX);
-		this.distY = Math.abs(target.offsetTop - e.clientY);
 		this.props.onDragStart && this.props.onDragStart(e, data);
+		this.dragging = true;
 
-		this.setState({
-			dragging: true
-		}, () => {
-			const onDrag = (e) => {
-				if (!this.state.dragging) return false;
+		const deltaX = Math.abs(target.offsetLeft - e.clientX);
+		const deltaY = Math.abs(target.offsetTop - e.clientY);
 
-				e.stopPropagation();
+		const onDrag = (e) => {
+			if (this.dragging) {
 				const currentPosition = {
-					x: e.clientX - this.distX,
-					y: e.clientY - this.distY
+					left: e.clientX - deltaX,
+					top: e.clientY - deltaY
 				};
-				const data = { startX: startingPosition.x, startY: startingPosition.y, currentX: currentPosition.x, currentY: currentPosition.y, node: target };
+				const data = { startX: startingPosition.left, startY: startingPosition.top, currentX: currentPosition.left, currentY: currentPosition.top, node: target };
+				this.props.onDrag && this.props.onDrag(e, data);
 				this.setState({
-					x: currentPosition.x,
-					y: currentPosition.y
-				}, () => {
-					this.props.onDrag && this.props.onDrag(e, data);
+					left: currentPosition.left,
+					top: currentPosition.top
 				});
-			};
+			}
+		};
 
-			const onDragEnd = (e) => {
-				if (!this.state.dragging) return false;
-
+		const onDragEnd = (e) => {
+			if (this.dragging) {
 				const endPosition = {
-					x: e.clientX - this.distX,
-					y: e.clientY - this.distY
+					left: e.clientX - deltaX,
+					top: e.clientY - deltaY
 				};
-				const data = { startX: startingPosition.x, startY: startingPosition.y, endX: endPosition.x, endY: endPosition.y, node: target };
-				this.setState({
-					dragging: false,
-					x: endPosition.x,
-					y: endPosition.y
-				}, () => {
-					document.removeEventListener('mousemove', onDrag);
-					document.removeEventListener('mouseup', onDragEnd);
+				const data = { startX: startingPosition.left, startY: startingPosition.top, endX: endPosition.left, endY: endPosition.top, node: target };
+				this.props.onDragEnd && this.props.onDragEnd(e, data);
+				document.removeEventListener('mousemove', onDrag);
+				document.removeEventListener('mouseup', onDragEnd);
+				this.dragging = false;
+			}
+		};
 
-					this.props.onDragEnd && this.props.onDragEnd(e, data);
-				});
-			};
-
-			document.addEventListener('mousemove', onDrag);
-			document.addEventListener('mouseup', onDragEnd);
-		});
+		document.addEventListener('mousemove', onDrag);
+		document.addEventListener('mouseup', onDragEnd);
 	}
 
 	shortcutHandler(e) {
 		if (!e.shiftKey && e.key === 'ArrowRight') {
 			this.setState({
-				x: this.state.x + 1
+				left: this.state.left + 1
 			});
 		} else if (e.shiftKey && e.key === 'ArrowRight') {
 			this.setState({
-				x: this.state.x + 10
+				left: this.state.left + 10
 			});
 		} else if (!e.shiftKey && e.key === 'ArrowLeft') {
 			this.setState({
-				x: this.state.x - 1
+				left: this.state.left - 1
 			});
 		} else if (e.shiftKey && e.key === 'ArrowLeft') {
 			this.setState({
-				x: this.state.x - 10
+				left: this.state.left - 10
 			});
 		} else if (!e.shiftKey && e.key === 'ArrowUp') {
 			this.setState({
-				y: this.state.y - 1
+				top: this.state.top - 1
 			});
 		} else if (e.shiftKey && e.key === 'ArrowUp') {
 			this.setState({
-				y: this.state.y - 10
+				top: this.state.top - 10
 			});
 		} else if (!e.shiftKey && e.key === 'ArrowDown') {
 			this.setState({
-				y: this.state.y + 1
+				top: this.state.top + 1
 			});
 		} else if (e.shiftKey && e.key === 'ArrowDown') {
 			this.setState({
-				y: this.state.y + 10
+				top: this.state.top + 10
 			});
 		}
 	}
 
 	onResizeStart(e) {
 		const { target } = e;
-		e.stopPropagation();
 		const data = { node: target.parentNode };
 		const startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
+		this.resizing = true;
 
-		this.setState({
-			resizing: true
-		}, () => {
-			const onResize = (e) => {
-				if (!this.state.resizing) return false;
 
-				const { target } = e;
+		const onResize = (e) => {
+			if (this.resizing) {
+				e.stopImmediatePropagation();
 				if (target.id === 'br') {
 					const currentDimensions = {
 						width: e.clientX - startingDimensions.left,
@@ -138,12 +120,11 @@ class Box extends Component {
 					};
 
 					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height
-					}, () => {
-						this.props.onResize && this.props.onResize(e, data);
-					})
+					});
 				} else if (target.id === 'bl') {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
@@ -158,13 +139,12 @@ class Box extends Component {
 					};
 
 					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						top: currentPosition.top,
 						left: currentPosition.left
-					}, () => {
-						this.props.onResize && this.props.onResize(e, data);
 					});
 				} else if (target.id === 'tr') {
 					const deltaX = e.clientX - startingDimensions.left;
@@ -180,13 +160,12 @@ class Box extends Component {
 					};
 
 					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						top: currentPosition.top,
 						left: currentPosition.left
-					}, () => {
-						this.props.onResize && this.props.onResize(e, data);
 					});
 				} else if (target.id === 'tl') {
 					const deltaX = startingDimensions.left - e.clientX;
@@ -201,31 +180,29 @@ class Box extends Component {
 						left: startingDimensions.left - deltaX
 					};
 					const data = { currentWidth: currentDimensions.width, currentHeight: currentDimensions.height, node: target.parentNode };
+					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						top: currentPosition.top,
 						left: currentPosition.left
-					}, () => {
-						this.props.onResize && this.props.onResize(e, data);
 					});
 				}
-			};
+			}
+		};
 
-			const onResizeEnd = (e) => {
+		const onResizeEnd = (e) => {
+			if (this.resizing) {
 				document.removeEventListener('mousemove', onResize);
 				document.removeEventListener('mouseup', onResizeEnd);
 
-				this.setState({
-					resizing: false
-				}, () => {
-					this.props.onResizeEnd && this.props.onResizeEnd();
-				})
-			};
+				this.props.onResizeEnd && this.props.onResizeEnd(e);
+				this.resizing = false;
+			}
+		};
 
-			document.addEventListener('mousemove', onResize);
-			document.addEventListener('mouseup', onResizeEnd);
-		});
+		document.addEventListener('mousemove', onResize);
+		document.addEventListener('mouseup', onResizeEnd);
 	}
 
 	render() {
@@ -242,9 +219,9 @@ class Box extends Component {
 			className={boxClassNames}
 			id={id}
 			onClick={this.props.selectBox}
+			onMouseDown={this.onDragStart}
 			onKeyUp={this.shortcutHandler}
 			onKeyDown={this.shortcutHandler}
-			onMouseDown={this.onDragStart}
 			ref={this.box}
 			style={boxStyles}
 			tabIndex="0"
