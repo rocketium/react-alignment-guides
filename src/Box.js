@@ -67,37 +67,69 @@ class Box extends Component {
 	}
 
 	shortcutHandler(e) {
-		if (!e.shiftKey && e.key === 'ArrowRight') {
+		if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
 			this.setState({
 				left: this.state.left + 1
 			});
-		} else if (e.shiftKey && e.key === 'ArrowRight') {
+		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
 			this.setState({
 				left: this.state.left + 10
 			});
-		} else if (!e.shiftKey && e.key === 'ArrowLeft') {
+		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
 			this.setState({
 				left: this.state.left - 1
 			});
-		} else if (e.shiftKey && e.key === 'ArrowLeft') {
+		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
 			this.setState({
 				left: this.state.left - 10
 			});
-		} else if (!e.shiftKey && e.key === 'ArrowUp') {
+		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
 			this.setState({
 				top: this.state.top - 1
 			});
-		} else if (e.shiftKey && e.key === 'ArrowUp') {
+		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
 			this.setState({
 				top: this.state.top - 10
 			});
-		} else if (!e.shiftKey && e.key === 'ArrowDown') {
+		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
 			this.setState({
 				top: this.state.top + 1
 			});
-		} else if (e.shiftKey && e.key === 'ArrowDown') {
+		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
 			this.setState({
 				top: this.state.top + 10
+			});
+		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
+			this.setState({
+				width: this.state.width + 1
+			});
+		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
+			this.setState({
+				width: this.state.width + 10
+			});
+		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
+			this.setState({
+				width: this.state.width - 1
+			});
+		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
+			this.setState({
+				width: this.state.width - 10
+			});
+		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
+			this.setState({
+				height: this.state.height + 1
+			});
+		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
+			this.setState({
+				height: this.state.height + 10
+			});
+		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
+			this.setState({
+				height: this.state.height - 1
+			});
+		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
+			this.setState({
+				height: this.state.height - 10
 			});
 		}
 	}
