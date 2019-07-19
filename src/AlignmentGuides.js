@@ -5,7 +5,7 @@ import Box from './Box';
 import { calculateGuidePositions, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
 
-class SmartGuides extends Component {
+class AlignmentGuides extends Component {
 	constructor(props) {
 		super(props);
 		this.boundingBox = React.createRef();
@@ -31,7 +31,7 @@ class SmartGuides extends Component {
 				x: calculateGuidePositions(boundingBoxDimensions, 'x'),
 				y: calculateGuidePositions(boundingBoxDimensions, 'y')
 			};
-			
+
 			this.props.boxes.forEach((dimensions, index) => {
 				boxes[`box${index}`] = dimensions;
 				guides[`box${index}`] = {
@@ -186,7 +186,7 @@ class SmartGuides extends Component {
 	}
 }
 
-SmartGuides.propTypes = {
+AlignmentGuides.propTypes = {
 	drag: PropTypes.bool,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
@@ -202,4 +202,4 @@ SmartGuides.propTypes = {
 	onDragEnd: PropTypes.func
 };
 
-export default SmartGuides;
+export default AlignmentGuides;

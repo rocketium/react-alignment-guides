@@ -1,5 +1,5 @@
 'use strict';
 
-import SmartGuides from './src/SmartGuides';
+import AlignmentGuides from './src/AlignmentGuides';
 
-export default SmartGuides;
+export default AlignmentGuides;
