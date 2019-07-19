@@ -5,13 +5,6 @@ import Box from './Box';
 import { calculateGuidePositions, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
 
-// Dummy position data to generate the boxes
-const POS_DATA = [
-	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
-	{ x: 650, y: 300, width: 300, height: 150, top: 300, left: 650 },
-	{ x: 300, y: 250, width: 50, height: 50, top: 250, left: 300 }
-];
-
 class SmartGuides extends Component {
 	constructor(props) {
 		super(props);
@@ -38,9 +31,8 @@ class SmartGuides extends Component {
 				x: calculateGuidePositions(boundingBoxDimensions, 'x'),
 				y: calculateGuidePositions(boundingBoxDimensions, 'y')
 			};
-
-			// POS_DATA is only for testing. The position array will be supplied by the user.
-			POS_DATA.forEach((dimensions, index) => {
+			
+			this.props.boxes.forEach((dimensions, index) => {
 				boxes[`box${index}`] = dimensions;
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
