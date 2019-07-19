@@ -1,7 +1,7 @@
 {
-  "name": "react-smart-guides",
+  "name": "react-alignment-guides",
   "version": "0.1.0",
-  "description": "React Smart Guides is a grids and guides system for draggable elements in an enclosed space",
+  "description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --config webpack.config.js --hot --progress",
