@@ -11,7 +11,7 @@
     "smart guides",
     "snap to guide"
   ],
-  "main": "./index.js",
+  "main": "dist/index.js",
   "scripts": {
     "start": "NODE_ENV=development webpack-dev-server --config webpack.config.js --hot --progress",
     "build": "NODE_ENV=production webpack --config webpack.config.js --progress",
@@ -23,6 +23,9 @@
   },
   "author": "Ilango <ilango@rocketium.com>",
   "license": "Apache-2.0",
+  "files": [
+    "dist/*"
+  ],
   "dependencies": {
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
