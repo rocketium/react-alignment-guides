@@ -1,14 +1,28 @@
 {
   "name": "react-alignment-guides",
-  "version": "0.1.0",
+  "version": "0.6.5",
   "description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
-  "main": "index.js",
+  "keywords": [
+    "drag",
+    "draggable",
+    "resizable",
+    "rotatable",
+    "alignment guides",
+    "smart guides",
+    "snap to guide"
+  ],
+  "main": "./index.js",
   "scripts": {
-    "start": "webpack-dev-server --config webpack.config.js --hot --progress",
-    "build": "babel src/ -d lib/"
+    "start": "NODE_ENV=development webpack-dev-server --config webpack.config.js --hot --progress",
+    "build": "NODE_ENV=production webpack --config webpack.config.js --progress",
+    "prepublishOnly": "babel ./src --out-dir ./dist -s inline"
   },
-  "author": "",
-  "license": "MIT",
+  "peerDependencies": {
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  },
+  "author": "Ilango <ilango@rocketium.com>",
+  "license": "Apache-2.0",
   "dependencies": {
     "prop-types": "^15.7.2",
     "react": "^16.8.6",
@@ -16,13 +30,13 @@
     "shortid": "^2.2.14"
   },
   "devDependencies": {
+    "@babel/cli": "^7.5.5",
     "@babel/core": "^7.5.4",
     "@babel/plugin-proposal-export-default-from": "^7.5.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
     "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
     "@babel/preset-env": "^7.5.4",
     "@babel/preset-react": "^7.0.0",
-    "babel-cli": "^6.26.0",
     "babel-loader": "^8.0.6",
     "cross-env": "^5.2.0",
     "css-loader": "^3.0.0",
@@ -38,32 +52,5 @@
     "webpack": "^4.35.3",
     "webpack-cli": "^3.3.5",
     "webpack-dev-server": "^3.7.2"
-  },
-  "eslintConfig": {
-    "parserOptions": {
-      "ecmaVersion": 2018,
-      "sourceType": "module",
-      "ecmaFeatures": {
-        "jsx": true
-      }
-    }
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      "@babel/plugin-proposal-object-rest-spread",
-      "@babel/plugin-proposal-export-default-from",
-      "@babel/plugin-proposal-export-namespace-from"
-    ]
-  },
-  "prettier": {
-    "semi": false,
-    "singleQuote": true,
-    "tabWidth": 4,
-    "trailingComma": "es5",
-    "useTabs": true
   }
 }
