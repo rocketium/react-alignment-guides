@@ -5,18 +5,30 @@ import Box from './Box';
 import { calculateGuidePositions, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
 
+// Dummy position data to generate the boxes
+// const POS_DATA = [
+// 	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
+// 	{ x: 650, y: 300, width: 300, height: 150, top: 550, left: 650 },
+// 	{ x: 300, y: 250, width: 150, height: 350, top: 250, left: 300 }
+// ];
+
 class AlignmentGuides extends Component {
 	constructor(props) {
 		super(props);
 		this.boundingBox = React.createRef();
 		this.state = {
+			active: '',
 			boundingBoxDimensions: null,
 			boxes: {},
 			guides: {},
+			guidesActive: false,
 			match: {}
 		};
 		this.onDragHandler = this.onDragHandler.bind(this);
 		this.selectBox = this.selectBox.bind(this);
+		this.unSelectBox = this.unSelectBox.bind(this);
+		this.resizeEndHandler = this.resizeEndHandler.bind(this);
+		this.deactivateGuides = this.deactivateGuides.bind(this);
 	}
 
 	componentDidMount() {
@@ -32,7 +44,9 @@ class AlignmentGuides extends Component {
 				y: calculateGuidePositions(boundingBoxDimensions, 'y')
 			};
 
+			// POS_DATA is only for testing. The position array will be supplied by the user.
 			this.props.boxes.forEach((dimensions, index) => {
+			// POS_DATA.forEach((dimensions, index) => {
 				boxes[`box${index}`] = dimensions;
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
@@ -55,6 +69,8 @@ class AlignmentGuides extends Component {
 		});
 		this.props.onDrag && this.props.onDrag(e, data);
 		this.setState({
+			active: data.node.id,
+			guidesActive: true,
 			boxes: Object.assign({}, this.state.boxes, {
 				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
 					left: data.currentX,
@@ -116,6 +132,31 @@ class AlignmentGuides extends Component {
 		});
 	}
 
+	unSelectBox(e) {
+		this.setState({
+			active: ''
+		})
+	}
+
+	resizeEndHandler(e, data) {
+		this.setState({
+			boxes: Object.assign({}, this.state.boxes, {
+				[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
+					width: data.finalWidth,
+					height: data.finalHeight,
+					top: data.finalTop,
+					left: data.finalLeft
+				})
+			})
+		});
+	}
+
+	deactivateGuides(e, data) {
+		this.setState({
+			guidesActive: false
+		});
+	}
+
 	render() {
 		const { active, boxes, guides } = this.state;
 
@@ -130,9 +171,10 @@ class AlignmentGuides extends Component {
 				id={id}
 				isSelected={active === id}
 				key={shortid.generate()}
-				onDragStart={this.selectBox}
 				onDrag={this.onDragHandler}
+				onDragEnd={this.deactivateGuides}
 				selectBox={this.selectBox}
+				onResizeEnd={this.resizeEndHandler}
 			/>
 		});
 
@@ -141,6 +183,7 @@ class AlignmentGuides extends Component {
 		// 2. An edge of a box touches any of the edges of another box
 		// 3. A box aligns vertically or horizontally with the bounding box
 		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
+			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.xAxis} ${styles.active}` : `${styles.guide} ${styles.xAxis}`;
 			const xAxisGuidesForCurrentBox = guides[box].x.map(position => {
 				if (
 					this.state.active &&
@@ -150,7 +193,7 @@ class AlignmentGuides extends Component {
 					this.state.match.x.intersection &&
 					this.state.match.x.intersection === position
 				) {
-					return <div key={shortid.generate()} className={`${styles.guide} ${styles.xAxis}`} style={{ left: position }} />;
+					return <div key={shortid.generate()} className={guideClassNames} style={{ left: position }} />;
 				} else {
 					return null;
 				}
@@ -160,6 +203,7 @@ class AlignmentGuides extends Component {
 		}, []);
 
 		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
+			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.yAxis} ${styles.active}` : `${styles.guide} ${styles.yAxis}`;
 			const yAxisGuidesForCurrentBox = guides[box].y.map(position => {
 				if (
 					this.state.active &&
@@ -169,7 +213,7 @@ class AlignmentGuides extends Component {
 					this.state.match.y.intersection &&
 					this.state.match.y.intersection === position
 				) {
-					return <div key={shortid.generate()} className={`${styles.guide} ${styles.yAxis}`} style={{ top: position }} />
+					return <div key={shortid.generate()} className={guideClassNames} style={{ top: position }} />
 				} else {
 					return null;
 				}

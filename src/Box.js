@@ -35,6 +35,7 @@ class Box extends Component {
 
 		const onDrag = (e) => {
 			if (this.dragging) {
+				e.stopImmediatePropagation();
 				const currentPosition = {
 					left: e.clientX - deltaX,
 					top: e.clientY - deltaY
@@ -141,7 +142,6 @@ class Box extends Component {
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
 		this.resizing = true;
 
-
 		const onResize = (e) => {
 			if (this.resizing) {
 				e.stopImmediatePropagation();
@@ -228,7 +228,10 @@ class Box extends Component {
 				document.removeEventListener('mousemove', onResize);
 				document.removeEventListener('mouseup', onResizeEnd);
 
-				this.props.onResizeEnd && this.props.onResizeEnd(e);
+				const parentNode = e.target.parentNode;
+				const dimensions = parentNode.getBoundingClientRect().toJSON();
+				const data = { finalWidth: dimensions.width, finalHeight: dimensions.height, finalTop: dimensions.top, finalLeft: dimensions.left, node: parentNode };
+				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 				this.resizing = false;
 			}
 		};
@@ -250,7 +253,7 @@ class Box extends Component {
 		return <div
 			className={boxClassNames}
 			id={id}
-			onClick={this.props.selectBox}
+			onMouseUp={this.props.selectBox}
 			onMouseDown={this.onDragStart}
 			onKeyUp={this.shortcutHandler}
 			onKeyDown={this.shortcutHandler}

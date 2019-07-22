@@ -28,11 +28,15 @@
 .guide {
 	background: #EB4B48;
 	color: #EB4B48;
-	display: block;
+	display: none;
 	left: 0;
 	position: absolute;
 	top: 0;
 	z-index: 2;
+}
+
+.active {
+	display: block;
 }
 
 .xAxis {
