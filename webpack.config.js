@@ -1,6 +1,29 @@
 const webpack = require('webpack');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+let plugins = [
+	new HtmlWebpackPlugin({
+		filename: path.resolve(__dirname, 'dist/index.html'),
+		template: path.resolve(__dirname, 'index.html')
+	}),
+	new MiniCssExtractPlugin({
+		filename: "[name].css",
+		chunkFilename: "[id].css"
+	}),
+	new webpack.HotModuleReplacementPlugin()
+];
+
+if (process.env.NODE_ENV === 'production') {
+	plugins = [
+		new MiniCssExtractPlugin({
+			filename: "[name].css",
+			chunkFilename: "[id].css"
+		}),
+		new webpack.HotModuleReplacementPlugin()
+	]
+}
 
 module.exports = {
 	mode: process.env.NODE_ENV,
@@ -45,13 +68,7 @@ module.exports = {
 		]
 	},
 	optimization: {},
-	plugins: [
-		new MiniCssExtractPlugin({
-			filename: "[name].css",
-			chunkFilename: "[id].css"
-		}),
-		new webpack.HotModuleReplacementPlugin()
-	],
+	plugins: plugins,
 	devServer: {
 		contentBase: path.join(__dirname, 'dist'),
 		compress: true,
