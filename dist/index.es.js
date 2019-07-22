@@ -1,10 +1,5 @@
-'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var React = require('react');
-var React__default = _interopDefault(React);
-var PropTypes = _interopDefault(require('prop-types'));
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
 function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -388,7 +383,7 @@ function (_Component) {
     };
     _this.dragging = false;
     _this.resizing = false;
-    _this.box = React__default.createRef();
+    _this.box = React.createRef();
     _this.onDragStart = _this.onDragStart.bind(babelHelpers.assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(babelHelpers.assertThisInitialized(_this));
     _this.onResizeStart = _this.onResizeStart.bind(babelHelpers.assertThisInitialized(_this));
@@ -676,7 +671,7 @@ function (_Component) {
         top: "".concat(this.state.top, "px"),
         left: "".concat(this.state.left, "px")
       };
-      return React__default.createElement("div", {
+      return React.createElement("div", {
         className: boxClassNames,
         id: id,
         onMouseUp: this.props.selectBox,
@@ -688,7 +683,7 @@ function (_Component) {
         tabIndex: "0"
       }, isSelected ? RESIZE_HANDLES.map(function (handle) {
         var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
-        return React__default.createElement("div", {
+        return React.createElement("div", {
           key: shortid.generate(),
           className: className,
           onMouseDown: _this4.onResizeStart,
@@ -698,7 +693,7 @@ function (_Component) {
     }
   }]);
   return Box;
-}(React.Component);
+}(Component);
 
 Box.propTypes = {
   defaultPosition: PropTypes.object.isRequired,
@@ -828,7 +823,7 @@ function (_Component) {
 
     babelHelpers.classCallCheck(this, AlignmentGuides);
     _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(AlignmentGuides).call(this, props));
-    _this.boundingBox = React__default.createRef();
+    _this.boundingBox = React.createRef();
     _this.state = {
       active: '',
       boundingBoxDimensions: null,
@@ -985,7 +980,7 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        return React__default.createElement(Box, babelHelpers["extends"]({}, _this3.props, {
+        return React.createElement(Box, babelHelpers["extends"]({}, _this3.props, {
           defaultPosition: position,
           id: id,
           isSelected: active === id,
@@ -1004,7 +999,7 @@ function (_Component) {
         var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position) {
           if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.x && _this3.state.match.x.intersection && _this3.state.match.x.intersection === position) {
-            return React__default.createElement("div", {
+            return React.createElement("div", {
               key: shortid.generate(),
               className: guideClassNames,
               style: {
@@ -1021,7 +1016,7 @@ function (_Component) {
         var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position) {
           if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.y && _this3.state.match.y.intersection && _this3.state.match.y.intersection === position) {
-            return React__default.createElement("div", {
+            return React.createElement("div", {
               key: shortid.generate(),
               className: guideClassNames,
               style: {
@@ -1034,7 +1029,7 @@ function (_Component) {
         });
         return result.concat(yAxisGuidesForCurrentBox);
       }, []);
-      return React__default.createElement("div", {
+      return React.createElement("div", {
         ref: this.boundingBox,
         className: styles.boundingBox,
         style: {
@@ -1045,7 +1040,7 @@ function (_Component) {
     }
   }]);
   return AlignmentGuides;
-}(React.Component);
+}(Component);
 
 AlignmentGuides.propTypes = {
   drag: PropTypes.bool,
@@ -1067,5 +1062,5 @@ AlignmentGuides.propTypes = {
 // 	document.getElementById('root')
 // );
 
-module.exports = AlignmentGuides;
-//# sourceMappingURL=index.js.map
+export default AlignmentGuides;
+//# sourceMappingURL=index.es.js.map

@@ -1,59 +1,79 @@
 {
-  "name": "react-alignment-guides",
-  "version": "0.6.6",
-  "description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
-  "keywords": [
-    "drag",
-    "draggable",
-    "resizable",
-    "rotatable",
-    "alignment guides",
-    "smart guides",
-    "snap to guide"
-  ],
-  "main": "dist/index.js",
-  "scripts": {
-    "start": "NODE_ENV=development webpack-dev-server --config webpack.config.js --hot --progress",
-    "build": "NODE_ENV=production webpack --config webpack.config.js --progress",
-    "prepublishOnly": "babel ./src --out-dir ./dist -s inline"
-  },
-  "peerDependencies": {
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6"
-  },
-  "author": "Ilango <ilango@rocketium.com>",
-  "license": "Apache-2.0",
-  "files": [
-    "dist/*"
-  ],
-  "dependencies": {
-    "prop-types": "^15.7.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "shortid": "^2.2.14"
-  },
-  "devDependencies": {
-    "@babel/cli": "^7.5.5",
-    "@babel/core": "^7.5.4",
-    "@babel/plugin-proposal-export-default-from": "^7.5.2",
-    "@babel/plugin-proposal-export-namespace-from": "^7.5.2",
-    "@babel/plugin-proposal-object-rest-spread": "^7.5.4",
-    "@babel/preset-env": "^7.5.4",
-    "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
-    "cross-env": "^5.2.0",
-    "css-loader": "^3.0.0",
-    "eslint": "^6.0.1",
-    "eslint-loader": "^2.2.1",
-    "html-webpack-plugin": "^3.2.0",
-    "husky": "^3.0.0",
-    "mini-css-extract-plugin": "^0.7.0",
-    "node-sass": "^4.12.0",
-    "prettier": "^1.18.2",
-    "sass-loader": "^7.1.0",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.35.3",
-    "webpack-cli": "^3.3.5",
-    "webpack-dev-server": "^3.7.2"
-  }
+	"name": "react-alignment-guides",
+	"version": "0.6.8",
+	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
+	"keywords": [
+		"drag",
+		"draggable",
+		"resizable",
+		"rotatable",
+		"alignment guides",
+		"smart guides",
+		"snap to guide"
+	],
+	"author": "Ilango <ilango@rocketium.com>",
+	"license": "Apache-2.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/rocketium/react-alignment-guides"
+	},
+	"main": "dist/index.js",
+	"module": "dist/index.es.js",
+	"jsnext:main": "dist/index.es.js",
+	"engines": {
+		"node": ">=8",
+		"npm": ">=5"
+	},
+	"scripts": {
+		"build": "rollup -c",
+		"start": "rollup -c -w",
+		"prepare": "yarn run build",
+		"predeploy": "cd example && yarn install && yarn run build",
+		"deploy": "gh-pages -d example/build"
+	},
+	"peerDependencies": {
+		"prop-types": "^15.7.2",
+		"react": "^15.0.0 || ^16.0.0",
+		"react-dom": "^15.0.0 || ^16.0.0"
+	},
+	"devDependencies": {
+		"@svgr/rollup": "^4.3.2",
+		"@babel/cli": "^7.5.5",
+		"@babel/core": "^7.5.4",
+		"@babel/plugin-proposal-class-properties": "^7.5.5",
+		"@babel/plugin-proposal-export-default-from": "^7.5.2",
+		"@babel/plugin-proposal-export-namespace-from": "^7.5.2",
+		"@babel/plugin-proposal-object-rest-spread": "^7.5.4",
+		"@babel/plugin-external-helpers": "^7.2.0",
+		"@babel/preset-env": "^7.5.4",
+		"@babel/preset-react": "^7.0.0",
+		"babel-eslint": "^10.0.2",
+		"babel-loader": "^8.0.6",
+		"cross-env": "^5.2.0",
+		"eslint": "^6.1.0",
+		"eslint-config-standard": "^13.0.1",
+		"eslint-config-standard-react": "^8.0.0",
+		"eslint-plugin-import": "^2.18.2",
+		"eslint-plugin-node": "^9.1.0",
+		"eslint-plugin-promise": "^4.2.1",
+		"eslint-plugin-react": "^7.14.2",
+		"eslint-plugin-standard": "^4.0.0",
+		"gh-pages": "^2.0.1",
+		"node-sass": "^4.12.0",
+		"react": "^16.8.6",
+		"react-dom": "^16.8.6",
+		"react-scripts": "^3.0.1",
+		"rollup": "^1.17.0",
+		"rollup-plugin-babel": "^4.3.3",
+		"rollup-plugin-commonjs": "^10.0.1",
+		"rollup-plugin-node-builtins": "^2.1.2",
+		"rollup-plugin-node-resolve": "^5.2.0",
+		"rollup-plugin-peer-deps-external": "^2.2.0",
+		"rollup-plugin-postcss": "^2.0.3",
+		"rollup-plugin-url": "^2.2.2",
+		"shortid": "^2.2.14"
+	},
+	"files": [
+		"dist"
+	]
 }
