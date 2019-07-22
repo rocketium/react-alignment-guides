@@ -370,16 +370,35 @@ var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  p
 var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
 styleInject(css);
 
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
 var Box =
 /*#__PURE__*/
 function (_Component) {
-  babelHelpers.inherits(Box, _Component);
+  _inherits(Box, _Component);
 
   function Box(props) {
     var _this;
 
-    babelHelpers.classCallCheck(this, Box);
-    _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(Box).call(this, props));
+    _classCallCheck(this, Box);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(Box).call(this, props));
     _this.state = {
       width: props.position ? props.position.width : props.defaultPosition.width,
       height: props.position ? props.position.height : props.defaultPosition.height,
@@ -389,13 +408,13 @@ function (_Component) {
     _this.dragging = false;
     _this.resizing = false;
     _this.box = React__default.createRef();
-    _this.onDragStart = _this.onDragStart.bind(babelHelpers.assertThisInitialized(_this));
-    _this.shortcutHandler = _this.shortcutHandler.bind(babelHelpers.assertThisInitialized(_this));
-    _this.onResizeStart = _this.onResizeStart.bind(babelHelpers.assertThisInitialized(_this));
+    _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
+    _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
+    _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
     return _this;
   }
 
-  babelHelpers.createClass(Box, [{
+  _createClass(Box, [{
     key: "onDragStart",
     value: function onDragStart(e) {
       var _this2 = this;
@@ -697,6 +716,7 @@ function (_Component) {
       }) : null);
     }
   }]);
+
   return Box;
 }(React.Component);
 
@@ -721,7 +741,9 @@ Box.propTypes = {
 
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { babelHelpers.defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var calculateGuidePositions = function calculateGuidePositions(dimensions, axis) {
   if (axis === 'x') {
@@ -812,6 +834,27 @@ var checkValueProximities = function checkValueProximities(activeBoxGuidesInOneA
   };
 };
 
+function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
+
+function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties$1(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass$1(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties$1(Constructor.prototype, protoProps); if (staticProps) _defineProperties$1(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn$1(self, call) { if (call && (_typeof$1(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized$1(self); }
+
+function _getPrototypeOf$1(o) { _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf$1(o); }
+
+function _assertThisInitialized$1(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+function _inherits$1(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf$1(subClass, superClass); }
+
+function _setPrototypeOf$1(o, p) { _setPrototypeOf$1 = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf$1(o, p); }
 // const POS_DATA = [
 // 	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
 // 	{ x: 650, y: 300, width: 300, height: 150, top: 550, left: 650 },
@@ -821,13 +864,14 @@ var checkValueProximities = function checkValueProximities(activeBoxGuidesInOneA
 var AlignmentGuides =
 /*#__PURE__*/
 function (_Component) {
-  babelHelpers.inherits(AlignmentGuides, _Component);
+  _inherits$1(AlignmentGuides, _Component);
 
   function AlignmentGuides(props) {
     var _this;
 
-    babelHelpers.classCallCheck(this, AlignmentGuides);
-    _this = babelHelpers.possibleConstructorReturn(this, babelHelpers.getPrototypeOf(AlignmentGuides).call(this, props));
+    _classCallCheck$1(this, AlignmentGuides);
+
+    _this = _possibleConstructorReturn$1(this, _getPrototypeOf$1(AlignmentGuides).call(this, props));
     _this.boundingBox = React__default.createRef();
     _this.state = {
       active: '',
@@ -837,15 +881,15 @@ function (_Component) {
       guidesActive: false,
       match: {}
     };
-    _this.onDragHandler = _this.onDragHandler.bind(babelHelpers.assertThisInitialized(_this));
-    _this.selectBox = _this.selectBox.bind(babelHelpers.assertThisInitialized(_this));
-    _this.unSelectBox = _this.unSelectBox.bind(babelHelpers.assertThisInitialized(_this));
-    _this.resizeEndHandler = _this.resizeEndHandler.bind(babelHelpers.assertThisInitialized(_this));
-    _this.deactivateGuides = _this.deactivateGuides.bind(babelHelpers.assertThisInitialized(_this));
+    _this.onDragHandler = _this.onDragHandler.bind(_assertThisInitialized$1(_this));
+    _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
+    _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized$1(_this));
+    _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized$1(_this));
+    _this.deactivateGuides = _this.deactivateGuides.bind(_assertThisInitialized$1(_this));
     return _this;
   }
 
-  babelHelpers.createClass(AlignmentGuides, [{
+  _createClass$1(AlignmentGuides, [{
     key: "componentDidMount",
     value: function componentDidMount() {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
@@ -887,11 +931,11 @@ function (_Component) {
       this.setState({
         active: data.node.id,
         guidesActive: true,
-        boxes: Object.assign({}, this.state.boxes, babelHelpers.defineProperty({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+        boxes: Object.assign({}, this.state.boxes, _defineProperty$1({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
           left: data.currentX,
           top: data.currentY
         }))),
-        guides: Object.assign({}, this.state.guides, babelHelpers.defineProperty({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        guides: Object.assign({}, this.state.guides, _defineProperty$1({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
           x: calculateGuidePositions(dimensions, 'x'),
           y: calculateGuidePositions(dimensions, 'y')
         })))
@@ -923,11 +967,11 @@ function (_Component) {
           }
         }
 
-        var boxes = Object.assign({}, _this2.state.boxes, babelHelpers.defineProperty({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
+        var boxes = Object.assign({}, _this2.state.boxes, _defineProperty$1({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
           left: newActiveBoxLeft,
           top: newActiveBoxTop
         })));
-        var guides = Object.assign({}, _this2.state.guides, babelHelpers.defineProperty({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
+        var guides = Object.assign({}, _this2.state.guides, _defineProperty$1({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
           x: calculateGuidePositions(boxes[_this2.state.active], 'x'),
           y: calculateGuidePositions(boxes[_this2.state.active], 'y')
         })));
@@ -957,7 +1001,7 @@ function (_Component) {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
       this.setState({
-        boxes: Object.assign({}, this.state.boxes, babelHelpers.defineProperty({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
+        boxes: Object.assign({}, this.state.boxes, _defineProperty$1({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
           width: data.finalWidth,
           height: data.finalHeight,
           top: data.finalTop,
@@ -985,7 +1029,7 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        return React__default.createElement(Box, babelHelpers["extends"]({}, _this3.props, {
+        return React__default.createElement(Box, _extends({}, _this3.props, {
           defaultPosition: position,
           id: id,
           isSelected: active === id,
@@ -1044,6 +1088,7 @@ function (_Component) {
       }, draggableBoxes, xAxisGuides, yAxisGuides);
     }
   }]);
+
   return AlignmentGuides;
 }(React.Component);
 
