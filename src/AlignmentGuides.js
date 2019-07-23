@@ -31,7 +31,7 @@ class AlignmentGuides extends Component {
 		this.deactivateGuides = this.deactivateGuides.bind(this);
 	}
 
-	componentDidMount() {
+	componentWillUpdate(nextProps, nextState, nextContext) {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
 		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
 			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
