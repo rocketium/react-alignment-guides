@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import shortid from 'shortid';
+import nanoid from 'nanoid';
 import Box from './Box';
 import { calculateGuidePositions, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
@@ -164,13 +164,14 @@ class AlignmentGuides extends Component {
 		const draggableBoxes = Object.keys(boxes).map((box, index) => {
 			const position = boxes[box];
 			const id = `box${index}`;
+			const key = nanoid();
 
 			return <Box
 				{...this.props}
 				defaultPosition={position}
 				id={id}
 				isSelected={active === id}
-				key={shortid.generate()}
+				key={key}
 				onDrag={this.onDragHandler}
 				onDragEnd={this.deactivateGuides}
 				selectBox={this.selectBox}
@@ -184,6 +185,7 @@ class AlignmentGuides extends Component {
 		// 3. A box aligns vertically or horizontally with the bounding box
 		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.xAxis} ${styles.active}` : `${styles.guide} ${styles.xAxis}`;
+			const key = nanoid();
 			const xAxisGuidesForCurrentBox = guides[box].x.map(position => {
 				if (
 					this.state.active &&
@@ -193,7 +195,7 @@ class AlignmentGuides extends Component {
 					this.state.match.x.intersection &&
 					this.state.match.x.intersection === position
 				) {
-					return <div key={shortid.generate()} className={guideClassNames} style={{ left: position }} />;
+					return <div key={key} className={guideClassNames} style={{ left: position }} />;
 				} else {
 					return null;
 				}
@@ -204,6 +206,7 @@ class AlignmentGuides extends Component {
 
 		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.yAxis} ${styles.active}` : `${styles.guide} ${styles.yAxis}`;
+			const key = nanoid();
 			const yAxisGuidesForCurrentBox = guides[box].y.map(position => {
 				if (
 					this.state.active &&
@@ -213,7 +216,7 @@ class AlignmentGuides extends Component {
 					this.state.match.y.intersection &&
 					this.state.match.y.intersection === position
 				) {
-					return <div key={shortid.generate()} className={guideClassNames} style={{ top: position }} />
+					return <div key={key} className={guideClassNames} style={{ top: position }} />
 				} else {
 					return null;
 				}

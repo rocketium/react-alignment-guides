@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import shortid from 'shortid';
+import nanoid from 'nanoid';
 import { RESIZE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
@@ -265,7 +265,8 @@ class Box extends Component {
 				isSelected ?
 					RESIZE_HANDLES.map(handle => {
 						const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
-						return <div key={shortid.generate()} className={className} onMouseDown={this.onResizeStart} id={handle} />
+						const key = nanoid();
+						return <div key={key} className={className} onMouseDown={this.onResizeStart} id={handle} />
 					}) :
 					null
 			}

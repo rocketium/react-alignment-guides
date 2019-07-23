@@ -70,10 +70,12 @@
 		"rollup-plugin-node-resolve": "^5.2.0",
 		"rollup-plugin-peer-deps-external": "^2.2.0",
 		"rollup-plugin-postcss": "^2.0.3",
-		"rollup-plugin-url": "^2.2.2",
-		"shortid": "^2.2.14"
+		"rollup-plugin-url": "^2.2.2"
 	},
 	"files": [
 		"dist"
-	]
+	],
+	"dependencies": {
+		"nanoid": "^2.0.3"
+	}
 }
