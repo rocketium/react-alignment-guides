@@ -222,7 +222,7 @@ class AlignmentGuides extends Component {
 			return result.concat(yAxisGuidesForCurrentBox);
 		}, []);
 
-		return <div ref={this.boundingBox} className={styles.boundingBox} style={{ width: '100vw', height: '100vh' }}>
+		return <div ref={this.boundingBox} className={styles.boundingBox}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
@@ -231,6 +231,7 @@ class AlignmentGuides extends Component {
 }
 
 AlignmentGuides.propTypes = {
+	boxes: PropTypes.array.isRequired,
 	drag: PropTypes.bool,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
