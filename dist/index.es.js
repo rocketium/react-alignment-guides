@@ -1,61 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module.exports), module.exports;
-}
-
-var crypto = {};
-
-var random = createCommonjsModule(function (module) {
-{
-  module.exports = crypto.randomBytes;
-}
-});
-
-/**
- * URL safe symbols.
- *
- * This alphabet uses a-z A-Z 0-9 _- symbols.
- * Symbols order was changed for better gzip compression.
- *
- * @name url
- * @type {string}
- *
- * @example
- * const url = require('nanoid/url')
- * generate(url, 10) //=> "Uakgb_J5m9"
- */
-var url =
-  'ModuleSymbhasOwnPr-0123456789ABCDEFGHIJKLNQRTUVWXYZ_cfgijkpqtvxz';
-
-/**
- * Generate secure URL-friendly unique ID.
- *
- * By default, ID will have 21 symbols to have a collision probability similar
- * to UUID v4.
- *
- * @param {number} [size=21] The number of symbols in ID.
- *
- * @return {string} Random string.
- *
- * @example
- * const nanoid = require('nanoid')
- * model.id = nanoid() //=> "Uakgb_J5m9g-0JDMbcJqL"
- *
- * @name nanoid
- * @function
- */
-var nanoid = function (size) {
-  size = size || 21;
-  var bytes = random(size);
-  var id = '';
-  while (0 < size--) {
-    id += url[bytes[size] & 63];
-  }
-  return id
-};
-
 // Key map for changing the position and size of draggable boxes
 
 var RESIZE_HANDLES = ['tr', 'tl', 'br', 'bl']; // Positions for rotate handles
@@ -428,9 +373,8 @@ function (_Component) {
         tabIndex: "0"
       }, isSelected ? RESIZE_HANDLES.map(function (handle) {
         var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
-        var key = nanoid();
         return React.createElement("div", {
-          key: key,
+          key: handle,
           className: className,
           onMouseDown: _this4.onResizeStart,
           id: handle
@@ -751,12 +695,11 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        var key = nanoid();
         return React.createElement(Box, _extends({}, _this3.props, {
           defaultPosition: position,
           id: id,
           isSelected: active === id,
-          key: key,
+          key: id,
           onDrag: _this3.onDragHandler,
           onDragEnd: _this3.deactivateGuides,
           selectBox: _this3.selectBox,
@@ -769,11 +712,10 @@ function (_Component) {
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
         var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
-        var key = nanoid();
-        var xAxisGuidesForCurrentBox = guides[box].x.map(function (position) {
+        var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
           if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.x && _this3.state.match.x.intersection && _this3.state.match.x.intersection === position) {
             return React.createElement("div", {
-              key: key,
+              key: "".concat(position, "-").concat(index),
               className: guideClassNames,
               style: {
                 left: position
@@ -787,11 +729,10 @@ function (_Component) {
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
         var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
-        var key = nanoid();
-        var yAxisGuidesForCurrentBox = guides[box].y.map(function (position) {
+        var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
           if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.y && _this3.state.match.y.intersection && _this3.state.match.y.intersection === position) {
             return React.createElement("div", {
-              key: key,
+              key: "".concat(position, "-").concat(index),
               className: guideClassNames,
               style: {
                 top: position
