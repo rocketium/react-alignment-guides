@@ -38,6 +38,12 @@ styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -352,15 +358,18 @@ function (_Component) {
       var _this4 = this;
 
       var _this$props = this.props,
+          boxStyle = _this$props.boxStyle,
           id = _this$props.id,
           isSelected = _this$props.isSelected;
       var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
-      var boxStyles = {
+
+      var boxStyles = _objectSpread({}, boxStyle, {
         width: "".concat(this.state.width, "px"),
         height: "".concat(this.state.height, "px"),
         top: "".concat(this.state.top, "px"),
         left: "".concat(this.state.left, "px")
-      };
+      });
+
       return React.createElement("div", {
         className: boxClassNames,
         id: id,
@@ -405,11 +414,11 @@ Box.propTypes = {
   onDragEnd: PropTypes.func
 };
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(source, true).forEach(function (key) { _defineProperty$1(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var calculateGuidePositions = function calculateGuidePositions(dimensions, axis) {
   if (axis === 'x') {
@@ -437,13 +446,13 @@ var proximityListener = function proximityListener(active, allGuides) {
   var allMatchedGuides = {};
 
   if (xAxisMatchedGuides.proximity) {
-    allMatchedGuides.x = _objectSpread({}, xAxisMatchedGuides, {
+    allMatchedGuides.x = _objectSpread$1({}, xAxisMatchedGuides, {
       activeBoxGuides: xAxisGuidesForActiveBox
     });
   }
 
   if (yAxisMatchedGuides.proximity) {
-    allMatchedGuides.y = _objectSpread({}, yAxisMatchedGuides, {
+    allMatchedGuides.y = _objectSpread$1({}, yAxisMatchedGuides, {
       activeBoxGuides: yAxisGuidesForActiveBox
     });
   }
@@ -504,7 +513,7 @@ function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iter
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -521,11 +530,6 @@ function _assertThisInitialized$1(self) { if (self === void 0) { throw new Refer
 function _inherits$1(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf$1(subClass, superClass); }
 
 function _setPrototypeOf$1(o, p) { _setPrototypeOf$1 = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf$1(o, p); }
-// const POS_DATA = [
-// 	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
-// 	{ x: 650, y: 300, width: 300, height: 150, top: 550, left: 650 },
-// 	{ x: 300, y: 250, width: 150, height: 350, top: 250, left: 300 }
-// ];
 
 var AlignmentGuides =
 /*#__PURE__*/
@@ -553,9 +557,37 @@ function (_Component) {
     _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized$1(_this));
     _this.deactivateGuides = _this.deactivateGuides.bind(_assertThisInitialized$1(_this));
     return _this;
-  }
+  } // TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
+
 
   _createClass$1(AlignmentGuides, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
+      if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
+        var boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+        var boxes = {};
+        var guides = {}; // Adding the guides for the bounding box to the guides object
+
+        guides.boundingBox = {
+          x: calculateGuidePositions(boundingBoxDimensions, 'x'),
+          y: calculateGuidePositions(boundingBoxDimensions, 'y')
+        };
+        this.props.boxes.forEach(function (dimensions, index) {
+          boxes["box".concat(index)] = dimensions;
+          guides["box".concat(index)] = {
+            x: calculateGuidePositions(dimensions, 'x'),
+            y: calculateGuidePositions(dimensions, 'y')
+          };
+        });
+        this.setState({
+          boundingBoxDimensions: boundingBoxDimensions,
+          boxes: boxes,
+          guides: guides
+        });
+      }
+    }
+  }, {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, nextContext) {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
@@ -567,10 +599,8 @@ function (_Component) {
         guides.boundingBox = {
           x: calculateGuidePositions(boundingBoxDimensions, 'x'),
           y: calculateGuidePositions(boundingBoxDimensions, 'y')
-        }; // POS_DATA is only for testing. The position array will be supplied by the user.
-
+        };
         this.props.boxes.forEach(function (dimensions, index) {
-          // POS_DATA.forEach((dimensions, index) => {
           boxes["box".concat(index)] = dimensions;
           guides["box".concat(index)] = {
             x: calculateGuidePositions(dimensions, 'x'),
@@ -597,11 +627,11 @@ function (_Component) {
       this.setState({
         active: data.node.id,
         guidesActive: true,
-        boxes: Object.assign({}, this.state.boxes, _defineProperty$1({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+        boxes: Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
           left: data.currentX,
           top: data.currentY
         }))),
-        guides: Object.assign({}, this.state.guides, _defineProperty$1({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        guides: Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
           x: calculateGuidePositions(dimensions, 'x'),
           y: calculateGuidePositions(dimensions, 'y')
         })))
@@ -633,11 +663,11 @@ function (_Component) {
           }
         }
 
-        var boxes = Object.assign({}, _this2.state.boxes, _defineProperty$1({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
+        var boxes = Object.assign({}, _this2.state.boxes, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
           left: newActiveBoxLeft,
           top: newActiveBoxTop
         })));
-        var guides = Object.assign({}, _this2.state.guides, _defineProperty$1({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
+        var guides = Object.assign({}, _this2.state.guides, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
           x: calculateGuidePositions(boxes[_this2.state.active], 'x'),
           y: calculateGuidePositions(boxes[_this2.state.active], 'y')
         })));
@@ -667,7 +697,7 @@ function (_Component) {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
       this.setState({
-        boxes: Object.assign({}, this.state.boxes, _defineProperty$1({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
+        boxes: Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
           width: data.finalWidth,
           height: data.finalHeight,
           top: data.finalTop,
@@ -702,8 +732,8 @@ function (_Component) {
           key: id,
           onDrag: _this3.onDragHandler,
           onDragEnd: _this3.deactivateGuides,
-          selectBox: _this3.selectBox,
-          onResizeEnd: _this3.resizeEndHandler
+          onResizeEnd: _this3.resizeEndHandler,
+          selectBox: _this3.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -758,6 +788,7 @@ function (_Component) {
 
 AlignmentGuides.propTypes = {
   boxes: PropTypes.array.isRequired,
+  boxStyle: PropTypes.object,
   className: PropTypes.string,
   drag: PropTypes.bool,
   resize: PropTypes.bool,

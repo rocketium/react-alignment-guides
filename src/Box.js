@@ -240,9 +240,10 @@ class Box extends Component {
 	}
 
 	render() {
-		const { id, isSelected } = this.props;
+		const { boxStyle, id, isSelected } = this.props;
 		const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
 		const boxStyles = {
+			...boxStyle,
 			width: `${this.state.width}px`,
 			height: `${this.state.height}px`,
 			top: `${this.state.top}px`,

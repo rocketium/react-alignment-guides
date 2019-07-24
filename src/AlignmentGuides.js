@@ -4,13 +4,6 @@ import Box from './Box';
 import { calculateGuidePositions, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
 
-// Dummy position data to generate the boxes
-// const POS_DATA = [
-// 	{ x: 0, y: 0, width: 400, height: 200, top: 0, left: 0 },
-// 	{ x: 650, y: 300, width: 300, height: 150, top: 550, left: 650 },
-// 	{ x: 300, y: 250, width: 150, height: 350, top: 250, left: 300 }
-// ];
-
 class AlignmentGuides extends Component {
 	constructor(props) {
 		super(props);
@@ -30,6 +23,36 @@ class AlignmentGuides extends Component {
 		this.deactivateGuides = this.deactivateGuides.bind(this);
 	}
 
+	// TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
+	componentDidMount() {
+		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
+		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
+			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+			const boxes = {};
+			const guides = {};
+
+			// Adding the guides for the bounding box to the guides object
+			guides.boundingBox = {
+				x: calculateGuidePositions(boundingBoxDimensions, 'x'),
+				y: calculateGuidePositions(boundingBoxDimensions, 'y')
+			};
+
+			this.props.boxes.forEach((dimensions, index) => {
+				boxes[`box${index}`] = dimensions;
+				guides[`box${index}`] = {
+					x: calculateGuidePositions(dimensions, 'x'),
+					y: calculateGuidePositions(dimensions, 'y')
+				};
+			});
+
+			this.setState({
+				boundingBoxDimensions,
+				boxes,
+				guides
+			});
+		}
+	}
+
 	componentWillUpdate(nextProps, nextState, nextContext) {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
 		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
@@ -43,9 +66,7 @@ class AlignmentGuides extends Component {
 				y: calculateGuidePositions(boundingBoxDimensions, 'y')
 			};
 
-			// POS_DATA is only for testing. The position array will be supplied by the user.
 			this.props.boxes.forEach((dimensions, index) => {
-			// POS_DATA.forEach((dimensions, index) => {
 				boxes[`box${index}`] = dimensions;
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
@@ -172,8 +193,8 @@ class AlignmentGuides extends Component {
 				key={id}
 				onDrag={this.onDragHandler}
 				onDragEnd={this.deactivateGuides}
-				selectBox={this.selectBox}
 				onResizeEnd={this.resizeEndHandler}
+				selectBox={this.selectBox}
 			/>
 		});
 
@@ -232,6 +253,7 @@ class AlignmentGuides extends Component {
 
 AlignmentGuides.propTypes = {
 	boxes: PropTypes.array.isRequired,
+	boxStyle: PropTypes.object,
 	className: PropTypes.string,
 	drag: PropTypes.bool,
 	resize: PropTypes.bool,
