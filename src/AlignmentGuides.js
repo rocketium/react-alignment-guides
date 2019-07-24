@@ -181,6 +181,7 @@ class AlignmentGuides extends Component {
 		// 1. A box aligns with another (top, center or bottom)
 		// 2. An edge of a box touches any of the edges of another box
 		// 3. A box aligns vertically or horizontally with the bounding box
+		// TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
 			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.xAxis} ${styles.active}` : `${styles.guide} ${styles.xAxis}`;
 			const xAxisGuidesForCurrentBox = guides[box].x.map((position, index) => {
@@ -221,7 +222,7 @@ class AlignmentGuides extends Component {
 			return result.concat(yAxisGuidesForCurrentBox);
 		}, []);
 
-		return <div ref={this.boundingBox} className={styles.boundingBox}>
+		return <div ref={this.boundingBox} className={styles.boundingBox} style={this.props.style}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
@@ -243,7 +244,8 @@ AlignmentGuides.propTypes = {
 	onResizeEnd: PropTypes.func,
 	onDragStart: PropTypes.func,
 	onDrag: PropTypes.func,
-	onDragEnd: PropTypes.func
+	onDragEnd: PropTypes.func,
+	style: PropTypes.object
 };
 
 export default AlignmentGuides;
