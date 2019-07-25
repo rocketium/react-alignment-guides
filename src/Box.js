@@ -252,7 +252,13 @@ class Box extends Component {
 
 				const parentNode = e.target.parentNode;
 				const dimensions = parentNode.getBoundingClientRect().toJSON();
-				const data = { finalWidth: dimensions.width, finalHeight: dimensions.height, finalTop: dimensions.top, finalLeft: dimensions.left, node: parentNode };
+				const data = {
+					finalWidth: dimensions.width,
+					finalHeight: dimensions.height,
+					finalTop: dimensions.top - boundingBox.top,
+					finalLeft: dimensions.left - boundingBox.left,
+					node: parentNode
+				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 				this.resizing = false;
 			}

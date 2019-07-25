@@ -365,8 +365,8 @@ function (_Component) {
           var _data7 = {
             finalWidth: dimensions.width,
             finalHeight: dimensions.height,
-            finalTop: dimensions.top,
-            finalLeft: dimensions.left,
+            finalTop: dimensions.top - boundingBox.top,
+            finalLeft: dimensions.left - boundingBox.left,
             node: parentNode
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
