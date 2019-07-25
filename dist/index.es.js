@@ -117,8 +117,8 @@ function (_Component) {
       var target = e.target;
       var startingPosition = target.getBoundingClientRect().toJSON();
       var data = {
-        startX: startingPosition.x,
-        startY: startingPosition.y,
+        x: startingPosition.x,
+        y: startingPosition.y,
         node: target
       };
       this.props.onDragStart && this.props.onDragStart(e, data);
@@ -134,10 +134,8 @@ function (_Component) {
             top: e.clientY - deltaY
           };
           var _data = {
-            startX: startingPosition.left,
-            startY: startingPosition.top,
-            currentX: currentPosition.left,
-            currentY: currentPosition.top,
+            x: currentPosition.left,
+            y: currentPosition.top,
             node: target
           };
 
@@ -157,10 +155,8 @@ function (_Component) {
             top: e.clientY - deltaY
           };
           var _data2 = {
-            startX: startingPosition.left,
-            startY: startingPosition.top,
-            endX: endPosition.left,
-            endY: endPosition.top,
+            x: endPosition.left,
+            y: endPosition.top,
             node: target
           };
           _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
@@ -248,11 +244,15 @@ function (_Component) {
       var _this3 = this;
 
       var target = e.target;
-      var data = {
-        node: target.parentNode
-      };
       var boundingBox = this.props.boundingBox;
       var startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
+      var data = {
+        width: startingDimensions.width,
+        height: startingDimensions.height,
+        x: startingDimensions.left,
+        y: startingDimensions.top,
+        node: target.parentNode
+      };
       this.props.onResizeStart && this.props.onResizeStart(e, data);
       this.resizing = true;
 
@@ -266,8 +266,10 @@ function (_Component) {
               height: e.clientY - startingDimensions.top
             };
             var _data3 = {
-              currentWidth: currentDimensions.width,
-              currentHeight: currentDimensions.height,
+              width: currentDimensions.width,
+              height: currentDimensions.height,
+              x: startingDimensions.left,
+              y: startingDimensions.top,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data3);
@@ -288,8 +290,10 @@ function (_Component) {
               left: startingDimensions.left - deltaX
             };
             var _data4 = {
-              currentWidth: _currentDimensions.width,
-              currentHeight: _currentDimensions.height,
+              width: _currentDimensions.width,
+              height: _currentDimensions.height,
+              x: currentPosition.left - boundingBox.left,
+              y: currentPosition.top - boundingBox.top,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data4);
@@ -314,8 +318,10 @@ function (_Component) {
               left: startingDimensions.left
             };
             var _data5 = {
-              currentWidth: _currentDimensions2.width,
-              currentHeight: _currentDimensions2.height,
+              width: _currentDimensions2.width,
+              height: _currentDimensions2.height,
+              x: _currentPosition.left - boundingBox.left,
+              y: _currentPosition.top - boundingBox.top,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data5);
@@ -340,8 +346,10 @@ function (_Component) {
               left: startingDimensions.left - _deltaX2
             };
             var _data6 = {
-              currentWidth: _currentDimensions3.width,
-              currentHeight: _currentDimensions3.height,
+              width: _currentDimensions3.width,
+              height: _currentDimensions3.height,
+              x: _currentPosition2.left - boundingBox.left,
+              y: _currentPosition2.top - boundingBox.top,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data6);
@@ -363,10 +371,10 @@ function (_Component) {
           var parentNode = e.target.parentNode;
           var dimensions = parentNode.getBoundingClientRect().toJSON();
           var _data7 = {
-            finalWidth: dimensions.width,
-            finalHeight: dimensions.height,
-            finalTop: dimensions.top - boundingBox.top,
-            finalLeft: dimensions.left - boundingBox.left,
+            width: dimensions.width,
+            height: dimensions.height,
+            x: dimensions.top - boundingBox.top,
+            y: dimensions.left - boundingBox.left,
             node: parentNode
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
