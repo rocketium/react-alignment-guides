@@ -1,6 +1,6 @@
 {
 	"name": "react-alignment-guides",
-	"version": "0.7.11",
+	"version": "0.7.12",
 	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
 	"keywords": [
 		"drag",

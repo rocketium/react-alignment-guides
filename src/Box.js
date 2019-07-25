@@ -46,7 +46,7 @@ class Box extends Component {
 	onDragStart(e) {
 		const { target } = e;
 		const startingPosition = target.getBoundingClientRect().toJSON();
-		const data = { x: startingPosition.x, y: startingPosition.y, node: target };
+		const data = { x: startingPosition.x, y: startingPosition.y, width: startingPosition.width, height: startingPosition.height, node: target };
 		this.props.onDragStart && this.props.onDragStart(e, data);
 		this.dragging = true;
 
@@ -60,7 +60,7 @@ class Box extends Component {
 					left: e.clientX - deltaX,
 					top: e.clientY - deltaY
 				};
-				const data = { x: currentPosition.left, y: currentPosition.top, node: target };
+				const data = { x: currentPosition.left, y: currentPosition.top, width: startingPosition.width, height: startingPosition.height, node: target };
 				this.setState({
 					left: currentPosition.left,
 					top: currentPosition.top
@@ -76,7 +76,7 @@ class Box extends Component {
 					left: e.clientX - deltaX,
 					top: e.clientY - deltaY
 				};
-				const data = { x: endPosition.left, y: endPosition.top, node: target };
+				const data = { x: endPosition.left, y: endPosition.top, width: startingPosition.width, height: startingPosition.height, node: target };
 				this.props.onDragEnd && this.props.onDragEnd(e, data);
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
