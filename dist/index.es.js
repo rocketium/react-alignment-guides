@@ -667,16 +667,16 @@ function (_Component) {
       var _this2 = this;
 
       var dimensions = Object.assign({}, this.state.boxes[data.node.id], {
-        left: data.currentX,
-        top: data.currentY
+        left: data.x,
+        top: data.y
       });
       this.props.onDrag && this.props.onDrag(e, data);
       this.setState({
         active: data.node.id,
         guidesActive: true,
         boxes: Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
-          left: data.currentX,
-          top: data.currentY
+          left: data.x,
+          top: data.y
         }))),
         guides: Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
           x: calculateGuidePositions(dimensions, 'x'),

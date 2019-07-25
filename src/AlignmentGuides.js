@@ -84,8 +84,8 @@ class AlignmentGuides extends Component {
 
 	onDragHandler(e, data) {
 		const dimensions = Object.assign({}, this.state.boxes[data.node.id], {
-			left: data.currentX,
-			top: data.currentY
+			left: data.x,
+			top: data.y
 		});
 		this.props.onDrag && this.props.onDrag(e, data);
 		this.setState({
@@ -93,8 +93,8 @@ class AlignmentGuides extends Component {
 			guidesActive: true,
 			boxes: Object.assign({}, this.state.boxes, {
 				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-					left: data.currentX,
-					top: data.currentY
+					left: data.x,
+					top: data.y
 				})
 			}),
 			guides: Object.assign({}, this.state.guides, {
