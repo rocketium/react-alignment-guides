@@ -1,6 +1,6 @@
 {
 	"name": "react-alignment-guides",
-	"version": "0.7.7",
+	"version": "0.7.8",
 	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
 	"keywords": [
 		"drag",
@@ -46,11 +46,8 @@
 		"@babel/preset-env": "^7.5.4",
 		"@babel/preset-react": "^7.0.0",
 		"@svgr/rollup": "^4.3.2",
-		"babel-eslint": "^10.0.2",
-		"babel-loader": "^8.0.6",
 		"bl": "^3.0.0",
 		"cross-env": "^5.2.0",
-		"eslint": "^6.1.0",
 		"eslint-config-standard": "^13.0.1",
 		"eslint-config-standard-react": "^8.0.0",
 		"eslint-plugin-import": "^2.18.2",
