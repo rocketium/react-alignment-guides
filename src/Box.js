@@ -22,6 +22,27 @@ class Box extends Component {
 		this.onResizeStart = this.onResizeStart.bind(this);
 	}
 
+	componentDidMount() {
+		const { defaultPosition } = this.props;
+		this.setState({
+			width: defaultPosition.width,
+			height: defaultPosition.height,
+			top: defaultPosition.top,
+			left: defaultPosition.left
+		});
+	}
+
+	componentWillUpdate(nextProps, nextState, nextContext) {
+		if (this.props.position !== nextProps.position) {
+			this.setState({
+				width: nextProps.position.width,
+				height: nextProps.position.height,
+				top: nextProps.position.top,
+				left: nextProps.position.left
+			});
+		}
+	}
+
 	onDragStart(e) {
 		const { target } = e;
 		const startingPosition = target.getBoundingClientRect().toJSON();
@@ -40,10 +61,11 @@ class Box extends Component {
 					top: e.clientY - deltaY
 				};
 				const data = { startX: startingPosition.left, startY: startingPosition.top, currentX: currentPosition.left, currentY: currentPosition.top, node: target };
-				this.props.onDrag && this.props.onDrag(e, data);
 				this.setState({
 					left: currentPosition.left,
 					top: currentPosition.top
+				}, () => {
+					this.props.onDrag && this.props.onDrag(e, data);
 				});
 			}
 		};
@@ -137,6 +159,7 @@ class Box extends Component {
 	onResizeStart(e) {
 		const { target } = e;
 		const data = { node: target.parentNode };
+		const { boundingBox } = this.props;
 		const startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
 		this.resizing = true;
@@ -174,8 +197,8 @@ class Box extends Component {
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						top: currentPosition.top,
-						left: currentPosition.left
+						top: currentPosition.top - boundingBox.top,
+						left: currentPosition.left - boundingBox.left
 					});
 				} else if (target.id === 'tr') {
 					const deltaX = e.clientX - startingDimensions.left;
@@ -195,8 +218,8 @@ class Box extends Component {
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						top: currentPosition.top,
-						left: currentPosition.left
+						top: currentPosition.top - boundingBox.top,
+						left: currentPosition.left - boundingBox.left
 					});
 				} else if (target.id === 'tl') {
 					const deltaX = startingDimensions.left - e.clientX;
@@ -215,8 +238,8 @@ class Box extends Component {
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						top: currentPosition.top,
-						left: currentPosition.left
+						top: currentPosition.top - boundingBox.top,
+						left: currentPosition.left - boundingBox.left
 					});
 				}
 			}

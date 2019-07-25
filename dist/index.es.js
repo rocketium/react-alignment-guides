@@ -38,7 +38,7 @@ styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -87,6 +87,29 @@ function (_Component) {
   }
 
   _createClass(Box, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      var defaultPosition = this.props.defaultPosition;
+      this.setState({
+        width: defaultPosition.width,
+        height: defaultPosition.height,
+        top: defaultPosition.top,
+        left: defaultPosition.left
+      });
+    }
+  }, {
+    key: "componentWillUpdate",
+    value: function componentWillUpdate(nextProps, nextState, nextContext) {
+      if (this.props.position !== nextProps.position) {
+        this.setState({
+          width: nextProps.position.width,
+          height: nextProps.position.height,
+          top: nextProps.position.top,
+          left: nextProps.position.left
+        });
+      }
+    }
+  }, {
     key: "onDragStart",
     value: function onDragStart(e) {
       var _this2 = this;
@@ -117,11 +140,12 @@ function (_Component) {
             currentY: currentPosition.top,
             node: target
           };
-          _this2.props.onDrag && _this2.props.onDrag(e, _data);
 
           _this2.setState({
             left: currentPosition.left,
             top: currentPosition.top
+          }, function () {
+            _this2.props.onDrag && _this2.props.onDrag(e, _data);
           });
         }
       };
@@ -227,6 +251,7 @@ function (_Component) {
       var data = {
         node: target.parentNode
       };
+      var boundingBox = this.props.boundingBox;
       var startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
       this.props.onResizeStart && this.props.onResizeStart(e, data);
       this.resizing = true;
@@ -272,8 +297,8 @@ function (_Component) {
             _this3.setState({
               width: _currentDimensions.width,
               height: _currentDimensions.height,
-              top: currentPosition.top,
-              left: currentPosition.left
+              top: currentPosition.top - boundingBox.top,
+              left: currentPosition.left - boundingBox.left
             });
           } else if (target.id === 'tr') {
             var _deltaX = e.clientX - startingDimensions.left;
@@ -298,8 +323,8 @@ function (_Component) {
             _this3.setState({
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              top: _currentPosition.top,
-              left: _currentPosition.left
+              top: _currentPosition.top - boundingBox.top,
+              left: _currentPosition.left - boundingBox.left
             });
           } else if (target.id === 'tl') {
             var _deltaX2 = startingDimensions.left - e.clientX;
@@ -324,8 +349,8 @@ function (_Component) {
             _this3.setState({
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              top: _currentPosition2.top,
-              left: _currentPosition2.left
+              top: _currentPosition2.top - boundingBox.top,
+              left: _currentPosition2.left - boundingBox.left
             });
           }
         }
@@ -414,7 +439,7 @@ Box.propTypes = {
   onDragEnd: PropTypes.func
 };
 
-function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { keys.push.apply(keys, Object.getOwnPropertySymbols(object)); } if (enumerableOnly) keys = keys.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); return keys; }
+function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(source, true).forEach(function (key) { _defineProperty$1(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
@@ -545,7 +570,7 @@ function (_Component) {
     _this.boundingBox = React.createRef();
     _this.state = {
       active: '',
-      boundingBoxDimensions: null,
+      boundingBox: null,
       boxes: {},
       guides: {},
       guidesActive: false,
@@ -564,14 +589,18 @@ function (_Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-      if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
-        var boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+      if (this.boundingBox.current && this.state.boundingBox === null) {
+        var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
         var guides = {}; // Adding the guides for the bounding box to the guides object
 
         guides.boundingBox = {
-          x: calculateGuidePositions(boundingBoxDimensions, 'x'),
-          y: calculateGuidePositions(boundingBoxDimensions, 'y')
+          x: calculateGuidePositions(boundingBox, 'x').map(function (value) {
+            return value - boundingBox.left;
+          }),
+          y: calculateGuidePositions(boundingBox, 'y').map(function (value) {
+            return value - boundingBox.top;
+          })
         };
         this.props.boxes.forEach(function (dimensions, index) {
           boxes["box".concat(index)] = dimensions;
@@ -580,8 +609,9 @@ function (_Component) {
             y: calculateGuidePositions(dimensions, 'y')
           };
         });
+        document.addEventListener('mouseup', this.unSelectBox);
         this.setState({
-          boundingBoxDimensions: boundingBoxDimensions,
+          boundingBox: boundingBox,
           boxes: boxes,
           guides: guides
         });
@@ -591,14 +621,18 @@ function (_Component) {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, nextContext) {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-      if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
-        var boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+      if (this.boundingBox.current && this.state.boundingBox === null) {
+        var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
         var guides = {}; // Adding the guides for the bounding box to the guides object
 
         guides.boundingBox = {
-          x: calculateGuidePositions(boundingBoxDimensions, 'x'),
-          y: calculateGuidePositions(boundingBoxDimensions, 'y')
+          x: calculateGuidePositions(boundingBox, 'x').map(function (value) {
+            return value - boundingBox.left;
+          }),
+          y: calculateGuidePositions(boundingBox, 'y').map(function (value) {
+            return value - boundingBox.top;
+          })
         };
         this.props.boxes.forEach(function (dimensions, index) {
           boxes["box".concat(index)] = dimensions;
@@ -608,11 +642,16 @@ function (_Component) {
           };
         });
         this.setState({
-          boundingBoxDimensions: boundingBoxDimensions,
+          boundingBox: boundingBox,
           boxes: boxes,
           guides: guides
         });
       }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('mouseup', this.unSelectBox);
     }
   }, {
     key: "onDragHandler",
@@ -682,16 +721,24 @@ function (_Component) {
   }, {
     key: "selectBox",
     value: function selectBox(e) {
-      this.setState({
-        active: e.target.id
-      });
+      if (e.target.id.indexOf('box') >= 0) {
+        this.setState({
+          active: e.target.id
+        });
+      } else if (e.target.parentNode.id.indexOf('box') >= 0) {
+        this.setState({
+          active: e.target.parentNode.id
+        });
+      }
     }
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      this.setState({
-        active: ''
-      });
+      if (e.target.parentNode.id.indexOf('box') === -1) {
+        this.setState({
+          active: ''
+        });
+      }
     }
   }, {
     key: "resizeEndHandler",
@@ -726,6 +773,7 @@ function (_Component) {
         var position = boxes[box];
         var id = "box".concat(index);
         return React.createElement(Box, _extends({}, _this3.props, {
+          boundingBox: _this3.state.boundingBox,
           defaultPosition: position,
           id: id,
           isSelected: active === id,
@@ -733,6 +781,7 @@ function (_Component) {
           onDrag: _this3.onDragHandler,
           onDragEnd: _this3.deactivateGuides,
           onResizeEnd: _this3.resizeEndHandler,
+          position: position,
           selectBox: _this3.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:

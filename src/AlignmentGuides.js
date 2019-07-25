@@ -10,7 +10,7 @@ class AlignmentGuides extends Component {
 		this.boundingBox = React.createRef();
 		this.state = {
 			active: '',
-			boundingBoxDimensions: null,
+			boundingBox: null,
 			boxes: {},
 			guides: {},
 			guidesActive: false,
@@ -26,15 +26,15 @@ class AlignmentGuides extends Component {
 	// TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
 	componentDidMount() {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
-			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+		if (this.boundingBox.current && this.state.boundingBox === null) {
+			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};
 
 			// Adding the guides for the bounding box to the guides object
 			guides.boundingBox = {
-				x: calculateGuidePositions(boundingBoxDimensions, 'x'),
-				y: calculateGuidePositions(boundingBoxDimensions, 'y')
+				x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
+				y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
 			};
 
 			this.props.boxes.forEach((dimensions, index) => {
@@ -45,8 +45,10 @@ class AlignmentGuides extends Component {
 				};
 			});
 
+			document.addEventListener('mouseup', this.unSelectBox);
+
 			this.setState({
-				boundingBoxDimensions,
+				boundingBox,
 				boxes,
 				guides
 			});
@@ -55,15 +57,15 @@ class AlignmentGuides extends Component {
 
 	componentWillUpdate(nextProps, nextState, nextContext) {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-		if (this.boundingBox.current && this.state.boundingBoxDimensions === null) {
-			const boundingBoxDimensions = this.boundingBox.current.getBoundingClientRect().toJSON();
+		if (this.boundingBox.current && this.state.boundingBox === null) {
+			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};
 
 			// Adding the guides for the bounding box to the guides object
 			guides.boundingBox = {
-				x: calculateGuidePositions(boundingBoxDimensions, 'x'),
-				y: calculateGuidePositions(boundingBoxDimensions, 'y')
+				x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
+				y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
 			};
 
 			this.props.boxes.forEach((dimensions, index) => {
@@ -75,11 +77,15 @@ class AlignmentGuides extends Component {
 			});
 
 			this.setState({
-				boundingBoxDimensions,
+				boundingBox,
 				boxes,
 				guides
 			});
 		}
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('mouseup', this.unSelectBox);
 	}
 
 	onDragHandler(e, data) {
@@ -147,15 +153,23 @@ class AlignmentGuides extends Component {
 	}
 
 	selectBox(e) {
-		this.setState({
-			active: e.target.id
-		});
+		if (e.target.id.indexOf('box') >= 0) {
+			this.setState({
+				active: e.target.id
+			});
+		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
+			this.setState({
+				active: e.target.parentNode.id
+			});
+		}
 	}
 
 	unSelectBox(e) {
-		this.setState({
-			active: ''
-		})
+		if (e.target.parentNode.id.indexOf('box') === -1) {
+			this.setState({
+				active: ''
+			});
+		}
 	}
 
 	resizeEndHandler(e, data) {
@@ -187,6 +201,7 @@ class AlignmentGuides extends Component {
 
 			return <Box
 				{...this.props}
+				boundingBox={this.state.boundingBox}
 				defaultPosition={position}
 				id={id}
 				isSelected={active === id}
@@ -194,8 +209,9 @@ class AlignmentGuides extends Component {
 				onDrag={this.onDragHandler}
 				onDragEnd={this.deactivateGuides}
 				onResizeEnd={this.resizeEndHandler}
+				position={position}
 				selectBox={this.selectBox}
-			/>
+			/>;
 		});
 
 		// Create a guide(s) when the following conditions are met:
