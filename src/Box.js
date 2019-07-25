@@ -45,8 +45,16 @@ class Box extends Component {
 
 	onDragStart(e) {
 		const { target } = e;
+		const boundingBox = this.props.getBoundingBoxElement();
 		const startingPosition = target.getBoundingClientRect().toJSON();
-		const data = { x: startingPosition.x, y: startingPosition.y, width: startingPosition.width, height: startingPosition.height, node: target };
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		const data = {
+			x: startingPosition.x - boundingBoxPosition.x,
+			y: startingPosition.y - boundingBoxPosition.y,
+			width: startingPosition.width,
+			height: startingPosition.height,
+			node: target
+		};
 		this.props.onDragStart && this.props.onDragStart(e, data);
 		this.dragging = true;
 
@@ -158,9 +166,16 @@ class Box extends Component {
 
 	onResizeStart(e) {
 		const { target } = e;
-		const { boundingBox } = this.props;
+		const boundingBox = this.props.getBoundingBoxElement();
 		const startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
-		const data = { width: startingDimensions.width, height: startingDimensions.height, x: startingDimensions.left, y: startingDimensions.top, node: target.parentNode };
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		const data = {
+			width: startingDimensions.width,
+			height: startingDimensions.height,
+			x: startingDimensions.left - boundingBoxPosition.x,
+			y: startingDimensions.top - boundingBoxPosition.y,
+			node: target.parentNode
+		};
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
 		this.resizing = true;
 
@@ -176,8 +191,8 @@ class Box extends Component {
 					const data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						x: startingDimensions.left,
-						y: startingDimensions.top,
+						x: startingDimensions.left - boundingBoxPosition.x,
+						y: startingDimensions.top - boundingBoxPosition.y,
 						node: target.parentNode
 					};
 					this.props.onResize && this.props.onResize(e, data);
@@ -201,16 +216,16 @@ class Box extends Component {
 					const data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						x: currentPosition.left - boundingBox.left,
-						y: currentPosition.top - boundingBox.top,
+						x: currentPosition.left - boundingBoxPosition.x,
+						y: currentPosition.top - boundingBoxPosition.y,
 						node: target.parentNode
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						top: currentPosition.top - boundingBox.top,
-						left: currentPosition.left - boundingBox.left
+						top: currentPosition.top - boundingBoxPosition.y,
+						left: currentPosition.left - boundingBoxPosition.x
 					});
 				} else if (target.id === 'tr') {
 					const deltaX = e.clientX - startingDimensions.left;
@@ -228,16 +243,16 @@ class Box extends Component {
 					const data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						x: currentPosition.left - boundingBox.left,
-						y: currentPosition.top - boundingBox.top,
+						x: currentPosition.left - boundingBoxPosition.x,
+						y: currentPosition.top - boundingBoxPosition.y,
 						node: target.parentNode
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						top: currentPosition.top - boundingBox.top,
-						left: currentPosition.left - boundingBox.left
+						top: currentPosition.top - boundingBoxPosition.y,
+						left: currentPosition.left - boundingBoxPosition.x
 					});
 				} else if (target.id === 'tl') {
 					const deltaX = startingDimensions.left - e.clientX;
@@ -254,16 +269,16 @@ class Box extends Component {
 					const data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						x: currentPosition.left - boundingBox.left,
-						y: currentPosition.top - boundingBox.top,
+						x: currentPosition.left - boundingBoxPosition.x,
+						y: currentPosition.top - boundingBoxPosition.y,
 						node: target.parentNode
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
 						height: currentDimensions.height,
-						top: currentPosition.top - boundingBox.top,
-						left: currentPosition.left - boundingBox.left
+						top: currentPosition.top - boundingBoxPosition.y,
+						left: currentPosition.left - boundingBoxPosition.x
 					});
 				}
 			}
@@ -279,8 +294,8 @@ class Box extends Component {
 				const data = {
 					width: dimensions.width,
 					height: dimensions.height,
-					x: dimensions.top - boundingBox.top,
-					y: dimensions.left - boundingBox.left,
+					x: dimensions.top - boundingBoxPosition.y,
+					y: dimensions.left - boundingBoxPosition.x,
 					node: parentNode
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
@@ -328,11 +343,10 @@ class Box extends Component {
 
 Box.propTypes = {
 	defaultPosition: PropTypes.object.isRequired,
+	drag: PropTypes.bool,
+	getBoundingBoxElement: PropTypes.func,
 	id: PropTypes.string,
 	isSelected: PropTypes.bool,
-	drag: PropTypes.bool,
-	resize: PropTypes.bool,
-	rotate: PropTypes.bool,
 	keybindings: PropTypes.bool,
 	onRotateStart: PropTypes.func,
 	onRotate: PropTypes.func,
@@ -342,7 +356,9 @@ Box.propTypes = {
 	onResizeEnd: PropTypes.func,
 	onDragStart: PropTypes.func,
 	onDrag: PropTypes.func,
-	onDragEnd: PropTypes.func
+	onDragEnd: PropTypes.func,
+	resize: PropTypes.bool,
+	rotate: PropTypes.bool
 };
 
 export default Box;

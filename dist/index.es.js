@@ -115,10 +115,12 @@ function (_Component) {
       var _this2 = this;
 
       var target = e.target;
+      var boundingBox = this.props.getBoundingBoxElement();
       var startingPosition = target.getBoundingClientRect().toJSON();
+      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
       var data = {
-        x: startingPosition.x,
-        y: startingPosition.y,
+        x: startingPosition.x - boundingBoxPosition.x,
+        y: startingPosition.y - boundingBoxPosition.y,
         width: startingPosition.width,
         height: startingPosition.height,
         node: target
@@ -250,13 +252,14 @@ function (_Component) {
       var _this3 = this;
 
       var target = e.target;
-      var boundingBox = this.props.boundingBox;
+      var boundingBox = this.props.getBoundingBoxElement();
       var startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
+      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
       var data = {
         width: startingDimensions.width,
         height: startingDimensions.height,
-        x: startingDimensions.left,
-        y: startingDimensions.top,
+        x: startingDimensions.left - boundingBoxPosition.x,
+        y: startingDimensions.top - boundingBoxPosition.y,
         node: target.parentNode
       };
       this.props.onResizeStart && this.props.onResizeStart(e, data);
@@ -274,8 +277,8 @@ function (_Component) {
             var _data3 = {
               width: currentDimensions.width,
               height: currentDimensions.height,
-              x: startingDimensions.left,
-              y: startingDimensions.top,
+              x: startingDimensions.left - boundingBoxPosition.x,
+              y: startingDimensions.top - boundingBoxPosition.y,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data3);
@@ -298,8 +301,8 @@ function (_Component) {
             var _data4 = {
               width: _currentDimensions.width,
               height: _currentDimensions.height,
-              x: currentPosition.left - boundingBox.left,
-              y: currentPosition.top - boundingBox.top,
+              x: currentPosition.left - boundingBoxPosition.x,
+              y: currentPosition.top - boundingBoxPosition.y,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data4);
@@ -307,8 +310,8 @@ function (_Component) {
             _this3.setState({
               width: _currentDimensions.width,
               height: _currentDimensions.height,
-              top: currentPosition.top - boundingBox.top,
-              left: currentPosition.left - boundingBox.left
+              top: currentPosition.top - boundingBoxPosition.y,
+              left: currentPosition.left - boundingBoxPosition.x
             });
           } else if (target.id === 'tr') {
             var _deltaX = e.clientX - startingDimensions.left;
@@ -326,8 +329,8 @@ function (_Component) {
             var _data5 = {
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              x: _currentPosition.left - boundingBox.left,
-              y: _currentPosition.top - boundingBox.top,
+              x: _currentPosition.left - boundingBoxPosition.x,
+              y: _currentPosition.top - boundingBoxPosition.y,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data5);
@@ -335,8 +338,8 @@ function (_Component) {
             _this3.setState({
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              top: _currentPosition.top - boundingBox.top,
-              left: _currentPosition.left - boundingBox.left
+              top: _currentPosition.top - boundingBoxPosition.y,
+              left: _currentPosition.left - boundingBoxPosition.x
             });
           } else if (target.id === 'tl') {
             var _deltaX2 = startingDimensions.left - e.clientX;
@@ -354,8 +357,8 @@ function (_Component) {
             var _data6 = {
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              x: _currentPosition2.left - boundingBox.left,
-              y: _currentPosition2.top - boundingBox.top,
+              x: _currentPosition2.left - boundingBoxPosition.x,
+              y: _currentPosition2.top - boundingBoxPosition.y,
               node: target.parentNode
             };
             _this3.props.onResize && _this3.props.onResize(e, _data6);
@@ -363,8 +366,8 @@ function (_Component) {
             _this3.setState({
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              top: _currentPosition2.top - boundingBox.top,
-              left: _currentPosition2.left - boundingBox.left
+              top: _currentPosition2.top - boundingBoxPosition.y,
+              left: _currentPosition2.left - boundingBoxPosition.x
             });
           }
         }
@@ -379,8 +382,8 @@ function (_Component) {
           var _data7 = {
             width: dimensions.width,
             height: dimensions.height,
-            x: dimensions.top - boundingBox.top,
-            y: dimensions.left - boundingBox.left,
+            x: dimensions.top - boundingBoxPosition.y,
+            y: dimensions.left - boundingBoxPosition.x,
             node: parentNode
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
@@ -436,11 +439,10 @@ function (_Component) {
 
 Box.propTypes = {
   defaultPosition: PropTypes.object.isRequired,
+  drag: PropTypes.bool,
+  getBoundingBoxElement: PropTypes.func,
   id: PropTypes.string,
   isSelected: PropTypes.bool,
-  drag: PropTypes.bool,
-  resize: PropTypes.bool,
-  rotate: PropTypes.bool,
   keybindings: PropTypes.bool,
   onRotateStart: PropTypes.func,
   onRotate: PropTypes.func,
@@ -450,7 +452,9 @@ Box.propTypes = {
   onResizeEnd: PropTypes.func,
   onDragStart: PropTypes.func,
   onDrag: PropTypes.func,
-  onDragEnd: PropTypes.func
+  onDragEnd: PropTypes.func,
+  resize: PropTypes.bool,
+  rotate: PropTypes.bool
 };
 
 function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
@@ -590,6 +594,7 @@ function (_Component) {
       guidesActive: false,
       match: {}
     };
+    _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized$1(_this));
     _this.onDragHandler = _this.onDragHandler.bind(_assertThisInitialized$1(_this));
     _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
     _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized$1(_this));
@@ -660,6 +665,11 @@ function (_Component) {
           guides: guides
         });
       }
+    }
+  }, {
+    key: "getBoundingBoxElement",
+    value: function getBoundingBoxElement() {
+      return this.boundingBox;
     }
   }, {
     key: "onDragHandler",
@@ -783,6 +793,7 @@ function (_Component) {
         return React.createElement(Box, _extends({}, _this3.props, {
           boundingBox: _this3.state.boundingBox,
           defaultPosition: position,
+          getBoundingBoxElement: _this3.getBoundingBoxElement,
           id: id,
           isSelected: active === id,
           key: id,

@@ -16,6 +16,7 @@ class AlignmentGuides extends Component {
 			guidesActive: false,
 			match: {}
 		};
+		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
 		this.onDragHandler = this.onDragHandler.bind(this);
 		this.selectBox = this.selectBox.bind(this);
 		this.unSelectBox = this.unSelectBox.bind(this);
@@ -80,6 +81,10 @@ class AlignmentGuides extends Component {
 				guides
 			});
 		}
+	}
+
+	getBoundingBoxElement() {
+		return this.boundingBox;
 	}
 
 	onDragHandler(e, data) {
@@ -197,6 +202,7 @@ class AlignmentGuides extends Component {
 				{...this.props}
 				boundingBox={this.state.boundingBox}
 				defaultPosition={position}
+				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
 				isSelected={active === id}
 				key={id}
