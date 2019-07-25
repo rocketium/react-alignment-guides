@@ -15,7 +15,7 @@ export default class App extends Component {
 			<AlignmentGuides
 				boxes={POS_DATA}
 				boxStyle={{ backgroundColor: '#A8EEED' }}
-				style={{ backgroundColor: '#333', width: '100%', height: '100%' }}
+				style={{ backgroundColor: '#333', width: '75%', height: '75%', top: '150px', left: '150px' }}
 			/>
 		)
 	}
