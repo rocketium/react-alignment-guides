@@ -609,7 +609,6 @@ function (_Component) {
             y: calculateGuidePositions(dimensions, 'y')
           };
         });
-        document.addEventListener('mouseup', this.unSelectBox);
         this.setState({
           boundingBox: boundingBox,
           boxes: boxes,
@@ -647,11 +646,6 @@ function (_Component) {
           guides: guides
         });
       }
-    }
-  }, {
-    key: "componentWillUnmount",
-    value: function componentWillUnmount() {
-      document.removeEventListener('mouseup', this.unSelectBox);
     }
   }, {
     key: "onDragHandler",

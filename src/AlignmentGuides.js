@@ -45,8 +45,6 @@ class AlignmentGuides extends Component {
 				};
 			});
 
-			document.addEventListener('mouseup', this.unSelectBox);
-
 			this.setState({
 				boundingBox,
 				boxes,
@@ -82,10 +80,6 @@ class AlignmentGuides extends Component {
 				guides
 			});
 		}
-	}
-
-	componentWillUnmount() {
-		document.removeEventListener('mouseup', this.unSelectBox);
 	}
 
 	onDragHandler(e, data) {
