@@ -773,14 +773,18 @@ function (_Component) {
   }, {
     key: "deactivateGuides",
     value: function deactivateGuides(e, data) {
+      var _this3 = this;
+
       this.setState({
         guidesActive: false
+      }, function () {
+        _this3.props.onDragEnd && _this3.props.onDragEnd(e, data);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _this$state = this.state,
           active = _this$state.active,
@@ -790,18 +794,18 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        return React.createElement(Box, _extends({}, _this3.props, {
-          boundingBox: _this3.state.boundingBox,
+        return React.createElement(Box, _extends({}, _this4.props, {
+          boundingBox: _this4.state.boundingBox,
           defaultPosition: position,
-          getBoundingBoxElement: _this3.getBoundingBoxElement,
+          getBoundingBoxElement: _this4.getBoundingBoxElement,
           id: id,
           isSelected: active === id,
           key: id,
-          onDrag: _this3.onDragHandler,
-          onDragEnd: _this3.deactivateGuides,
-          onResizeEnd: _this3.resizeEndHandler,
+          onDrag: _this4.onDragHandler,
+          onDragEnd: _this4.deactivateGuides,
+          onResizeEnd: _this4.resizeEndHandler,
           position: position,
-          selectBox: _this3.selectBox
+          selectBox: _this4.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -810,9 +814,9 @@ function (_Component) {
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.x && _this3.state.match.x.intersection && _this3.state.match.x.intersection === position) {
+          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.x && _this4.state.match.x.intersection && _this4.state.match.x.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -827,9 +831,9 @@ function (_Component) {
         return result.concat(xAxisGuidesForCurrentBox);
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.y && _this3.state.match.y.intersection && _this3.state.match.y.intersection === position) {
+          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.y && _this4.state.match.y.intersection && _this4.state.match.y.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,

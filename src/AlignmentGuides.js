@@ -187,6 +187,8 @@ class AlignmentGuides extends Component {
 	deactivateGuides(e, data) {
 		this.setState({
 			guidesActive: false
+		}, () => {
+			this.props.onDragEnd && this.props.onDragEnd(e, data);
 		});
 	}
 
