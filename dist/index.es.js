@@ -253,14 +253,14 @@ function (_Component) {
 
       var target = e.target;
       var boundingBox = this.props.getBoundingBoxElement();
-      var startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
+      var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
       var data = {
         width: startingDimensions.width,
         height: startingDimensions.height,
         x: startingDimensions.left - boundingBoxPosition.x,
         y: startingDimensions.top - boundingBoxPosition.y,
-        node: target.parentNode
+        node: this.box.current
       };
       this.props.onResizeStart && this.props.onResizeStart(e, data);
       this.resizing = true;
@@ -279,7 +279,7 @@ function (_Component) {
               height: currentDimensions.height,
               x: startingDimensions.left - boundingBoxPosition.x,
               y: startingDimensions.top - boundingBoxPosition.y,
-              node: target.parentNode
+              node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data3);
 
@@ -303,7 +303,7 @@ function (_Component) {
               height: _currentDimensions.height,
               x: currentPosition.left - boundingBoxPosition.x,
               y: currentPosition.top - boundingBoxPosition.y,
-              node: target.parentNode
+              node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data4);
 
@@ -331,7 +331,7 @@ function (_Component) {
               height: _currentDimensions2.height,
               x: _currentPosition.left - boundingBoxPosition.x,
               y: _currentPosition.top - boundingBoxPosition.y,
-              node: target.parentNode
+              node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data5);
 
@@ -359,7 +359,7 @@ function (_Component) {
               height: _currentDimensions3.height,
               x: _currentPosition2.left - boundingBoxPosition.x,
               y: _currentPosition2.top - boundingBoxPosition.y,
-              node: target.parentNode
+              node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data6);
 
@@ -377,14 +377,15 @@ function (_Component) {
         if (_this3.resizing) {
           document.removeEventListener('mousemove', onResize);
           document.removeEventListener('mouseup', onResizeEnd);
-          var parentNode = e.target.parentNode;
-          var dimensions = parentNode.getBoundingClientRect().toJSON();
+
+          var dimensions = _this3.box.current.getBoundingClientRect().toJSON();
+
           var _data7 = {
             width: dimensions.width,
             height: dimensions.height,
-            x: dimensions.top - boundingBoxPosition.y,
-            y: dimensions.left - boundingBoxPosition.x,
-            node: parentNode
+            y: dimensions.top - boundingBoxPosition.y,
+            x: dimensions.left - boundingBoxPosition.x,
+            node: _this3.box.current
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
           _this3.resizing = false;
@@ -761,30 +762,41 @@ function (_Component) {
   }, {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
+      var _this3 = this;
+
       this.setState({
         boxes: Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
-          width: data.finalWidth,
-          height: data.finalHeight,
-          top: data.finalTop,
-          left: data.finalLeft
+          width: data.width,
+          height: data.height,
+          top: data.y,
+          left: data.x
         })))
+      }, function () {
+        _this3.setState({
+          guides: Object.assign({}, _this3.state.guides, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
+            x: calculateGuidePositions(_this3.state.boxes[_this3.state.active], 'x'),
+            y: calculateGuidePositions(_this3.state.boxes[_this3.state.active], 'y')
+          })))
+        }, function () {
+          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
+        });
       });
     }
   }, {
     key: "deactivateGuides",
     value: function deactivateGuides(e, data) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.setState({
         guidesActive: false
       }, function () {
-        _this3.props.onDragEnd && _this3.props.onDragEnd(e, data);
+        _this4.props.onDragEnd && _this4.props.onDragEnd(e, data);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var _this$state = this.state,
           active = _this$state.active,
@@ -794,18 +806,18 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        return React.createElement(Box, _extends({}, _this4.props, {
-          boundingBox: _this4.state.boundingBox,
+        return React.createElement(Box, _extends({}, _this5.props, {
+          boundingBox: _this5.state.boundingBox,
           defaultPosition: position,
-          getBoundingBoxElement: _this4.getBoundingBoxElement,
+          getBoundingBoxElement: _this5.getBoundingBoxElement,
           id: id,
           isSelected: active === id,
           key: id,
-          onDrag: _this4.onDragHandler,
-          onDragEnd: _this4.deactivateGuides,
-          onResizeEnd: _this4.resizeEndHandler,
+          onDrag: _this5.onDragHandler,
+          onDragEnd: _this5.deactivateGuides,
+          onResizeEnd: _this5.resizeEndHandler,
           position: position,
-          selectBox: _this4.selectBox
+          selectBox: _this5.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -814,9 +826,9 @@ function (_Component) {
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.x && _this4.state.match.x.intersection && _this4.state.match.x.intersection === position) {
+          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.x && _this5.state.match.x.intersection && _this5.state.match.x.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -831,9 +843,9 @@ function (_Component) {
         return result.concat(xAxisGuidesForCurrentBox);
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.y && _this4.state.match.y.intersection && _this4.state.match.y.intersection === position) {
+          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.y && _this5.state.match.y.intersection && _this5.state.match.y.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,

@@ -167,14 +167,14 @@ class Box extends Component {
 	onResizeStart(e) {
 		const { target } = e;
 		const boundingBox = this.props.getBoundingBoxElement();
-		const startingDimensions = target.parentNode.getBoundingClientRect().toJSON();
+		const startingDimensions = this.box.current.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		const data = {
 			width: startingDimensions.width,
 			height: startingDimensions.height,
 			x: startingDimensions.left - boundingBoxPosition.x,
 			y: startingDimensions.top - boundingBoxPosition.y,
-			node: target.parentNode
+			node: this.box.current
 		};
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
 		this.resizing = true;
@@ -193,7 +193,7 @@ class Box extends Component {
 						height: currentDimensions.height,
 						x: startingDimensions.left - boundingBoxPosition.x,
 						y: startingDimensions.top - boundingBoxPosition.y,
-						node: target.parentNode
+						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
@@ -218,7 +218,7 @@ class Box extends Component {
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
 						y: currentPosition.top - boundingBoxPosition.y,
-						node: target.parentNode
+						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
@@ -245,7 +245,7 @@ class Box extends Component {
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
 						y: currentPosition.top - boundingBoxPosition.y,
-						node: target.parentNode
+						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
@@ -271,7 +271,7 @@ class Box extends Component {
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
 						y: currentPosition.top - boundingBoxPosition.y,
-						node: target.parentNode
+						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
@@ -289,14 +289,13 @@ class Box extends Component {
 				document.removeEventListener('mousemove', onResize);
 				document.removeEventListener('mouseup', onResizeEnd);
 
-				const parentNode = e.target.parentNode;
-				const dimensions = parentNode.getBoundingClientRect().toJSON();
+				const dimensions = this.box.current.getBoundingClientRect().toJSON();
 				const data = {
 					width: dimensions.width,
 					height: dimensions.height,
-					x: dimensions.top - boundingBoxPosition.y,
-					y: dimensions.left - boundingBoxPosition.x,
-					node: parentNode
+					y: dimensions.top - boundingBoxPosition.y,
+					x: dimensions.left - boundingBoxPosition.x,
+					node: this.box.current
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 				this.resizing = false;
