@@ -44,7 +44,7 @@ class Box extends Component {
 	}
 
 	onDragStart(e) {
-		const { target } = e;
+		const target = this.box.current;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingPosition = target.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();

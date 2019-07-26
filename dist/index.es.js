@@ -114,7 +114,7 @@ function (_Component) {
     value: function onDragStart(e) {
       var _this2 = this;
 
-      var target = e.target;
+      var target = this.box.current;
       var boundingBox = this.props.getBoundingBoxElement();
       var startingPosition = target.getBoundingClientRect().toJSON();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
