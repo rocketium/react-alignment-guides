@@ -140,8 +140,8 @@ function (_Component) {
           var _data = {
             x: currentPosition.left,
             y: currentPosition.top,
-            width: startingPosition.width,
-            height: startingPosition.height,
+            width: target.offsetWidth,
+            height: target.offsetHeight,
             node: target
           };
 
@@ -163,8 +163,8 @@ function (_Component) {
           var _data2 = {
             x: endPosition.left,
             y: endPosition.top,
-            width: startingPosition.width,
-            height: startingPosition.height,
+            width: target.offsetWidth,
+            height: target.offsetHeight,
             node: target
           };
           _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);

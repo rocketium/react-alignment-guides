@@ -68,7 +68,13 @@ class Box extends Component {
 					left: e.clientX - deltaX,
 					top: e.clientY - deltaY
 				};
-				const data = { x: currentPosition.left, y: currentPosition.top, width: startingPosition.width, height: startingPosition.height, node: target };
+				const data = {
+					x: currentPosition.left,
+					y: currentPosition.top,
+					width: target.offsetWidth,
+					height: target.offsetHeight,
+					node: target
+				};
 				this.setState({
 					left: currentPosition.left,
 					top: currentPosition.top
@@ -84,7 +90,13 @@ class Box extends Component {
 					left: e.clientX - deltaX,
 					top: e.clientY - deltaY
 				};
-				const data = { x: endPosition.left, y: endPosition.top, width: startingPosition.width, height: startingPosition.height, node: target };
+				const data = {
+					x: endPosition.left,
+					y: endPosition.top,
+					width: target.offsetWidth,
+					height: target.offsetHeight,
+					node: target
+				};
 				this.props.onDragEnd && this.props.onDragEnd(e, data);
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
