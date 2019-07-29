@@ -27,7 +27,7 @@ class AlignmentGuides extends Component {
 	// TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
 	componentDidMount() {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-		if (this.boundingBox.current && this.state.boundingBox === null) {
+		if (this.boundingBox.current) {
 			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};
@@ -56,7 +56,7 @@ class AlignmentGuides extends Component {
 
 	componentWillUpdate(nextProps, nextState, nextContext) {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-		if (this.boundingBox.current && this.state.boundingBox === null) {
+		if (this.boundingBox.current) {
 			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};

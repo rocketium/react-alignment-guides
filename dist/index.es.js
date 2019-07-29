@@ -609,7 +609,7 @@ function (_Component) {
     key: "componentDidMount",
     value: function componentDidMount() {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-      if (this.boundingBox.current && this.state.boundingBox === null) {
+      if (this.boundingBox.current) {
         var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
         var guides = {}; // Adding the guides for the bounding box to the guides object
@@ -640,7 +640,7 @@ function (_Component) {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, nextContext) {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-      if (this.boundingBox.current && this.state.boundingBox === null) {
+      if (this.boundingBox.current) {
         var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
         var guides = {}; // Adding the guides for the bounding box to the guides object
