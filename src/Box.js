@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
+import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
 import { RESIZE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
-class Box extends Component {
+class Box extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.state = {

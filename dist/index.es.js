@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { PureComponent, Component } from 'react';
 import PropTypes from 'prop-types';
 
 // Key map for changing the position and size of draggable boxes
@@ -62,8 +62,8 @@ function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || func
 
 var Box =
 /*#__PURE__*/
-function (_Component) {
-  _inherits(Box, _Component);
+function (_PureComponent) {
+  _inherits(Box, _PureComponent);
 
   function Box(props) {
     var _this;
@@ -436,7 +436,7 @@ function (_Component) {
   }]);
 
   return Box;
-}(Component);
+}(PureComponent);
 
 Box.propTypes = {
   defaultPosition: PropTypes.object.isRequired,
@@ -875,18 +875,18 @@ AlignmentGuides.propTypes = {
   boxStyle: PropTypes.object,
   className: PropTypes.string,
   drag: PropTypes.bool,
-  resize: PropTypes.bool,
-  rotate: PropTypes.bool,
   keybindings: PropTypes.bool,
-  onRotateStart: PropTypes.func,
-  onRotate: PropTypes.func,
-  onRotateEnd: PropTypes.func,
-  onResizeStart: PropTypes.func,
-  onResize: PropTypes.func,
-  onResizeEnd: PropTypes.func,
   onDragStart: PropTypes.func,
   onDrag: PropTypes.func,
   onDragEnd: PropTypes.func,
+  onResizeStart: PropTypes.func,
+  onResize: PropTypes.func,
+  onResizeEnd: PropTypes.func,
+  onRotateStart: PropTypes.func,
+  onRotate: PropTypes.func,
+  onRotateEnd: PropTypes.func,
+  resize: PropTypes.bool,
+  rotate: PropTypes.bool,
   style: PropTypes.object
 };
 
