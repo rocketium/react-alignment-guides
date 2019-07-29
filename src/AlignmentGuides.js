@@ -155,10 +155,14 @@ class AlignmentGuides extends Component {
 		if (e.target.id.indexOf('box') >= 0) {
 			this.setState({
 				active: e.target.id
+			}, () => {
+				this.props.onSelect && this.props.onSelect(e);
 			});
 		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
 			this.setState({
 				active: e.target.parentNode.id
+			}, () => {
+				this.props.onSelect && this.props.onSelect(e);
 			});
 		}
 	}
@@ -295,6 +299,7 @@ AlignmentGuides.propTypes = {
 	onRotateStart: PropTypes.func,
 	onRotate: PropTypes.func,
 	onRotateEnd: PropTypes.func,
+	onSelect: PropTypes.func,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
 	style: PropTypes.object

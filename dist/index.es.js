@@ -740,13 +740,19 @@ function (_Component) {
   }, {
     key: "selectBox",
     value: function selectBox(e) {
+      var _this3 = this;
+
       if (e.target.id.indexOf('box') >= 0) {
         this.setState({
           active: e.target.id
+        }, function () {
+          _this3.props.onSelect && _this3.props.onSelect(e);
         });
       } else if (e.target.parentNode.id.indexOf('box') >= 0) {
         this.setState({
           active: e.target.parentNode.id
+        }, function () {
+          _this3.props.onSelect && _this3.props.onSelect(e);
         });
       }
     }
@@ -762,7 +768,7 @@ function (_Component) {
   }, {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
-      var _this3 = this;
+      var _this4 = this;
 
       this.setState({
         boxes: Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
@@ -772,31 +778,31 @@ function (_Component) {
           left: data.x
         })))
       }, function () {
-        _this3.setState({
-          guides: Object.assign({}, _this3.state.guides, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
-            x: calculateGuidePositions(_this3.state.boxes[_this3.state.active], 'x'),
-            y: calculateGuidePositions(_this3.state.boxes[_this3.state.active], 'y')
+        _this4.setState({
+          guides: Object.assign({}, _this4.state.guides, _defineProperty$2({}, _this4.state.active, Object.assign({}, _this4.state.guides[_this4.state.active], {
+            x: calculateGuidePositions(_this4.state.boxes[_this4.state.active], 'x'),
+            y: calculateGuidePositions(_this4.state.boxes[_this4.state.active], 'y')
           })))
         }, function () {
-          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
+          _this4.props.onResizeEnd && _this4.props.onResizeEnd(e, data);
         });
       });
     }
   }, {
     key: "deactivateGuides",
     value: function deactivateGuides(e, data) {
-      var _this4 = this;
+      var _this5 = this;
 
       this.setState({
         guidesActive: false
       }, function () {
-        _this4.props.onDragEnd && _this4.props.onDragEnd(e, data);
+        _this5.props.onDragEnd && _this5.props.onDragEnd(e, data);
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this6 = this;
 
       var _this$state = this.state,
           active = _this$state.active,
@@ -806,18 +812,18 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        return React.createElement(Box, _extends({}, _this5.props, {
-          boundingBox: _this5.state.boundingBox,
+        return React.createElement(Box, _extends({}, _this6.props, {
+          boundingBox: _this6.state.boundingBox,
           defaultPosition: position,
-          getBoundingBoxElement: _this5.getBoundingBoxElement,
+          getBoundingBoxElement: _this6.getBoundingBoxElement,
           id: id,
           isSelected: active === id,
           key: id,
-          onDrag: _this5.onDragHandler,
-          onDragEnd: _this5.deactivateGuides,
-          onResizeEnd: _this5.resizeEndHandler,
+          onDrag: _this6.onDragHandler,
+          onDragEnd: _this6.deactivateGuides,
+          onResizeEnd: _this6.resizeEndHandler,
           position: position,
-          selectBox: _this5.selectBox
+          selectBox: _this6.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -826,9 +832,9 @@ function (_Component) {
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+        var guideClassNames = _this6.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.x && _this5.state.match.x.intersection && _this5.state.match.x.intersection === position) {
+          if (_this6.state.active && _this6.state.active === box && _this6.state.match && _this6.state.match.x && _this6.state.match.x.intersection && _this6.state.match.x.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -843,9 +849,9 @@ function (_Component) {
         return result.concat(xAxisGuidesForCurrentBox);
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+        var guideClassNames = _this6.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.y && _this5.state.match.y.intersection && _this5.state.match.y.intersection === position) {
+          if (_this6.state.active && _this6.state.active === box && _this6.state.match && _this6.state.match.y && _this6.state.match.y.intersection && _this6.state.match.y.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -885,6 +891,7 @@ AlignmentGuides.propTypes = {
   onRotateStart: PropTypes.func,
   onRotate: PropTypes.func,
   onRotateEnd: PropTypes.func,
+  onSelect: PropTypes.func,
   resize: PropTypes.bool,
   rotate: PropTypes.bool,
   style: PropTypes.object
