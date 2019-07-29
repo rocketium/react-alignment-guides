@@ -56,7 +56,7 @@ class AlignmentGuides extends Component {
 
 	componentWillUpdate(nextProps, nextState, nextContext) {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-		if (nextProps !== this.props && nextState !== this.state) {
+		if (nextProps.boxes !== this.props.boxes) {
 			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};
@@ -67,7 +67,7 @@ class AlignmentGuides extends Component {
 				y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
 			};
 
-			this.props.boxes.forEach((dimensions, index) => {
+			nextProps.boxes.forEach((dimensions, index) => {
 				boxes[`box${index}`] = dimensions;
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),

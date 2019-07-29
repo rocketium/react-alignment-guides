@@ -640,7 +640,7 @@ function (_Component) {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, nextContext) {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-      if (nextProps !== this.props && nextState !== this.state) {
+      if (nextProps.boxes !== this.props.boxes) {
         var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
         var guides = {}; // Adding the guides for the bounding box to the guides object
@@ -653,7 +653,7 @@ function (_Component) {
             return value - boundingBox.top;
           })
         };
-        this.props.boxes.forEach(function (dimensions, index) {
+        nextProps.boxes.forEach(function (dimensions, index) {
           boxes["box".concat(index)] = dimensions;
           guides["box".concat(index)] = {
             x: calculateGuidePositions(dimensions, 'x'),
