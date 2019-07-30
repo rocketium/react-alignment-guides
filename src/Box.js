@@ -71,9 +71,9 @@ class Box extends PureComponent {
 				const data = {
 					x: currentPosition.left,
 					y: currentPosition.top,
-					width: target.offsetWidth,
-					height: target.offsetHeight,
-					node: target
+					width: this.box.current.offsetWidth,
+					height: this.box.current.offsetHeight,
+					node: this.box.current
 				};
 				this.setState({
 					left: currentPosition.left,
@@ -93,9 +93,9 @@ class Box extends PureComponent {
 				const data = {
 					x: endPosition.left,
 					y: endPosition.top,
-					width: target.offsetWidth,
-					height: target.offsetHeight,
-					node: target
+					width: this.box.current.offsetWidth,
+					height: this.box.current.offsetHeight,
+					node: this.box.current
 				};
 				this.props.onDragEnd && this.props.onDragEnd(e, data);
 				document.removeEventListener('mousemove', onDrag);

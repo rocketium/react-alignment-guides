@@ -32,7 +32,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  height: 150px;\n  width: 300px;\n  position: absolute;\n  outline: none;\n  z-index: 10; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_biggest__1UnNV {\n  z-index: 9; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 2; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  height: 150px;\n  width: 300px;\n  position: absolute;\n  outline: none;\n  z-index: 10; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_biggest__1UnNV {\n  z-index: 9; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 11; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
 var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","biggest":"styles_biggest__1UnNV","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
 styleInject(css);
 
@@ -140,9 +140,9 @@ function (_PureComponent) {
           var _data = {
             x: currentPosition.left,
             y: currentPosition.top,
-            width: target.offsetWidth,
-            height: target.offsetHeight,
-            node: target
+            width: _this2.box.current.offsetWidth,
+            height: _this2.box.current.offsetHeight,
+            node: _this2.box.current
           };
 
           _this2.setState({
@@ -163,9 +163,9 @@ function (_PureComponent) {
           var _data2 = {
             x: endPosition.left,
             y: endPosition.top,
-            width: target.offsetWidth,
-            height: target.offsetHeight,
-            node: target
+            width: _this2.box.current.offsetWidth,
+            height: _this2.box.current.offsetHeight,
+            node: _this2.box.current
           };
           _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
           document.removeEventListener('mousemove', onDrag);
