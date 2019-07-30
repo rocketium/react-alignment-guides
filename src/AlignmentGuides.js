@@ -46,6 +46,8 @@ class AlignmentGuides extends Component {
 				};
 			});
 
+			document.addEventListener('click', this.unSelectBox);
+
 			this.setState({
 				boundingBox,
 				boxes,
@@ -81,6 +83,10 @@ class AlignmentGuides extends Component {
 				guides
 			});
 		}
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('click', this.unSelectBox);
 	}
 
 	getBoundingBoxElement() {
@@ -172,7 +178,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		if (e.target.parentNode.id.indexOf('box') === -1) {
+		if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
 			this.setState({
 				active: ''
 			});

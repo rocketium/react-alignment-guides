@@ -629,6 +629,7 @@ function (_Component) {
             y: calculateGuidePositions(dimensions, 'y')
           };
         });
+        document.addEventListener('click', this.unSelectBox);
         this.setState({
           boundingBox: boundingBox,
           boxes: boxes,
@@ -666,6 +667,11 @@ function (_Component) {
           guides: guides
         });
       }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('click', this.unSelectBox);
     }
   }, {
     key: "getBoundingBoxElement",
@@ -776,7 +782,7 @@ function (_Component) {
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      if (e.target.parentNode.id.indexOf('box') === -1) {
+      if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
         this.setState({
           active: ''
         });
