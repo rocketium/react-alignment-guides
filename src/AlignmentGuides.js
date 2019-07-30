@@ -195,7 +195,9 @@ class AlignmentGuides extends Component {
 					width: data.width,
 					height: data.height,
 					top: data.y,
-					left: data.x
+					left: data.x,
+					x: data.x,
+					y: data.y
 				})
 			})
 		}, () => {
