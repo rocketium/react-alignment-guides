@@ -319,8 +319,9 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { boxStyle, id, isSelected } = this.props;
-		const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+		const { biggestBox, boxStyle, id, isSelected } = this.props;
+		let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+		boxClassNames = biggestBox === id ? `${boxClassNames} ${styles.biggest}` : boxClassNames;
 		const boxStyles = {
 			...boxStyle,
 			width: `${this.state.width}px`,
@@ -353,6 +354,7 @@ class Box extends PureComponent {
 }
 
 Box.propTypes = {
+	biggestBox: PropTypes.string,
 	defaultPosition: PropTypes.object.isRequired,
 	drag: PropTypes.bool,
 	getBoundingBoxElement: PropTypes.func,

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Box from './Box';
-import { calculateGuidePositions, proximityListener } from './utils/helpers';
+import { calculateGuidePositions, findBiggestBox, proximityListener } from './utils/helpers';
 import styles from './styles.scss';
 
 class AlignmentGuides extends Component {
@@ -11,6 +11,7 @@ class AlignmentGuides extends Component {
 		this.state = {
 			active: '',
 			boundingBox: null,
+			biggestBox: '',
 			boxes: {},
 			guides: {},
 			guidesActive: false,
@@ -51,7 +52,8 @@ class AlignmentGuides extends Component {
 			this.setState({
 				boundingBox,
 				boxes,
-				guides
+				guides,
+				biggestBox: findBiggestBox(boxes)
 			});
 		}
 	}
@@ -80,7 +82,8 @@ class AlignmentGuides extends Component {
 			this.setState({
 				boundingBox,
 				boxes,
-				guides
+				guides,
+				biggestBox: findBiggestBox(boxes)
 			});
 		}
 	}
@@ -227,6 +230,7 @@ class AlignmentGuides extends Component {
 
 			return <Box
 				{...this.props}
+				biggestBox={this.state.biggestBox}
 				boundingBox={this.state.boundingBox}
 				defaultPosition={position}
 				getBoundingBoxElement={this.getBoundingBoxElement}

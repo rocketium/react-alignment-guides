@@ -80,3 +80,13 @@ export const checkValueProximities = (activeBoxGuidesInOneAxis, allOtherGuidesIn
 
 	return { matchedArray, proximity, intersection };
 };
+
+export const findBiggestBox = (boxes) => {
+	return Object.keys(boxes).reduce((prev, current) => {
+		if (boxes[current].width > boxes[prev].width) {
+			return current;
+		} else {
+			return prev
+		}
+	});
+};

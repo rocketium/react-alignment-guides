@@ -32,8 +32,8 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  height: 150px;\n  width: 300px;\n  position: absolute;\n  outline: none; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 2; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
-var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  height: 150px;\n  width: 300px;\n  position: absolute;\n  outline: none;\n  z-index: 10; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_biggest__1UnNV {\n  z-index: 9; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 2; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
+var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","biggest":"styles_biggest__1UnNV","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
 styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -401,10 +401,12 @@ function (_PureComponent) {
       var _this4 = this;
 
       var _this$props = this.props,
+          biggestBox = _this$props.biggestBox,
           boxStyle = _this$props.boxStyle,
           id = _this$props.id,
           isSelected = _this$props.isSelected;
       var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
+      boxClassNames = biggestBox === id ? "".concat(boxClassNames, " ").concat(styles.biggest) : boxClassNames;
 
       var boxStyles = _objectSpread({}, boxStyle, {
         width: "".concat(this.state.width, "px"),
@@ -439,6 +441,7 @@ function (_PureComponent) {
 }(PureComponent);
 
 Box.propTypes = {
+  biggestBox: PropTypes.string,
   defaultPosition: PropTypes.object.isRequired,
   drag: PropTypes.bool,
   getBoundingBoxElement: PropTypes.func,
@@ -552,6 +555,15 @@ var checkValueProximities = function checkValueProximities(activeBoxGuidesInOneA
     intersection: intersection
   };
 };
+var findBiggestBox = function findBiggestBox(boxes) {
+  return Object.keys(boxes).reduce(function (prev, current) {
+    if (boxes[current].width > boxes[prev].width) {
+      return current;
+    } else {
+      return prev;
+    }
+  });
+};
 
 function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
 
@@ -590,6 +602,7 @@ function (_Component) {
     _this.state = {
       active: '',
       boundingBox: null,
+      biggestBox: '',
       boxes: {},
       guides: {},
       guidesActive: false,
@@ -633,7 +646,8 @@ function (_Component) {
         this.setState({
           boundingBox: boundingBox,
           boxes: boxes,
-          guides: guides
+          guides: guides,
+          biggestBox: findBiggestBox(boxes)
         });
       }
     }
@@ -664,7 +678,8 @@ function (_Component) {
         this.setState({
           boundingBox: boundingBox,
           boxes: boxes,
-          guides: guides
+          guides: guides,
+          biggestBox: findBiggestBox(boxes)
         });
       }
     }
@@ -836,6 +851,7 @@ function (_Component) {
         var position = boxes[box];
         var id = "box".concat(index);
         return React.createElement(Box, _extends({}, _this6.props, {
+          biggestBox: _this6.state.biggestBox,
           boundingBox: _this6.state.boundingBox,
           defaultPosition: position,
           getBoundingBoxElement: _this6.getBoundingBoxElement,
