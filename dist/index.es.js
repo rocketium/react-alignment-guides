@@ -743,16 +743,33 @@ function (_Component) {
       var _this3 = this;
 
       if (e.target.id.indexOf('box') >= 0) {
+        var boxDimensions = e.target.getBoundingClientRect().toJSON();
+        var data = {
+          x: boxDimensions.x,
+          y: boxDimensions.y,
+          width: boxDimensions.width,
+          height: boxDimensions.height,
+          node: e.target
+        };
         this.setState({
           active: e.target.id
         }, function () {
-          _this3.props.onSelect && _this3.props.onSelect(e);
+          _this3.props.onSelect && _this3.props.onSelect(e, data);
         });
       } else if (e.target.parentNode.id.indexOf('box') >= 0) {
+        var _boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
+
+        var _data = {
+          x: _boxDimensions.x,
+          y: _boxDimensions.y,
+          width: _boxDimensions.width,
+          height: _boxDimensions.height,
+          node: e.target.parentNode
+        };
         this.setState({
           active: e.target.parentNode.id
         }, function () {
-          _this3.props.onSelect && _this3.props.onSelect(e);
+          _this3.props.onSelect && _this3.props.onSelect(e, _data);
         });
       }
     }
