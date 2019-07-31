@@ -654,8 +654,9 @@ function (_Component) {
   }, {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, nextContext) {
-      // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-      if (nextProps.boxes !== this.props.boxes) {
+      var active = this.state.active; // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
+
+      if (nextProps.boxes[active] && this.props.boxes[active] && nextProps.boxes !== this.props.boxes) {
         var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
         var guides = {}; // Adding the guides for the bounding box to the guides object
