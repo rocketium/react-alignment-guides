@@ -133,24 +133,53 @@ function (_PureComponent) {
       var onDrag = function onDrag(e) {
         if (_this2.dragging) {
           e.stopImmediatePropagation();
-          var currentPosition = {
-            left: e.clientX - deltaX,
-            top: e.clientY - deltaY
-          };
-          var _data = {
-            x: currentPosition.left,
-            y: currentPosition.top,
-            width: _this2.box.current.offsetWidth,
-            height: _this2.box.current.offsetHeight,
-            node: _this2.box.current
-          };
 
-          _this2.setState({
-            left: currentPosition.left,
-            top: currentPosition.top
-          }, function () {
-            _this2.props.onDrag && _this2.props.onDrag(e, _data);
-          });
+          var _boundingBox = _this2.props.getBoundingBoxElement();
+
+          var boundingBoxDimensions = _boundingBox.current.getBoundingClientRect().toJSON();
+
+          var boxWidth = _this2.box.current.offsetWidth;
+          var boxHeight = _this2.box.current.offsetHeight;
+          var left = e.clientX - deltaX;
+          var top = e.clientY - deltaY;
+
+          if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth) {
+            var currentPosition = {
+              left: left
+            };
+            var _data = {
+              x: currentPosition.left,
+              y: currentPosition.top,
+              width: _this2.box.current.offsetWidth,
+              height: _this2.box.current.offsetHeight,
+              node: _this2.box.current
+            };
+
+            _this2.setState({
+              left: currentPosition.left
+            }, function () {
+              _this2.props.onDrag && _this2.props.onDrag(e, _data);
+            });
+          }
+
+          if (top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
+            var _currentPosition = {
+              top: top
+            };
+            var _data2 = {
+              x: _currentPosition.left,
+              y: _currentPosition.top,
+              width: _this2.box.current.offsetWidth,
+              height: _this2.box.current.offsetHeight,
+              node: _this2.box.current
+            };
+
+            _this2.setState({
+              top: _currentPosition.top
+            }, function () {
+              _this2.props.onDrag && _this2.props.onDrag(e, _data2);
+            });
+          }
         }
       };
 
@@ -160,14 +189,14 @@ function (_PureComponent) {
             left: e.clientX - deltaX,
             top: e.clientY - deltaY
           };
-          var _data2 = {
+          var _data3 = {
             x: endPosition.left,
             y: endPosition.top,
             width: _this2.box.current.offsetWidth,
             height: _this2.box.current.offsetHeight,
             node: _this2.box.current
           };
-          _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
+          _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data3);
           document.removeEventListener('mousemove', onDrag);
           document.removeEventListener('mouseup', onDragEnd);
           _this2.dragging = false;
@@ -274,14 +303,14 @@ function (_PureComponent) {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
             };
-            var _data3 = {
+            var _data4 = {
               width: currentDimensions.width,
               height: currentDimensions.height,
               x: startingDimensions.left - boundingBoxPosition.x,
               y: startingDimensions.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data3);
+            _this3.props.onResize && _this3.props.onResize(e, _data4);
 
             _this3.setState({
               width: currentDimensions.width,
@@ -298,14 +327,14 @@ function (_PureComponent) {
               top: startingDimensions.top,
               left: startingDimensions.left - deltaX
             };
-            var _data4 = {
+            var _data5 = {
               width: _currentDimensions.width,
               height: _currentDimensions.height,
               x: currentPosition.left - boundingBoxPosition.x,
               y: currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data4);
+            _this3.props.onResize && _this3.props.onResize(e, _data5);
 
             _this3.setState({
               width: _currentDimensions.width,
@@ -322,24 +351,24 @@ function (_PureComponent) {
               width: _deltaX,
               height: startingDimensions.height + _deltaY
             };
-            var _currentPosition = {
+            var _currentPosition2 = {
               top: startingDimensions.top - _deltaY,
               left: startingDimensions.left
             };
-            var _data5 = {
+            var _data6 = {
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              x: _currentPosition.left - boundingBoxPosition.x,
-              y: _currentPosition.top - boundingBoxPosition.y,
+              x: _currentPosition2.left - boundingBoxPosition.x,
+              y: _currentPosition2.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data5);
+            _this3.props.onResize && _this3.props.onResize(e, _data6);
 
             _this3.setState({
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              top: _currentPosition.top - boundingBoxPosition.y,
-              left: _currentPosition.left - boundingBoxPosition.x
+              top: _currentPosition2.top - boundingBoxPosition.y,
+              left: _currentPosition2.left - boundingBoxPosition.x
             });
           } else if (target.id === 'tl') {
             var _deltaX2 = startingDimensions.left - e.clientX;
@@ -350,24 +379,24 @@ function (_PureComponent) {
               width: startingDimensions.width + _deltaX2,
               height: startingDimensions.height + _deltaY2
             };
-            var _currentPosition2 = {
+            var _currentPosition3 = {
               top: startingDimensions.top - _deltaY2,
               left: startingDimensions.left - _deltaX2
             };
-            var _data6 = {
+            var _data7 = {
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              x: _currentPosition2.left - boundingBoxPosition.x,
-              y: _currentPosition2.top - boundingBoxPosition.y,
+              x: _currentPosition3.left - boundingBoxPosition.x,
+              y: _currentPosition3.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data6);
+            _this3.props.onResize && _this3.props.onResize(e, _data7);
 
             _this3.setState({
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              top: _currentPosition2.top - boundingBoxPosition.y,
-              left: _currentPosition2.left - boundingBoxPosition.x
+              top: _currentPosition3.top - boundingBoxPosition.y,
+              left: _currentPosition3.left - boundingBoxPosition.x
             });
           }
         }
@@ -380,14 +409,14 @@ function (_PureComponent) {
 
           var dimensions = _this3.box.current.getBoundingClientRect().toJSON();
 
-          var _data7 = {
+          var _data8 = {
             width: dimensions.width,
             height: dimensions.height,
             y: dimensions.top - boundingBoxPosition.y,
             x: dimensions.left - boundingBoxPosition.x,
             node: _this3.box.current
           };
-          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
+          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data8);
           _this3.resizing = false;
         }
       };

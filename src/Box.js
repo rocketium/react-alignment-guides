@@ -64,23 +64,46 @@ class Box extends PureComponent {
 		const onDrag = (e) => {
 			if (this.dragging) {
 				e.stopImmediatePropagation();
-				const currentPosition = {
-					left: e.clientX - deltaX,
-					top: e.clientY - deltaY
-				};
-				const data = {
-					x: currentPosition.left,
-					y: currentPosition.top,
-					width: this.box.current.offsetWidth,
-					height: this.box.current.offsetHeight,
-					node: this.box.current
-				};
-				this.setState({
-					left: currentPosition.left,
-					top: currentPosition.top
-				}, () => {
-					this.props.onDrag && this.props.onDrag(e, data);
-				});
+				const boundingBox = this.props.getBoundingBoxElement();
+				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
+				const boxWidth = this.box.current.offsetWidth;
+				const boxHeight = this.box.current.offsetHeight;
+				const left = e.clientX - deltaX;
+				const top = e.clientY - deltaY;
+				if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth) {
+					const currentPosition = {
+						left
+					};
+					const data = {
+						x: currentPosition.left,
+						y: currentPosition.top,
+						width: this.box.current.offsetWidth,
+						height: this.box.current.offsetHeight,
+						node: this.box.current
+					};
+					this.setState({
+						left: currentPosition.left
+					}, () => {
+						this.props.onDrag && this.props.onDrag(e, data);
+					});
+				}
+				if (top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
+					const currentPosition = {
+						top
+					};
+					const data = {
+						x: currentPosition.left,
+						y: currentPosition.top,
+						width: this.box.current.offsetWidth,
+						height: this.box.current.offsetHeight,
+						node: this.box.current
+					};
+					this.setState({
+						top: currentPosition.top
+					}, () => {
+						this.props.onDrag && this.props.onDrag(e, data);
+					});
+				}
 			}
 		};
 
