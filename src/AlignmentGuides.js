@@ -58,6 +58,36 @@ class AlignmentGuides extends Component {
 		}
 	}
 
+	componentWillUpdate(nextProps, nextState, nextContext) {
+		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
+		if (nextProps.boxes !== this.props.boxes) {
+			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
+			const boxes = {};
+			const guides = {};
+
+			// Adding the guides for the bounding box to the guides object
+			guides.boundingBox = {
+				x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
+				y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
+			};
+
+			nextProps.boxes.forEach((dimensions, index) => {
+				boxes[`box${index}`] = dimensions;
+				guides[`box${index}`] = {
+					x: calculateGuidePositions(dimensions, 'x'),
+					y: calculateGuidePositions(dimensions, 'y')
+				};
+			});
+
+			this.setState({
+				boundingBox,
+				boxes,
+				guides,
+				biggestBox: findBiggestBox(boxes)
+			});
+		}
+	}
+
 	componentWillUnmount() {
 		document.removeEventListener('click', this.unSelectBox);
 	}
