@@ -37,8 +37,8 @@ class Box extends PureComponent {
 				e.stopImmediatePropagation();
 				const boundingBox = this.props.getBoundingBoxElement();
 				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
-				const boxWidth = this.box.current.offsetWidth;
-				const boxHeight = this.box.current.offsetHeight;
+				const boxWidth = this.props.position.width;
+				const boxHeight = this.props.position.height;
 				const left = e.clientX - deltaX;
 				const top = e.clientY - deltaY;
 
@@ -48,8 +48,8 @@ class Box extends PureComponent {
 					y: currentPosition.top,
 					top: currentPosition.top,
 					left: currentPosition.left,
-					width: this.box.current.offsetWidth,
-					height: this.box.current.offsetHeight,
+					width: this.props.position.width,
+					height: this.props.position.height,
 					node: this.box.current
 				};
 
@@ -68,8 +68,8 @@ class Box extends PureComponent {
 					y: endPosition.top,
 					top: endPosition.top,
 					left: endPosition.left,
-					width: this.box.current.offsetWidth,
-					height: this.box.current.offsetHeight,
+					width: this.props.position.width,
+					height: this.props.position.height,
 					node: this.box.current
 				};
 				this.props.onDragEnd && this.props.onDragEnd(e, data);

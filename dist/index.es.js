@@ -235,8 +235,8 @@ function (_PureComponent) {
 
           var boundingBoxDimensions = _boundingBox.current.getBoundingClientRect().toJSON();
 
-          var boxWidth = _this2.box.current.offsetWidth;
-          var boxHeight = _this2.box.current.offsetHeight;
+          var boxWidth = _this2.props.position.width;
+          var boxHeight = _this2.props.position.height;
           var left = e.clientX - deltaX;
           var top = e.clientY - deltaY;
           var currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
@@ -245,8 +245,8 @@ function (_PureComponent) {
             y: currentPosition.top,
             top: currentPosition.top,
             left: currentPosition.left,
-            width: _this2.box.current.offsetWidth,
-            height: _this2.box.current.offsetHeight,
+            width: _this2.props.position.width,
+            height: _this2.props.position.height,
             node: _this2.box.current
           };
           _this2.props.onDrag && _this2.props.onDrag(e, _data);
@@ -264,8 +264,8 @@ function (_PureComponent) {
             y: endPosition.top,
             top: endPosition.top,
             left: endPosition.left,
-            width: _this2.box.current.offsetWidth,
-            height: _this2.box.current.offsetHeight,
+            width: _this2.props.position.width,
+            height: _this2.props.position.height,
             node: _this2.box.current
           };
           _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
