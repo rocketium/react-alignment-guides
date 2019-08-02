@@ -90,3 +90,27 @@ export const findBiggestBox = (boxes) => {
 		}
 	});
 };
+
+export const calculateBoundaries = (left, top, width, height, bounds) => {
+	if (left >= 0 && left <= bounds.width - width && top >= 0 && top <= bounds.height - height) {
+		return {
+			left,
+			top
+		};
+	} else if (left >= 0 && left <= bounds.width - width) {
+		return {
+			left,
+			top: top < 0 ? 0 : (bounds.height - height)
+		};
+	} else if (top >= 0 && top <= bounds.height - height) {
+		return {
+			left: left < 0 ? 0 : (bounds.width - width),
+			top
+		};
+	} else {
+		return {
+			left: left < 0 ? 0 : (bounds.width - width),
+			top: top < 0 ? 0 : (bounds.height - height)
+		};
+	}
+};

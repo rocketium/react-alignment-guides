@@ -1,6 +1,133 @@
 import React, { PureComponent, Component } from 'react';
 import PropTypes from 'prop-types';
 
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+var calculateGuidePositions = function calculateGuidePositions(dimensions, axis) {
+  if (axis === 'x') {
+    var start = dimensions.left;
+    var middle = dimensions.left + parseInt(dimensions.width / 2, 10);
+    var end = dimensions.left + dimensions.width;
+    return [start, middle, end];
+  } else {
+    var _start = dimensions.top;
+
+    var _middle = dimensions.top + parseInt(dimensions.height / 2, 10);
+
+    var _end = dimensions.top + dimensions.height;
+
+    return [_start, _middle, _end];
+  }
+};
+var proximityListener = function proximityListener(active, allGuides) {
+  var xAxisGuidesForActiveBox = allGuides[active].x;
+  var yAxisGuidesForActiveBox = allGuides[active].y;
+  var xAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, xAxisGuidesForActiveBox, 'x');
+  var yAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, yAxisGuidesForActiveBox, 'y');
+  var xAxisMatchedGuides = checkValueProximities(xAxisGuidesForActiveBox, xAxisAllGuides);
+  var yAxisMatchedGuides = checkValueProximities(yAxisGuidesForActiveBox, yAxisAllGuides);
+  var allMatchedGuides = {};
+
+  if (xAxisMatchedGuides.proximity) {
+    allMatchedGuides.x = _objectSpread({}, xAxisMatchedGuides, {
+      activeBoxGuides: xAxisGuidesForActiveBox
+    });
+  }
+
+  if (yAxisMatchedGuides.proximity) {
+    allMatchedGuides.y = _objectSpread({}, yAxisMatchedGuides, {
+      activeBoxGuides: yAxisGuidesForActiveBox
+    });
+  }
+
+  return allMatchedGuides;
+};
+var getAllGuidesForGivenAxisExceptActiveBox = function getAllGuidesForGivenAxisExceptActiveBox(allGuides, guidesForActiveBoxAlongGivenAxis, axis) {
+  var result = Object.keys(allGuides).map(function (box) {
+    var currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
+
+    if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
+      return currentBoxGuidesAlongGivenAxis;
+    }
+  });
+  return result.filter(function (guides) {
+    return guides !== undefined;
+  });
+};
+var checkValueProximities = function checkValueProximities(activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis) {
+  var proximity = null;
+  var intersection = null;
+  var matchedArray = [];
+  var snapThreshold = 5;
+
+  for (var index = 0; index < allOtherGuidesInOneAxis.length; index += 1) {
+    var index2 = 0;
+    var index3 = 0;
+
+    while (index2 < activeBoxGuidesInOneAxis.length && index3 < allOtherGuidesInOneAxis[index].length) {
+      var diff = Math.abs(activeBoxGuidesInOneAxis[index2] - allOtherGuidesInOneAxis[index][index3]);
+
+      if (diff <= snapThreshold) {
+        proximity = {
+          value: diff,
+          activeBoxIndex: index2,
+          matchedBoxIndex: index3
+        };
+        matchedArray = allOtherGuidesInOneAxis[index];
+        intersection = allOtherGuidesInOneAxis[index][index3];
+      }
+
+      if (activeBoxGuidesInOneAxis[index2] < allOtherGuidesInOneAxis[index][index3]) {
+        index2 += 1;
+      } else {
+        index3 += 1;
+      }
+    }
+  }
+
+  return {
+    matchedArray: matchedArray,
+    proximity: proximity,
+    intersection: intersection
+  };
+};
+var findBiggestBox = function findBiggestBox(boxes) {
+  return Object.keys(boxes).reduce(function (prev, current) {
+    if (boxes[current].width > boxes[prev].width) {
+      return current;
+    } else {
+      return prev;
+    }
+  });
+};
+var calculateBoundaries = function calculateBoundaries(left, top, width, height, bounds) {
+  if (left >= 0 && left <= bounds.width - width && top >= 0 && top <= bounds.height - height) {
+    return {
+      left: left,
+      top: top
+    };
+  } else if (left >= 0 && left <= bounds.width - width) {
+    return {
+      left: left,
+      top: top < 0 ? 0 : bounds.height - height
+    };
+  } else if (top >= 0 && top <= bounds.height - height) {
+    return {
+      left: left < 0 ? 0 : bounds.width - width,
+      top: top
+    };
+  } else {
+    return {
+      left: left < 0 ? 0 : bounds.width - width,
+      top: top < 0 ? 0 : bounds.height - height
+    };
+  }
+};
+
 // Key map for changing the position and size of draggable boxes
 
 var RESIZE_HANDLES = ['tr', 'tl', 'br', 'bl']; // Positions for rotate handles
@@ -38,11 +165,11 @@ styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(source, true).forEach(function (key) { _defineProperty$1(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -115,68 +242,17 @@ function (_PureComponent) {
           var boxHeight = _this2.box.current.offsetHeight;
           var left = e.clientX - deltaX;
           var top = e.clientY - deltaY;
-
-          if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth && top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
-            var currentPosition = {
-              left: left,
-              top: top
-            };
-            var _data = {
-              x: currentPosition.left,
-              y: currentPosition.top,
-              top: currentPosition.top,
-              left: currentPosition.left,
-              width: _this2.box.current.offsetWidth,
-              height: _this2.box.current.offsetHeight,
-              node: _this2.box.current
-            };
-            _this2.props.onDrag && _this2.props.onDrag(e, _data);
-          } else if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth) {
-            var _currentPosition = {
-              left: left,
-              top: top < 0 ? 0 : boundingBoxDimensions.height - boxHeight
-            };
-            var _data2 = {
-              x: _currentPosition.left,
-              y: _currentPosition.top,
-              top: _currentPosition.top,
-              left: _currentPosition.left,
-              width: _this2.box.current.offsetWidth,
-              height: _this2.box.current.offsetHeight,
-              node: _this2.box.current
-            };
-            _this2.props.onDrag && _this2.props.onDrag(e, _data2);
-          } else if (top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
-            var _currentPosition2 = {
-              left: left < 0 ? 0 : boundingBoxDimensions.width - boxWidth,
-              top: top
-            };
-            var _data3 = {
-              x: _currentPosition2.left,
-              y: _currentPosition2.top,
-              top: _currentPosition2.top,
-              left: _currentPosition2.left,
-              width: _this2.box.current.offsetWidth,
-              height: _this2.box.current.offsetHeight,
-              node: _this2.box.current
-            };
-            _this2.props.onDrag && _this2.props.onDrag(e, _data3);
-          } else {
-            var _currentPosition3 = {
-              left: left < 0 ? 0 : boundingBoxDimensions.width - boxWidth,
-              top: top < 0 ? 0 : boundingBoxDimensions.height - boxHeight
-            };
-            var _data4 = {
-              x: _currentPosition3.left,
-              y: _currentPosition3.top,
-              top: _currentPosition3.top,
-              left: _currentPosition3.left,
-              width: _this2.box.current.offsetWidth,
-              height: _this2.box.current.offsetHeight,
-              node: _this2.box.current
-            };
-            _this2.props.onDrag && _this2.props.onDrag(e, _data4);
-          }
+          var currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+          var _data = {
+            x: currentPosition.left,
+            y: currentPosition.top,
+            top: currentPosition.top,
+            left: currentPosition.left,
+            width: _this2.box.current.offsetWidth,
+            height: _this2.box.current.offsetHeight,
+            node: _this2.box.current
+          };
+          _this2.props.onDrag && _this2.props.onDrag(e, _data);
         }
       };
 
@@ -186,7 +262,7 @@ function (_PureComponent) {
             left: e.clientX - deltaX,
             top: e.clientY - deltaY
           };
-          var _data5 = {
+          var _data2 = {
             x: endPosition.left,
             y: endPosition.top,
             top: endPosition.top,
@@ -195,7 +271,7 @@ function (_PureComponent) {
             height: _this2.box.current.offsetHeight,
             node: _this2.box.current
           };
-          _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data5);
+          _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
           document.removeEventListener('mousemove', onDrag);
           document.removeEventListener('mouseup', onDragEnd);
           _this2.dragging = false;
@@ -302,20 +378,20 @@ function (_PureComponent) {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
             };
-            var _data6 = {
+            var _data3 = {
               width: currentDimensions.width,
               height: currentDimensions.height,
               x: startingDimensions.left - boundingBoxPosition.x,
               y: startingDimensions.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data6);
+            _this3.props.onResize && _this3.props.onResize(e, _data3);
 
             _this3.setState({
               width: currentDimensions.width,
               height: currentDimensions.height,
-              top: _data6.y,
-              left: _data6.x
+              top: _data3.y,
+              left: _data3.x
             });
           } else if (target.id === 'bl') {
             var deltaX = startingDimensions.left - e.clientX;
@@ -328,14 +404,14 @@ function (_PureComponent) {
               top: startingDimensions.top,
               left: startingDimensions.left - deltaX
             };
-            var _data7 = {
+            var _data4 = {
               width: _currentDimensions.width,
               height: _currentDimensions.height,
               x: currentPosition.left - boundingBoxPosition.x,
               y: currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data7);
+            _this3.props.onResize && _this3.props.onResize(e, _data4);
 
             _this3.setState({
               width: _currentDimensions.width,
@@ -352,24 +428,24 @@ function (_PureComponent) {
               width: _deltaX,
               height: startingDimensions.height + _deltaY
             };
-            var _currentPosition4 = {
+            var _currentPosition = {
               top: startingDimensions.top - _deltaY,
               left: startingDimensions.left
             };
-            var _data8 = {
+            var _data5 = {
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              x: _currentPosition4.left - boundingBoxPosition.x,
-              y: _currentPosition4.top - boundingBoxPosition.y,
+              x: _currentPosition.left - boundingBoxPosition.x,
+              y: _currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data8);
+            _this3.props.onResize && _this3.props.onResize(e, _data5);
 
             _this3.setState({
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
-              top: _currentPosition4.top - boundingBoxPosition.y,
-              left: _currentPosition4.left - boundingBoxPosition.x
+              top: _currentPosition.top - boundingBoxPosition.y,
+              left: _currentPosition.left - boundingBoxPosition.x
             });
           } else if (target.id === 'tl') {
             var _deltaX2 = startingDimensions.left - e.clientX;
@@ -380,24 +456,24 @@ function (_PureComponent) {
               width: startingDimensions.width + _deltaX2,
               height: startingDimensions.height + _deltaY2
             };
-            var _currentPosition5 = {
+            var _currentPosition2 = {
               top: startingDimensions.top - _deltaY2,
               left: startingDimensions.left - _deltaX2
             };
-            var _data9 = {
+            var _data6 = {
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              x: _currentPosition5.left - boundingBoxPosition.x,
-              y: _currentPosition5.top - boundingBoxPosition.y,
+              x: _currentPosition2.left - boundingBoxPosition.x,
+              y: _currentPosition2.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data9);
+            _this3.props.onResize && _this3.props.onResize(e, _data6);
 
             _this3.setState({
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
-              top: _currentPosition5.top - boundingBoxPosition.y,
-              left: _currentPosition5.left - boundingBoxPosition.x
+              top: _currentPosition2.top - boundingBoxPosition.y,
+              left: _currentPosition2.left - boundingBoxPosition.x
             });
           }
         }
@@ -410,14 +486,14 @@ function (_PureComponent) {
 
           var dimensions = _this3.box.current.getBoundingClientRect().toJSON();
 
-          var _data10 = {
+          var _data7 = {
             width: dimensions.width,
             height: dimensions.height,
             y: dimensions.top - boundingBoxPosition.y,
             x: dimensions.left - boundingBoxPosition.x,
             node: _this3.box.current
           };
-          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data10);
+          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
           _this3.resizing = false;
         }
       };
@@ -439,7 +515,7 @@ function (_PureComponent) {
       var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
       boxClassNames = biggestBox === id ? "".concat(boxClassNames, " ").concat(styles.biggest) : boxClassNames;
 
-      var boxStyles = _objectSpread({}, boxStyle, {
+      var boxStyles = _objectSpread$1({}, boxStyle, {
         width: "".concat(position.width, "px"),
         height: "".concat(position.height, "px"),
         top: "".concat(position.top, "px"),
@@ -490,110 +566,6 @@ Box.propTypes = {
   position: PropTypes.object.isRequired,
   resize: PropTypes.bool,
   rotate: PropTypes.bool
-};
-
-function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(source, true).forEach(function (key) { _defineProperty$1(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
-
-function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-var calculateGuidePositions = function calculateGuidePositions(dimensions, axis) {
-  if (axis === 'x') {
-    var start = dimensions.left;
-    var middle = dimensions.left + parseInt(dimensions.width / 2, 10);
-    var end = dimensions.left + dimensions.width;
-    return [start, middle, end];
-  } else {
-    var _start = dimensions.top;
-
-    var _middle = dimensions.top + parseInt(dimensions.height / 2, 10);
-
-    var _end = dimensions.top + dimensions.height;
-
-    return [_start, _middle, _end];
-  }
-};
-var proximityListener = function proximityListener(active, allGuides) {
-  var xAxisGuidesForActiveBox = allGuides[active].x;
-  var yAxisGuidesForActiveBox = allGuides[active].y;
-  var xAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, xAxisGuidesForActiveBox, 'x');
-  var yAxisAllGuides = getAllGuidesForGivenAxisExceptActiveBox(allGuides, yAxisGuidesForActiveBox, 'y');
-  var xAxisMatchedGuides = checkValueProximities(xAxisGuidesForActiveBox, xAxisAllGuides);
-  var yAxisMatchedGuides = checkValueProximities(yAxisGuidesForActiveBox, yAxisAllGuides);
-  var allMatchedGuides = {};
-
-  if (xAxisMatchedGuides.proximity) {
-    allMatchedGuides.x = _objectSpread$1({}, xAxisMatchedGuides, {
-      activeBoxGuides: xAxisGuidesForActiveBox
-    });
-  }
-
-  if (yAxisMatchedGuides.proximity) {
-    allMatchedGuides.y = _objectSpread$1({}, yAxisMatchedGuides, {
-      activeBoxGuides: yAxisGuidesForActiveBox
-    });
-  }
-
-  return allMatchedGuides;
-};
-var getAllGuidesForGivenAxisExceptActiveBox = function getAllGuidesForGivenAxisExceptActiveBox(allGuides, guidesForActiveBoxAlongGivenAxis, axis) {
-  var result = Object.keys(allGuides).map(function (box) {
-    var currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
-
-    if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
-      return currentBoxGuidesAlongGivenAxis;
-    }
-  });
-  return result.filter(function (guides) {
-    return guides !== undefined;
-  });
-};
-var checkValueProximities = function checkValueProximities(activeBoxGuidesInOneAxis, allOtherGuidesInOneAxis) {
-  var proximity = null;
-  var intersection = null;
-  var matchedArray = [];
-  var snapThreshold = 5;
-
-  for (var index = 0; index < allOtherGuidesInOneAxis.length; index += 1) {
-    var index2 = 0;
-    var index3 = 0;
-
-    while (index2 < activeBoxGuidesInOneAxis.length && index3 < allOtherGuidesInOneAxis[index].length) {
-      var diff = Math.abs(activeBoxGuidesInOneAxis[index2] - allOtherGuidesInOneAxis[index][index3]);
-
-      if (diff <= snapThreshold) {
-        proximity = {
-          value: diff,
-          activeBoxIndex: index2,
-          matchedBoxIndex: index3
-        };
-        matchedArray = allOtherGuidesInOneAxis[index];
-        intersection = allOtherGuidesInOneAxis[index][index3];
-      }
-
-      if (activeBoxGuidesInOneAxis[index2] < allOtherGuidesInOneAxis[index][index3]) {
-        index2 += 1;
-      } else {
-        index3 += 1;
-      }
-    }
-  }
-
-  return {
-    matchedArray: matchedArray,
-    proximity: proximity,
-    intersection: intersection
-  };
-};
-var findBiggestBox = function findBiggestBox(boxes) {
-  return Object.keys(boxes).reduce(function (prev, current) {
-    if (boxes[current].width > boxes[prev].width) {
-      return current;
-    } else {
-      return prev;
-    }
-  });
 };
 
 function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }

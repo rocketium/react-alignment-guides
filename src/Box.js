@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import { calculateBoundaries } from './utils/helpers';
 import { RESIZE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
@@ -44,72 +45,19 @@ class Box extends PureComponent {
 				const boxHeight = this.box.current.offsetHeight;
 				const left = e.clientX - deltaX;
 				const top = e.clientY - deltaY;
+				
+				const currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+				const data = {
+					x: currentPosition.left,
+					y: currentPosition.top,
+					top: currentPosition.top,
+					left: currentPosition.left,
+					width: this.box.current.offsetWidth,
+					height: this.box.current.offsetHeight,
+					node: this.box.current
+				};
 
-				if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth && top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
-					const currentPosition = {
-						left,
-						top
-					};
-					const data = {
-						x: currentPosition.left,
-						y: currentPosition.top,
-						top: currentPosition.top,
-						left: currentPosition.left,
-						width: this.box.current.offsetWidth,
-						height: this.box.current.offsetHeight,
-						node: this.box.current
-					};
-
-					this.props.onDrag && this.props.onDrag(e, data);
-				} else if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth) {
-					const currentPosition = {
-						left,
-						top: top < 0 ? 0 : (boundingBoxDimensions.height - boxHeight)
-					};
-					const data = {
-						x: currentPosition.left,
-						y: currentPosition.top,
-						top: currentPosition.top,
-						left: currentPosition.left,
-						width: this.box.current.offsetWidth,
-						height: this.box.current.offsetHeight,
-						node: this.box.current
-					};
-
-					this.props.onDrag && this.props.onDrag(e, data);
-				} else if (top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
-					const currentPosition = {
-						left: left < 0 ? 0 : (boundingBoxDimensions.width - boxWidth),
-						top
-					};
-					const data = {
-						x: currentPosition.left,
-						y: currentPosition.top,
-						top: currentPosition.top,
-						left: currentPosition.left,
-						width: this.box.current.offsetWidth,
-						height: this.box.current.offsetHeight,
-						node: this.box.current
-					};
-
-					this.props.onDrag && this.props.onDrag(e, data);
-				} else {
-					const currentPosition = {
-						left: left < 0 ? 0 : (boundingBoxDimensions.width - boxWidth),
-						top: top < 0 ? 0 : (boundingBoxDimensions.height - boxHeight)
-					};
-					const data = {
-						x: currentPosition.left,
-						y: currentPosition.top,
-						top: currentPosition.top,
-						left: currentPosition.left,
-						width: this.box.current.offsetWidth,
-						height: this.box.current.offsetHeight,
-						node: this.box.current
-					};
-
-					this.props.onDrag && this.props.onDrag(e, data);
-				}
+				this.props.onDrag && this.props.onDrag(e, data);
 			}
 		};
 
