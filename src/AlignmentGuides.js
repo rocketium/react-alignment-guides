@@ -97,26 +97,28 @@ class AlignmentGuides extends Component {
 	}
 
 	onDragHandler(e, data) {
-		const dimensions = Object.assign({}, this.state.boxes[data.node.id], {
-			left: data.x,
-			top: data.y
+		const boxes = Object.assign({}, this.state.boxes, {
+			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+				x: data.x,
+				y: data.y,
+				left: data.left,
+				top: data.top,
+				width: data.width,
+				height: data.height
+			})
+		});
+		const guides = Object.assign({}, this.state.guides, {
+			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+				x: calculateGuidePositions(boxes[data.node.id], 'x'),
+				y: calculateGuidePositions(boxes[data.node.id], 'y')
+			})
 		});
 		this.props.onDrag && this.props.onDrag(e, data);
 		this.setState({
 			active: data.node.id,
 			guidesActive: true,
-			boxes: Object.assign({}, this.state.boxes, {
-				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-					left: data.x,
-					top: data.y
-				})
-			}),
-			guides: Object.assign({}, this.state.guides, {
-				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-					x: calculateGuidePositions(dimensions, 'x'),
-					y: calculateGuidePositions(dimensions, 'y')
-				})
-			})
+			boxes,
+			guides
 		}, () => {
 			const match = proximityListener(this.state.active, this.state.guides);
 			let newActiveBoxLeft = this.state.boxes[this.state.active].left;
@@ -189,28 +191,27 @@ class AlignmentGuides extends Component {
 	}
 
 	resizeEndHandler(e, data) {
+		const boxes = Object.assign({}, this.state.boxes, {
+			[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
+				width: data.width,
+				height: data.height,
+				top: data.y,
+				left: data.x,
+				x: data.x,
+				y: data.y
+			})
+		});
+		const guides = Object.assign({}, this.state.guides, {
+			[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
+				x: calculateGuidePositions(boxes[this.state.active], 'x'),
+				y: calculateGuidePositions(boxes[this.state.active], 'y')
+			})
+		});
 		this.setState({
-			boxes: Object.assign({}, this.state.boxes, {
-				[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
-					width: data.width,
-					height: data.height,
-					top: data.y,
-					left: data.x,
-					x: data.x,
-					y: data.y
-				})
-			})
+			boxes,
+			guides
 		}, () => {
-			this.setState({
-				guides: Object.assign({}, this.state.guides, {
-					[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
-						x: calculateGuidePositions(this.state.boxes[this.state.active], 'x'),
-						y: calculateGuidePositions(this.state.boxes[this.state.active], 'y')
-					})
-				})
-			}, () => {
-				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
-			})
+			this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 		});
 	}
 
@@ -234,7 +235,6 @@ class AlignmentGuides extends Component {
 				{...this.props}
 				biggestBox={this.state.biggestBox}
 				boundingBox={this.state.boundingBox}
-				defaultPosition={position}
 				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
 				isSelected={active === id}

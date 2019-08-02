@@ -6,13 +6,6 @@ import styles from './styles.scss';
 class Box extends PureComponent {
 	constructor(props) {
 		super(props);
-		this.state = {
-			width: props.position ? props.position.width : props.defaultPosition.width,
-			height: props.position ? props.position.height : props.defaultPosition.height,
-			top: props.position ? props.position.top : props.defaultPosition.top,
-			left: props.position ? props.position.left : props.defaultPosition.left
-		};
-
 		this.dragging = false;
 		this.resizing = false;
 
@@ -20,27 +13,6 @@ class Box extends PureComponent {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
-	}
-
-	componentDidMount() {
-		const { defaultPosition } = this.props;
-		this.setState({
-			width: defaultPosition.width,
-			height: defaultPosition.height,
-			top: defaultPosition.top,
-			left: defaultPosition.left
-		});
-	}
-
-	componentWillUpdate(nextProps, nextState, nextContext) {
-		if (this.props.position !== nextProps.position) {
-			this.setState({
-				width: nextProps.position.width,
-				height: nextProps.position.height,
-				top: nextProps.position.top,
-				left: nextProps.position.left
-			});
-		}
 	}
 
 	onDragStart(e) {
@@ -51,6 +23,8 @@ class Box extends PureComponent {
 		const data = {
 			x: startingPosition.x - boundingBoxPosition.x,
 			y: startingPosition.y - boundingBoxPosition.y,
+			top: startingPosition.y - boundingBoxPosition.y,
+			left: startingPosition.x - boundingBoxPosition.x,
 			width: startingPosition.width,
 			height: startingPosition.height,
 			node: target
@@ -70,39 +44,71 @@ class Box extends PureComponent {
 				const boxHeight = this.box.current.offsetHeight;
 				const left = e.clientX - deltaX;
 				const top = e.clientY - deltaY;
-				if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth) {
+
+				if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth && top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
 					const currentPosition = {
-						left
-					};
-					const data = {
-						x: currentPosition.left,
-						y: currentPosition.top,
-						width: this.box.current.offsetWidth,
-						height: this.box.current.offsetHeight,
-						node: this.box.current
-					};
-					this.setState({
-						left: currentPosition.left
-					}, () => {
-						this.props.onDrag && this.props.onDrag(e, data);
-					});
-				}
-				if (top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
-					const currentPosition = {
+						left,
 						top
 					};
 					const data = {
 						x: currentPosition.left,
 						y: currentPosition.top,
+						top: currentPosition.top,
+						left: currentPosition.left,
 						width: this.box.current.offsetWidth,
 						height: this.box.current.offsetHeight,
 						node: this.box.current
 					};
-					this.setState({
-						top: currentPosition.top
-					}, () => {
-						this.props.onDrag && this.props.onDrag(e, data);
-					});
+
+					this.props.onDrag && this.props.onDrag(e, data);
+				} else if (left >= 0 && left <= boundingBoxDimensions.width - boxWidth) {
+					const currentPosition = {
+						left,
+						top: top < 0 ? 0 : (boundingBoxDimensions.height - boxHeight)
+					};
+					const data = {
+						x: currentPosition.left,
+						y: currentPosition.top,
+						top: currentPosition.top,
+						left: currentPosition.left,
+						width: this.box.current.offsetWidth,
+						height: this.box.current.offsetHeight,
+						node: this.box.current
+					};
+
+					this.props.onDrag && this.props.onDrag(e, data);
+				} else if (top >= 0 && top <= boundingBoxDimensions.height - boxHeight) {
+					const currentPosition = {
+						left: left < 0 ? 0 : (boundingBoxDimensions.width - boxWidth),
+						top
+					};
+					const data = {
+						x: currentPosition.left,
+						y: currentPosition.top,
+						top: currentPosition.top,
+						left: currentPosition.left,
+						width: this.box.current.offsetWidth,
+						height: this.box.current.offsetHeight,
+						node: this.box.current
+					};
+
+					this.props.onDrag && this.props.onDrag(e, data);
+				} else {
+					const currentPosition = {
+						left: left < 0 ? 0 : (boundingBoxDimensions.width - boxWidth),
+						top: top < 0 ? 0 : (boundingBoxDimensions.height - boxHeight)
+					};
+					const data = {
+						x: currentPosition.left,
+						y: currentPosition.top,
+						top: currentPosition.top,
+						left: currentPosition.left,
+						width: this.box.current.offsetWidth,
+						height: this.box.current.offsetHeight,
+						node: this.box.current
+					};
+
+					this.props.onDrag && this.props.onDrag(e, data);
 				}
 			}
 		};
@@ -116,6 +122,8 @@ class Box extends PureComponent {
 				const data = {
 					x: endPosition.left,
 					y: endPosition.top,
+					top: endPosition.top,
+					left: endPosition.left,
 					width: this.box.current.offsetWidth,
 					height: this.box.current.offsetHeight,
 					node: this.box.current
@@ -233,7 +241,9 @@ class Box extends PureComponent {
 					this.props.onResize && this.props.onResize(e, data);
 					this.setState({
 						width: currentDimensions.width,
-						height: currentDimensions.height
+						height: currentDimensions.height,
+						top: data.y,
+						left: data.x
 					});
 				} else if (target.id === 'bl') {
 					const deltaX = startingDimensions.left - e.clientX;
@@ -342,15 +352,15 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { biggestBox, boxStyle, id, isSelected } = this.props;
+		const { biggestBox, boxStyle, id, isSelected, position } = this.props;
 		let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
 		boxClassNames = biggestBox === id ? `${boxClassNames} ${styles.biggest}` : boxClassNames;
 		const boxStyles = {
 			...boxStyle,
-			width: `${this.state.width}px`,
-			height: `${this.state.height}px`,
-			top: `${this.state.top}px`,
-			left: `${this.state.left}px`
+			width: `${position.width}px`,
+			height: `${position.height}px`,
+			top: `${position.top}px`,
+			left: `${position.left}px`
 		};
 
 		return <div
@@ -378,7 +388,6 @@ class Box extends PureComponent {
 
 Box.propTypes = {
 	biggestBox: PropTypes.string,
-	defaultPosition: PropTypes.object.isRequired,
 	drag: PropTypes.bool,
 	getBoundingBoxElement: PropTypes.func,
 	id: PropTypes.string,
@@ -393,6 +402,7 @@ Box.propTypes = {
 	onDragStart: PropTypes.func,
 	onDrag: PropTypes.func,
 	onDragEnd: PropTypes.func,
+	position: PropTypes.object.isRequired,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool
 };
