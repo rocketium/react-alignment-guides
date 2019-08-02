@@ -466,6 +466,8 @@ function (_PureComponent) {
             height: dimensions.height,
             y: dimensions.top - boundingBoxPosition.y,
             x: dimensions.left - boundingBoxPosition.x,
+            top: dimensions.top - boundingBoxPosition.y,
+            left: dimensions.left - boundingBoxPosition.x,
             node: _this3.box.current
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
@@ -839,11 +841,28 @@ function (_Component) {
   }, {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
+      if (this.state.resizing) {
+        this.props.onResize && this.props.onResize(e, data);
+      }
+
+      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+        x: data.x,
+        y: data.y,
+        left: data.left,
+        top: data.top,
+        width: data.width,
+        height: data.height
+      })));
+      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        x: calculateGuidePositions(boxes[data.node.id], 'x'),
+        y: calculateGuidePositions(boxes[data.node.id], 'y')
+      })));
       this.setState({
+        boxes: boxes,
+        guides: guides,
         resizing: false,
         guidesActive: false
       });
-      this.props.onResizeEnd && this.props.onResizeEnd(e, data);
     }
   }, {
     key: "render",

@@ -266,6 +266,8 @@ class Box extends PureComponent {
 					height: dimensions.height,
 					y: dimensions.top - boundingBoxPosition.y,
 					x: dimensions.left - boundingBoxPosition.x,
+					top: dimensions.top - boundingBoxPosition.y,
+					left: dimensions.left - boundingBoxPosition.x,
 					node: this.box.current
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
