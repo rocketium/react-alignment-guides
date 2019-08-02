@@ -13,16 +13,21 @@ class AlignmentGuides extends Component {
 			boundingBox: null,
 			biggestBox: '',
 			boxes: {},
+			dragging: false,
 			guides: {},
 			guidesActive: false,
-			match: {}
+			match: {},
+			resizing: false
 		};
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
-		this.onDragHandler = this.onDragHandler.bind(this);
 		this.selectBox = this.selectBox.bind(this);
 		this.unSelectBox = this.unSelectBox.bind(this);
+		this.dragStartHandler = this.dragStartHandler.bind(this);
+		this.dragHandler = this.dragHandler.bind(this);
+		this.dragEndHandler = this.dragEndHandler.bind(this);
+		this.resizeStartHandler = this.resizeStartHandler.bind(this);
+		this.resizeHandler = this.resizeHandler.bind(this);
 		this.resizeEndHandler = this.resizeEndHandler.bind(this);
-		this.deactivateGuides = this.deactivateGuides.bind(this);
 	}
 
 	// TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
@@ -96,7 +101,45 @@ class AlignmentGuides extends Component {
 		return this.boundingBox;
 	}
 
-	onDragHandler(e, data) {
+	selectBox(e) {
+		if (e.target.id.indexOf('box') >= 0) {
+			const boxDimensions = e.target.getBoundingClientRect().toJSON();
+			const data = { x: boxDimensions.x, y: boxDimensions.y, width: boxDimensions.width, height: boxDimensions.height, node: e.target };
+			this.setState({
+				active: e.target.id
+			});
+			this.props.onSelect && this.props.onSelect(e, data);
+		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
+			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
+			const data = { x: boxDimensions.x, y: boxDimensions.y, width: boxDimensions.width, height: boxDimensions.height, node: e.target.parentNode };
+			this.setState({
+				active: e.target.parentNode.id
+			});
+			this.props.onSelect && this.props.onSelect(e, data);
+		}
+	}
+
+	unSelectBox(e) {
+		if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+			this.setState({
+				active: ''
+			});
+		}
+	}
+
+	dragStartHandler(e, data) {
+		this.setState({
+			active: data.node.id,
+			dragging: true
+		});
+		this.props.onDragStart && this.props.onDragStart(e, data);
+	}
+
+	dragHandler(e, data) {
+		if (this.state.dragging) {
+			this.props.onDrag && this.props.onDrag(e, data);
+		}
+
 		const boxes = Object.assign({}, this.state.boxes, {
 			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
 				x: data.x,
@@ -113,9 +156,8 @@ class AlignmentGuides extends Component {
 				y: calculateGuidePositions(boxes[data.node.id], 'y')
 			})
 		});
-		this.props.onDrag && this.props.onDrag(e, data);
+
 		this.setState({
-			active: data.node.id,
 			guidesActive: true,
 			boxes,
 			guides
@@ -162,65 +204,56 @@ class AlignmentGuides extends Component {
 		});
 	}
 
-	selectBox(e) {
-		if (e.target.id.indexOf('box') >= 0) {
-			const boxDimensions = e.target.getBoundingClientRect().toJSON();
-			const data = { x: boxDimensions.x, y: boxDimensions.y, width: boxDimensions.width, height: boxDimensions.height, node: e.target };
-			this.setState({
-				active: e.target.id
-			}, () => {
-				this.props.onSelect && this.props.onSelect(e, data);
-			});
-		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
-			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
-			const data = { x: boxDimensions.x, y: boxDimensions.y, width: boxDimensions.width, height: boxDimensions.height, node: e.target.parentNode };
-			this.setState({
-				active: e.target.parentNode.id
-			}, () => {
-				this.props.onSelect && this.props.onSelect(e, data);
-			});
-		}
+	dragEndHandler(e, data) {
+		this.setState({
+			dragging: false,
+			guidesActive: false
+		});
+		this.props.onDragEnd && this.props.onDragEnd(e, data);
 	}
 
-	unSelectBox(e) {
-		if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
-			this.setState({
-				active: ''
-			});
-		}
+	resizeStartHandler(e, data) {
+		this.setState({
+			active: data.node.id,
+			resizing: true
+		});
+		this.props.onResizeStart && this.props.onResizeStart(e, data);
 	}
 
-	resizeEndHandler(e, data) {
+	resizeHandler(e, data) {
+		if (this.state.resizing) {
+			this.props.onResize && this.props.onResize(e, data);
+		}
+
 		const boxes = Object.assign({}, this.state.boxes, {
-			[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
-				width: data.width,
-				height: data.height,
-				top: data.y,
-				left: data.x,
+			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
 				x: data.x,
-				y: data.y
+				y: data.y,
+				left: data.left,
+				top: data.top,
+				width: data.width,
+				height: data.height
 			})
 		});
 		const guides = Object.assign({}, this.state.guides, {
-			[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
-				x: calculateGuidePositions(boxes[this.state.active], 'x'),
-				y: calculateGuidePositions(boxes[this.state.active], 'y')
+			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+				x: calculateGuidePositions(boxes[data.node.id], 'x'),
+				y: calculateGuidePositions(boxes[data.node.id], 'y')
 			})
 		});
+
 		this.setState({
 			boxes,
 			guides
-		}, () => {
-			this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 		});
 	}
 
-	deactivateGuides(e, data) {
+	resizeEndHandler(e, data) {
 		this.setState({
+			resizing: false,
 			guidesActive: false
-		}, () => {
-			this.props.onDragEnd && this.props.onDragEnd(e, data);
 		});
+		this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 	}
 
 	render() {
@@ -235,14 +268,19 @@ class AlignmentGuides extends Component {
 				{...this.props}
 				biggestBox={this.state.biggestBox}
 				boundingBox={this.state.boundingBox}
+				dragging={this.state.dragging}
 				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
 				isSelected={active === id}
 				key={id}
-				onDrag={this.onDragHandler}
-				onDragEnd={this.deactivateGuides}
+				onDragStart={this.dragStartHandler}
+				onDrag={this.dragHandler}
+				onDragEnd={this.dragEndHandler}
+				onResizeStart={this.resizeStartHandler}
+				onResize={this.resizeHandler}
 				onResizeEnd={this.resizeEndHandler}
 				position={position}
+				resizing={this.state.resizing}
 				selectBox={this.selectBox}
 			/>;
 		});

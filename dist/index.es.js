@@ -198,8 +198,6 @@ function (_PureComponent) {
     _classCallCheck(this, Box);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Box).call(this, props));
-    _this.dragging = false;
-    _this.resizing = false;
     _this.box = React.createRef();
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
@@ -226,12 +224,11 @@ function (_PureComponent) {
         node: target
       };
       this.props.onDragStart && this.props.onDragStart(e, data);
-      this.dragging = true;
       var deltaX = Math.abs(target.offsetLeft - e.clientX);
       var deltaY = Math.abs(target.offsetTop - e.clientY);
 
       var onDrag = function onDrag(e) {
-        if (_this2.dragging) {
+        if (_this2.props.dragging) {
           e.stopImmediatePropagation();
 
           var _boundingBox = _this2.props.getBoundingBoxElement();
@@ -257,7 +254,7 @@ function (_PureComponent) {
       };
 
       var onDragEnd = function onDragEnd(e) {
-        if (_this2.dragging) {
+        if (_this2.props.dragging) {
           var endPosition = {
             left: e.clientX - deltaX,
             top: e.clientY - deltaY
@@ -274,7 +271,6 @@ function (_PureComponent) {
           _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
           document.removeEventListener('mousemove', onDrag);
           document.removeEventListener('mouseup', onDragEnd);
-          _this2.dragging = false;
         }
       };
 
@@ -367,10 +363,9 @@ function (_PureComponent) {
         node: this.box.current
       };
       this.props.onResizeStart && this.props.onResizeStart(e, data);
-      this.resizing = true;
 
       var onResize = function onResize(e) {
-        if (_this3.resizing) {
+        if (_this3.props.resizing) {
           e.stopImmediatePropagation();
 
           if (target.id === 'br') {
@@ -383,16 +378,11 @@ function (_PureComponent) {
               height: currentDimensions.height,
               x: startingDimensions.left - boundingBoxPosition.x,
               y: startingDimensions.top - boundingBoxPosition.y,
+              left: startingDimensions.left - boundingBoxPosition.x,
+              top: startingDimensions.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data3);
-
-            _this3.setState({
-              width: currentDimensions.width,
-              height: currentDimensions.height,
-              top: _data3.y,
-              left: _data3.x
-            });
           } else if (target.id === 'bl') {
             var deltaX = startingDimensions.left - e.clientX;
             var deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
@@ -409,16 +399,11 @@ function (_PureComponent) {
               height: _currentDimensions.height,
               x: currentPosition.left - boundingBoxPosition.x,
               y: currentPosition.top - boundingBoxPosition.y,
+              left: currentPosition.left - boundingBoxPosition.x,
+              top: currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data4);
-
-            _this3.setState({
-              width: _currentDimensions.width,
-              height: _currentDimensions.height,
-              top: currentPosition.top - boundingBoxPosition.y,
-              left: currentPosition.left - boundingBoxPosition.x
-            });
           } else if (target.id === 'tr') {
             var _deltaX = e.clientX - startingDimensions.left;
 
@@ -437,16 +422,11 @@ function (_PureComponent) {
               height: _currentDimensions2.height,
               x: _currentPosition.left - boundingBoxPosition.x,
               y: _currentPosition.top - boundingBoxPosition.y,
+              left: _currentPosition.left - boundingBoxPosition.x,
+              top: _currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data5);
-
-            _this3.setState({
-              width: _currentDimensions2.width,
-              height: _currentDimensions2.height,
-              top: _currentPosition.top - boundingBoxPosition.y,
-              left: _currentPosition.left - boundingBoxPosition.x
-            });
           } else if (target.id === 'tl') {
             var _deltaX2 = startingDimensions.left - e.clientX;
 
@@ -465,22 +445,17 @@ function (_PureComponent) {
               height: _currentDimensions3.height,
               x: _currentPosition2.left - boundingBoxPosition.x,
               y: _currentPosition2.top - boundingBoxPosition.y,
+              left: _currentPosition2.left - boundingBoxPosition.x,
+              top: _currentPosition2.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data6);
-
-            _this3.setState({
-              width: _currentDimensions3.width,
-              height: _currentDimensions3.height,
-              top: _currentPosition2.top - boundingBoxPosition.y,
-              left: _currentPosition2.left - boundingBoxPosition.x
-            });
           }
         }
       };
 
       var onResizeEnd = function onResizeEnd(e) {
-        if (_this3.resizing) {
+        if (_this3.props.resizing) {
           document.removeEventListener('mousemove', onResize);
           document.removeEventListener('mouseup', onResizeEnd);
 
@@ -494,7 +469,6 @@ function (_PureComponent) {
             node: _this3.box.current
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
-          _this3.resizing = false;
         }
       };
 
@@ -607,16 +581,21 @@ function (_Component) {
       boundingBox: null,
       biggestBox: '',
       boxes: {},
+      dragging: false,
       guides: {},
       guidesActive: false,
-      match: {}
+      match: {},
+      resizing: false
     };
     _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized$1(_this));
-    _this.onDragHandler = _this.onDragHandler.bind(_assertThisInitialized$1(_this));
     _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
     _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized$1(_this));
+    _this.dragStartHandler = _this.dragStartHandler.bind(_assertThisInitialized$1(_this));
+    _this.dragHandler = _this.dragHandler.bind(_assertThisInitialized$1(_this));
+    _this.dragEndHandler = _this.dragEndHandler.bind(_assertThisInitialized$1(_this));
+    _this.resizeStartHandler = _this.resizeStartHandler.bind(_assertThisInitialized$1(_this));
+    _this.resizeHandler = _this.resizeHandler.bind(_assertThisInitialized$1(_this));
     _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized$1(_this));
-    _this.deactivateGuides = _this.deactivateGuides.bind(_assertThisInitialized$1(_this));
     return _this;
   } // TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
 
@@ -697,9 +676,63 @@ function (_Component) {
       return this.boundingBox;
     }
   }, {
-    key: "onDragHandler",
-    value: function onDragHandler(e, data) {
+    key: "selectBox",
+    value: function selectBox(e) {
+      if (e.target.id.indexOf('box') >= 0) {
+        var boxDimensions = e.target.getBoundingClientRect().toJSON();
+        var data = {
+          x: boxDimensions.x,
+          y: boxDimensions.y,
+          width: boxDimensions.width,
+          height: boxDimensions.height,
+          node: e.target
+        };
+        this.setState({
+          active: e.target.id
+        });
+        this.props.onSelect && this.props.onSelect(e, data);
+      } else if (e.target.parentNode.id.indexOf('box') >= 0) {
+        var _boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
+
+        var _data = {
+          x: _boxDimensions.x,
+          y: _boxDimensions.y,
+          width: _boxDimensions.width,
+          height: _boxDimensions.height,
+          node: e.target.parentNode
+        };
+        this.setState({
+          active: e.target.parentNode.id
+        });
+        this.props.onSelect && this.props.onSelect(e, _data);
+      }
+    }
+  }, {
+    key: "unSelectBox",
+    value: function unSelectBox(e) {
+      if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+        this.setState({
+          active: ''
+        });
+      }
+    }
+  }, {
+    key: "dragStartHandler",
+    value: function dragStartHandler(e, data) {
+      this.setState({
+        active: data.node.id,
+        dragging: true
+      });
+      this.props.onDragStart && this.props.onDragStart(e, data);
+    }
+  }, {
+    key: "dragHandler",
+    value: function dragHandler(e, data) {
       var _this2 = this;
+
+      if (this.state.dragging) {
+        this.props.onDrag && this.props.onDrag(e, data);
+      }
 
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
         x: data.x,
@@ -713,9 +746,7 @@ function (_Component) {
         x: calculateGuidePositions(boxes[data.node.id], 'x'),
         y: calculateGuidePositions(boxes[data.node.id], 'y')
       })));
-      this.props.onDrag && this.props.onDrag(e, data);
       this.setState({
-        active: data.node.id,
         guidesActive: true,
         boxes: boxes,
         guides: guides
@@ -764,89 +795,60 @@ function (_Component) {
       });
     }
   }, {
-    key: "selectBox",
-    value: function selectBox(e) {
-      var _this3 = this;
-
-      if (e.target.id.indexOf('box') >= 0) {
-        var boxDimensions = e.target.getBoundingClientRect().toJSON();
-        var data = {
-          x: boxDimensions.x,
-          y: boxDimensions.y,
-          width: boxDimensions.width,
-          height: boxDimensions.height,
-          node: e.target
-        };
-        this.setState({
-          active: e.target.id
-        }, function () {
-          _this3.props.onSelect && _this3.props.onSelect(e, data);
-        });
-      } else if (e.target.parentNode.id.indexOf('box') >= 0) {
-        var _boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
-
-        var _data = {
-          x: _boxDimensions.x,
-          y: _boxDimensions.y,
-          width: _boxDimensions.width,
-          height: _boxDimensions.height,
-          node: e.target.parentNode
-        };
-        this.setState({
-          active: e.target.parentNode.id
-        }, function () {
-          _this3.props.onSelect && _this3.props.onSelect(e, _data);
-        });
-      }
+    key: "dragEndHandler",
+    value: function dragEndHandler(e, data) {
+      this.setState({
+        dragging: false,
+        guidesActive: false
+      });
+      this.props.onDragEnd && this.props.onDragEnd(e, data);
     }
   }, {
-    key: "unSelectBox",
-    value: function unSelectBox(e) {
-      if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
-        this.setState({
-          active: ''
-        });
-      }
+    key: "resizeStartHandler",
+    value: function resizeStartHandler(e, data) {
+      this.setState({
+        active: data.node.id,
+        resizing: true
+      });
+      this.props.onResizeStart && this.props.onResizeStart(e, data);
     }
   }, {
-    key: "resizeEndHandler",
-    value: function resizeEndHandler(e, data) {
-      var _this4 = this;
+    key: "resizeHandler",
+    value: function resizeHandler(e, data) {
+      if (this.state.resizing) {
+        this.props.onResize && this.props.onResize(e, data);
+      }
 
-      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], {
-        width: data.width,
-        height: data.height,
-        top: data.y,
-        left: data.x,
+      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
         x: data.x,
-        y: data.y
+        y: data.y,
+        left: data.left,
+        top: data.top,
+        width: data.width,
+        height: data.height
       })));
-      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.guides[this.state.active], {
-        x: calculateGuidePositions(boxes[this.state.active], 'x'),
-        y: calculateGuidePositions(boxes[this.state.active], 'y')
+      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        x: calculateGuidePositions(boxes[data.node.id], 'x'),
+        y: calculateGuidePositions(boxes[data.node.id], 'y')
       })));
       this.setState({
         boxes: boxes,
         guides: guides
-      }, function () {
-        _this4.props.onResizeEnd && _this4.props.onResizeEnd(e, data);
       });
     }
   }, {
-    key: "deactivateGuides",
-    value: function deactivateGuides(e, data) {
-      var _this5 = this;
-
+    key: "resizeEndHandler",
+    value: function resizeEndHandler(e, data) {
       this.setState({
+        resizing: false,
         guidesActive: false
-      }, function () {
-        _this5.props.onDragEnd && _this5.props.onDragEnd(e, data);
       });
+      this.props.onResizeEnd && this.props.onResizeEnd(e, data);
     }
   }, {
     key: "render",
     value: function render() {
-      var _this6 = this;
+      var _this3 = this;
 
       var _this$state = this.state,
           active = _this$state.active,
@@ -856,18 +858,23 @@ function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
         var id = "box".concat(index);
-        return React.createElement(Box, _extends({}, _this6.props, {
-          biggestBox: _this6.state.biggestBox,
-          boundingBox: _this6.state.boundingBox,
-          getBoundingBoxElement: _this6.getBoundingBoxElement,
+        return React.createElement(Box, _extends({}, _this3.props, {
+          biggestBox: _this3.state.biggestBox,
+          boundingBox: _this3.state.boundingBox,
+          dragging: _this3.state.dragging,
+          getBoundingBoxElement: _this3.getBoundingBoxElement,
           id: id,
           isSelected: active === id,
           key: id,
-          onDrag: _this6.onDragHandler,
-          onDragEnd: _this6.deactivateGuides,
-          onResizeEnd: _this6.resizeEndHandler,
+          onDragStart: _this3.dragStartHandler,
+          onDrag: _this3.dragHandler,
+          onDragEnd: _this3.dragEndHandler,
+          onResizeStart: _this3.resizeStartHandler,
+          onResize: _this3.resizeHandler,
+          onResizeEnd: _this3.resizeEndHandler,
           position: position,
-          selectBox: _this6.selectBox
+          resizing: _this3.state.resizing,
+          selectBox: _this3.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -876,9 +883,9 @@ function (_Component) {
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this6.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+        var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this6.state.active && _this6.state.active === box && _this6.state.match && _this6.state.match.x && _this6.state.match.x.intersection && _this6.state.match.x.intersection === position) {
+          if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.x && _this3.state.match.x.intersection && _this3.state.match.x.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -893,9 +900,9 @@ function (_Component) {
         return result.concat(xAxisGuidesForCurrentBox);
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this6.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+        var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this6.state.active && _this6.state.active === box && _this6.state.match && _this6.state.match.y && _this6.state.match.y.intersection && _this6.state.match.y.intersection === position) {
+          if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.y && _this3.state.match.y.intersection && _this3.state.match.y.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,

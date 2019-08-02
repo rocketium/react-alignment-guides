@@ -7,9 +7,6 @@ import styles from './styles.scss';
 class Box extends PureComponent {
 	constructor(props) {
 		super(props);
-		this.dragging = false;
-		this.resizing = false;
-
 		this.box = React.createRef();
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
@@ -31,13 +28,12 @@ class Box extends PureComponent {
 			node: target
 		};
 		this.props.onDragStart && this.props.onDragStart(e, data);
-		this.dragging = true;
 
 		const deltaX = Math.abs(target.offsetLeft - e.clientX);
 		const deltaY = Math.abs(target.offsetTop - e.clientY);
 
 		const onDrag = (e) => {
-			if (this.dragging) {
+			if (this.props.dragging) {
 				e.stopImmediatePropagation();
 				const boundingBox = this.props.getBoundingBoxElement();
 				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
@@ -45,7 +41,7 @@ class Box extends PureComponent {
 				const boxHeight = this.box.current.offsetHeight;
 				const left = e.clientX - deltaX;
 				const top = e.clientY - deltaY;
-				
+
 				const currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
 				const data = {
 					x: currentPosition.left,
@@ -62,7 +58,7 @@ class Box extends PureComponent {
 		};
 
 		const onDragEnd = (e) => {
-			if (this.dragging) {
+			if (this.props.dragging) {
 				const endPosition = {
 					left: e.clientX - deltaX,
 					top: e.clientY - deltaY
@@ -79,7 +75,6 @@ class Box extends PureComponent {
 				this.props.onDragEnd && this.props.onDragEnd(e, data);
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
-				this.dragging = false;
 			}
 		};
 
@@ -168,10 +163,9 @@ class Box extends PureComponent {
 			node: this.box.current
 		};
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
-		this.resizing = true;
 
 		const onResize = (e) => {
-			if (this.resizing) {
+			if (this.props.resizing) {
 				e.stopImmediatePropagation();
 				if (target.id === 'br') {
 					const currentDimensions = {
@@ -184,15 +178,11 @@ class Box extends PureComponent {
 						height: currentDimensions.height,
 						x: startingDimensions.left - boundingBoxPosition.x,
 						y: startingDimensions.top - boundingBoxPosition.y,
+						left: startingDimensions.left - boundingBoxPosition.x,
+						top: startingDimensions.top - boundingBoxPosition.y,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-					this.setState({
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						top: data.y,
-						left: data.x
-					});
 				} else if (target.id === 'bl') {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
@@ -211,15 +201,11 @@ class Box extends PureComponent {
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
 						y: currentPosition.top - boundingBoxPosition.y,
+						left: currentPosition.left - boundingBoxPosition.x,
+						top: currentPosition.top - boundingBoxPosition.y,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-					this.setState({
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						top: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x
-					});
 				} else if (target.id === 'tr') {
 					const deltaX = e.clientX - startingDimensions.left;
 					const deltaY = startingDimensions.top - e.clientY;
@@ -238,15 +224,11 @@ class Box extends PureComponent {
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
 						y: currentPosition.top - boundingBoxPosition.y,
+						left: currentPosition.left - boundingBoxPosition.x,
+						top: currentPosition.top - boundingBoxPosition.y,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-					this.setState({
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						top: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x
-					});
 				} else if (target.id === 'tl') {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top - e.clientY;
@@ -264,21 +246,17 @@ class Box extends PureComponent {
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
 						y: currentPosition.top - boundingBoxPosition.y,
+						left: currentPosition.left - boundingBoxPosition.x,
+						top: currentPosition.top - boundingBoxPosition.y,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-					this.setState({
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						top: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x
-					});
 				}
 			}
 		};
 
 		const onResizeEnd = (e) => {
-			if (this.resizing) {
+			if (this.props.resizing) {
 				document.removeEventListener('mousemove', onResize);
 				document.removeEventListener('mouseup', onResizeEnd);
 
@@ -291,7 +269,6 @@ class Box extends PureComponent {
 					node: this.box.current
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
-				this.resizing = false;
 			}
 		};
 
