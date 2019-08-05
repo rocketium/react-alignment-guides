@@ -638,7 +638,8 @@ function (_Component) {
   }, {
     key: "componentWillUpdate",
     value: function componentWillUpdate(nextProps, nextState, nextContext) {
-      // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
+      var active = this.state.active; // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
+
       if (nextProps.boxes !== this.props.boxes) {
         var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
@@ -664,6 +665,27 @@ function (_Component) {
           boxes: boxes,
           guides: guides,
           biggestBox: findBiggestBox(boxes)
+        });
+      }
+
+      if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
+        var _boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, active, Object.assign({}, this.state.boxes[active], {
+          x: nextProps.boxes[active].x,
+          y: nextProps.boxes[active].y,
+          left: nextProps.boxes[active].left,
+          top: nextProps.boxes[active].top,
+          width: nextProps.boxes[active].width,
+          height: nextProps.boxes[active].height
+        })));
+
+        var _guides = Object.assign({}, this.state.guides, _defineProperty$2({}, active, Object.assign({}, this.state.guides[active], {
+          x: calculateGuidePositions(_boxes[active], 'x'),
+          y: calculateGuidePositions(_boxes[active], 'y')
+        })));
+
+        this.setState({
+          boxes: _boxes,
+          guides: _guides
         });
       }
     }
