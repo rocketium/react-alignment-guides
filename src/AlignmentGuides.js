@@ -134,8 +134,8 @@ class AlignmentGuides extends Component {
 			const data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
 				y: boxDimensions.y - boundingBoxPosition.y,
-				left: boxDimensions.left - boundingBoxPosition.left,
-				top: boxDimensions.top - boundingBoxPosition.top,
+				left: boxDimensions.left - boundingBoxPosition.x,
+				top: boxDimensions.top - boundingBoxPosition.y,
 				width: boxDimensions.width,
 				height: boxDimensions.height,
 				node: e.target
@@ -149,8 +149,8 @@ class AlignmentGuides extends Component {
 			const data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
 				y: boxDimensions.y - boundingBoxPosition.y,
-				left: boxDimensions.left - boundingBoxPosition.left,
-				top: boxDimensions.top - boundingBoxPosition.top,
+				left: boxDimensions.left - boundingBoxPosition.x,
+				top: boxDimensions.top - boundingBoxPosition.y,
 				width: boxDimensions.width,
 				height: boxDimensions.height,
 				node: e.target.parentNode

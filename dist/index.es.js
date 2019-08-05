@@ -360,15 +360,21 @@ function (_PureComponent) {
         height: startingDimensions.height,
         x: startingDimensions.left - boundingBoxPosition.x,
         y: startingDimensions.top - boundingBoxPosition.y,
+        left: startingDimensions.left - boundingBoxPosition.x,
+        top: startingDimensions.top - boundingBoxPosition.y,
         node: this.box.current
       };
       this.props.onResizeStart && this.props.onResizeStart(e, data);
+      var deltaX = target.offsetLeft - e.clientX;
+      var deltaY = target.offsetTop - e.clientY;
 
       var onResize = function onResize(e) {
         if (_this3.props.resizing) {
           e.stopImmediatePropagation();
 
           if (target.id === 'br') {
+            deltaX = target.offsetLeft - e.clientX;
+            deltaY = target.offsetTop - e.clientY;
             var currentDimensions = {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
@@ -380,12 +386,14 @@ function (_PureComponent) {
               y: startingDimensions.top - boundingBoxPosition.y,
               left: startingDimensions.left - boundingBoxPosition.x,
               top: startingDimensions.top - boundingBoxPosition.y,
+              deltaX: deltaX,
+              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data3);
           } else if (target.id === 'bl') {
-            var deltaX = startingDimensions.left - e.clientX;
-            var deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
+            deltaX = startingDimensions.left - e.clientX;
+            deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
             var _currentDimensions = {
               width: startingDimensions.width + deltaX,
               height: startingDimensions.height - deltaY
@@ -401,20 +409,20 @@ function (_PureComponent) {
               y: currentPosition.top - boundingBoxPosition.y,
               left: currentPosition.left - boundingBoxPosition.x,
               top: currentPosition.top - boundingBoxPosition.y,
+              deltaX: deltaX,
+              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data4);
           } else if (target.id === 'tr') {
-            var _deltaX = e.clientX - startingDimensions.left;
-
-            var _deltaY = startingDimensions.top - e.clientY;
-
+            deltaX = e.clientX - startingDimensions.left;
+            deltaY = startingDimensions.top - e.clientY;
             var _currentDimensions2 = {
-              width: _deltaX,
-              height: startingDimensions.height + _deltaY
+              width: deltaX,
+              height: startingDimensions.height + deltaY
             };
             var _currentPosition = {
-              top: startingDimensions.top - _deltaY,
+              top: startingDimensions.top - deltaY,
               left: startingDimensions.left
             };
             var _data5 = {
@@ -424,21 +432,21 @@ function (_PureComponent) {
               y: _currentPosition.top - boundingBoxPosition.y,
               left: _currentPosition.left - boundingBoxPosition.x,
               top: _currentPosition.top - boundingBoxPosition.y,
+              deltaX: deltaX,
+              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data5);
           } else if (target.id === 'tl') {
-            var _deltaX2 = startingDimensions.left - e.clientX;
-
-            var _deltaY2 = startingDimensions.top - e.clientY;
-
+            deltaX = startingDimensions.left - e.clientX;
+            deltaY = startingDimensions.top - e.clientY;
             var _currentDimensions3 = {
-              width: startingDimensions.width + _deltaX2,
-              height: startingDimensions.height + _deltaY2
+              width: startingDimensions.width + deltaX,
+              height: startingDimensions.height + deltaY
             };
             var _currentPosition2 = {
-              top: startingDimensions.top - _deltaY2,
-              left: startingDimensions.left - _deltaX2
+              top: startingDimensions.top - deltaY,
+              left: startingDimensions.left - deltaX
             };
             var _data6 = {
               width: _currentDimensions3.width,
@@ -447,6 +455,8 @@ function (_PureComponent) {
               y: _currentPosition2.top - boundingBoxPosition.y,
               left: _currentPosition2.left - boundingBoxPosition.x,
               top: _currentPosition2.top - boundingBoxPosition.y,
+              deltaX: deltaX,
+              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data6);
@@ -468,6 +478,8 @@ function (_PureComponent) {
             x: dimensions.left - boundingBoxPosition.x,
             top: dimensions.top - boundingBoxPosition.y,
             left: dimensions.left - boundingBoxPosition.x,
+            deltaX: deltaX,
+            deltaY: deltaY,
             node: _this3.box.current
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
@@ -710,8 +722,8 @@ function (_Component) {
         var data = {
           x: boxDimensions.x - boundingBoxPosition.x,
           y: boxDimensions.y - boundingBoxPosition.y,
-          left: boxDimensions.left - boundingBoxPosition.left,
-          top: boxDimensions.top - boundingBoxPosition.top,
+          left: boxDimensions.left - boundingBoxPosition.x,
+          top: boxDimensions.top - boundingBoxPosition.y,
           width: boxDimensions.width,
           height: boxDimensions.height,
           node: e.target
@@ -726,8 +738,8 @@ function (_Component) {
         var _data = {
           x: _boxDimensions.x - boundingBoxPosition.x,
           y: _boxDimensions.y - boundingBoxPosition.y,
-          left: _boxDimensions.left - boundingBoxPosition.left,
-          top: _boxDimensions.top - boundingBoxPosition.top,
+          left: _boxDimensions.left - boundingBoxPosition.x,
+          top: _boxDimensions.top - boundingBoxPosition.y,
           width: _boxDimensions.width,
           height: _boxDimensions.height,
           node: e.target.parentNode
