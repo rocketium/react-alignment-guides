@@ -702,11 +702,16 @@ function (_Component) {
   }, {
     key: "selectBox",
     value: function selectBox(e) {
+      var boundingBox = this.getBoundingBoxElement();
+      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+
       if (e.target.id.indexOf('box') >= 0) {
         var boxDimensions = e.target.getBoundingClientRect().toJSON();
         var data = {
-          x: boxDimensions.x,
-          y: boxDimensions.y,
+          x: boxDimensions.x - boundingBoxPosition.x,
+          y: boxDimensions.y - boundingBoxPosition.y,
+          left: boxDimensions.left - boundingBoxPosition.left,
+          top: boxDimensions.top - boundingBoxPosition.top,
           width: boxDimensions.width,
           height: boxDimensions.height,
           node: e.target
@@ -719,8 +724,10 @@ function (_Component) {
         var _boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 
         var _data = {
-          x: _boxDimensions.x,
-          y: _boxDimensions.y,
+          x: _boxDimensions.x - boundingBoxPosition.x,
+          y: _boxDimensions.y - boundingBoxPosition.y,
+          left: _boxDimensions.left - boundingBoxPosition.left,
+          top: _boxDimensions.top - boundingBoxPosition.top,
           width: _boxDimensions.width,
           height: _boxDimensions.height,
           node: e.target.parentNode

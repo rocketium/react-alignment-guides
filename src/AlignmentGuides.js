@@ -127,16 +127,34 @@ class AlignmentGuides extends Component {
 	}
 
 	selectBox(e) {
+		const boundingBox = this.getBoundingBoxElement();
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
-			const data = { x: boxDimensions.x, y: boxDimensions.y, width: boxDimensions.width, height: boxDimensions.height, node: e.target };
+			const data = {
+				x: boxDimensions.x - boundingBoxPosition.x,
+				y: boxDimensions.y - boundingBoxPosition.y,
+				left: boxDimensions.left - boundingBoxPosition.left,
+				top: boxDimensions.top - boundingBoxPosition.top,
+				width: boxDimensions.width,
+				height: boxDimensions.height,
+				node: e.target
+			};
 			this.setState({
 				active: e.target.id
 			});
 			this.props.onSelect && this.props.onSelect(e, data);
 		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
-			const data = { x: boxDimensions.x, y: boxDimensions.y, width: boxDimensions.width, height: boxDimensions.height, node: e.target.parentNode };
+			const data = {
+				x: boxDimensions.x - boundingBoxPosition.x,
+				y: boxDimensions.y - boundingBoxPosition.y,
+				left: boxDimensions.left - boundingBoxPosition.left,
+				top: boxDimensions.top - boundingBoxPosition.top,
+				width: boxDimensions.width,
+				height: boxDimensions.height,
+				node: e.target.parentNode
+			};
 			this.setState({
 				active: e.target.parentNode.id
 			});
