@@ -883,7 +883,7 @@ function (_Component) {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
       if (this.state.resizing) {
-        this.props.onResize && this.props.onResize(e, data);
+        this.props.onResizeEnd && this.props.onResizeEnd(e, data);
       }
 
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {

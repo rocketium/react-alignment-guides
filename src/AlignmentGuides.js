@@ -293,7 +293,7 @@ class AlignmentGuides extends Component {
 
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
-			this.props.onResize && this.props.onResize(e, data);
+			this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 		}
 
 		const boxes = Object.assign({}, this.state.boxes, {
