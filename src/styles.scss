@@ -56,8 +56,10 @@
 .coordinates {
 	font-size: 10px;
 	position: absolute;
-	top: -30px;
+	top: -20px;
+	left: 0;
 	color: #EB4B48;
+	font-weight: bold;
 }
 
 .dimensions {
@@ -66,6 +68,7 @@
 	justify-content: center;
 	position: absolute;
 	font-size: 10px;
+	font-weight: bold;
 	color: #EB4B48;
 }
 

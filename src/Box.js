@@ -319,9 +319,8 @@ class Box extends PureComponent {
 					<span
 						ref={this.coordinates}
 						className={styles.coordinates}
-						style={{ left: `-${this.getCoordinatesWrapperWidth() + 20}px` }}
 					>
-						{`${Math.round(position.left)}, ${Math.round(position.top)}`}
+						{`(${Math.round(position.left)}, ${Math.round(position.top)})`}
 					</span> :
 					null
 			}
@@ -339,7 +338,7 @@ class Box extends PureComponent {
 				isSelected ?
 					<span
 						className={`${styles.dimensions} ${styles.height}`}
-						style={{ height: `${position.height}px`, left: `${position.width}px` }}
+						style={{ height: `${position.height}px`, left: `${position.width + 10}px` }}
 					>
 						{Math.round(position.height)}
 					</span> :
