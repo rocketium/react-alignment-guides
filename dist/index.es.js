@@ -371,8 +371,6 @@ function (_PureComponent) {
       var onResize = function onResize(e) {
         if (_this3.props.resizing) {
           if (target.id === 'br') {
-            deltaX = target.offsetLeft - e.clientX;
-            deltaY = target.offsetTop - e.clientY;
             var currentDimensions = {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
@@ -384,21 +382,21 @@ function (_PureComponent) {
               y: startingDimensions.top - boundingBoxPosition.y,
               left: startingDimensions.left - boundingBoxPosition.x,
               top: startingDimensions.top - boundingBoxPosition.y,
-              deltaX: deltaX,
-              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data3);
           } else if (target.id === 'bl') {
-            deltaX = startingDimensions.left - e.clientX;
-            deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
+            var _deltaX = startingDimensions.left - e.clientX;
+
+            var _deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
+
             var _currentDimensions = {
-              width: startingDimensions.width + deltaX,
-              height: startingDimensions.height - deltaY
+              width: startingDimensions.width + _deltaX,
+              height: startingDimensions.height - _deltaY
             };
             var currentPosition = {
               top: startingDimensions.top,
-              left: startingDimensions.left - deltaX
+              left: startingDimensions.left - _deltaX
             };
             var _data4 = {
               width: _currentDimensions.width,
@@ -407,20 +405,20 @@ function (_PureComponent) {
               y: currentPosition.top - boundingBoxPosition.y,
               left: currentPosition.left - boundingBoxPosition.x,
               top: currentPosition.top - boundingBoxPosition.y,
-              deltaX: deltaX,
-              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data4);
           } else if (target.id === 'tr') {
-            deltaX = e.clientX - startingDimensions.left;
-            deltaY = startingDimensions.top - e.clientY;
+            var _deltaX2 = e.clientX - startingDimensions.left;
+
+            var _deltaY2 = startingDimensions.top - e.clientY;
+
             var _currentDimensions2 = {
-              width: deltaX,
-              height: startingDimensions.height + deltaY
+              width: _deltaX2,
+              height: startingDimensions.height + _deltaY2
             };
             var _currentPosition = {
-              top: startingDimensions.top - deltaY,
+              top: startingDimensions.top - _deltaY2,
               left: startingDimensions.left
             };
             var _data5 = {
@@ -430,21 +428,21 @@ function (_PureComponent) {
               y: _currentPosition.top - boundingBoxPosition.y,
               left: _currentPosition.left - boundingBoxPosition.x,
               top: _currentPosition.top - boundingBoxPosition.y,
-              deltaX: deltaX,
-              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data5);
           } else if (target.id === 'tl') {
-            deltaX = startingDimensions.left - e.clientX;
-            deltaY = startingDimensions.top - e.clientY;
+            var _deltaX3 = startingDimensions.left - e.clientX;
+
+            var _deltaY3 = startingDimensions.top - e.clientY;
+
             var _currentDimensions3 = {
-              width: startingDimensions.width + deltaX,
-              height: startingDimensions.height + deltaY
+              width: startingDimensions.width + _deltaX3,
+              height: startingDimensions.height + _deltaY3
             };
             var _currentPosition2 = {
-              top: startingDimensions.top - deltaY,
-              left: startingDimensions.left - deltaX
+              top: startingDimensions.top - _deltaY3,
+              left: startingDimensions.left - _deltaX3
             };
             var _data6 = {
               width: _currentDimensions3.width,
@@ -453,8 +451,6 @@ function (_PureComponent) {
               y: _currentPosition2.top - boundingBoxPosition.y,
               left: _currentPosition2.left - boundingBoxPosition.x,
               top: _currentPosition2.top - boundingBoxPosition.y,
-              deltaX: deltaX,
-              deltaY: deltaY,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, _data6);
@@ -476,8 +472,6 @@ function (_PureComponent) {
             x: dimensions.left - boundingBoxPosition.x,
             top: dimensions.top - boundingBoxPosition.y,
             left: dimensions.left - boundingBoxPosition.x,
-            deltaX: deltaX,
-            deltaY: deltaY,
             node: _this3.box.current
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);

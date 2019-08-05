@@ -166,14 +166,12 @@ class Box extends PureComponent {
 			node: this.box.current
 		};
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
-		let deltaX = target.offsetLeft - e.clientX;
-		let deltaY = target.offsetTop - e.clientY;
+		const deltaX = target.offsetLeft - e.clientX;
+		const deltaY = target.offsetTop - e.clientY;
 
 		const onResize = (e) => {
 			if (this.props.resizing) {
 				if (target.id === 'br') {
-					deltaX = target.offsetLeft - e.clientX;
-					deltaY = target.offsetTop - e.clientY;
 					const currentDimensions = {
 						width: e.clientX - startingDimensions.left,
 						height: e.clientY - startingDimensions.top
@@ -186,14 +184,12 @@ class Box extends PureComponent {
 						y: startingDimensions.top - boundingBoxPosition.y,
 						left: startingDimensions.left - boundingBoxPosition.x,
 						top: startingDimensions.top - boundingBoxPosition.y,
-						deltaX,
-						deltaY,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 				} else if (target.id === 'bl') {
-					deltaX = startingDimensions.left - e.clientX;
-					deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
+					const deltaX = startingDimensions.left - e.clientX;
+					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
 					const currentDimensions = {
 						width: startingDimensions.width + deltaX,
 						height: startingDimensions.height - deltaY
@@ -211,14 +207,12 @@ class Box extends PureComponent {
 						y: currentPosition.top - boundingBoxPosition.y,
 						left: currentPosition.left - boundingBoxPosition.x,
 						top: currentPosition.top - boundingBoxPosition.y,
-						deltaX,
-						deltaY,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 				} else if (target.id === 'tr') {
-					deltaX = e.clientX - startingDimensions.left;
-					deltaY = startingDimensions.top - e.clientY;
+					const deltaX = e.clientX - startingDimensions.left;
+					const deltaY = startingDimensions.top - e.clientY;
 					const currentDimensions = {
 						width: deltaX,
 						height: startingDimensions.height + deltaY
@@ -236,14 +230,12 @@ class Box extends PureComponent {
 						y: currentPosition.top - boundingBoxPosition.y,
 						left: currentPosition.left - boundingBoxPosition.x,
 						top: currentPosition.top - boundingBoxPosition.y,
-						deltaX,
-						deltaY,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
 				} else if (target.id === 'tl') {
-					deltaX = startingDimensions.left - e.clientX;
-					deltaY = startingDimensions.top - e.clientY;
+					const deltaX = startingDimensions.left - e.clientX;
+					const deltaY = startingDimensions.top - e.clientY;
 					const currentDimensions = {
 						width: startingDimensions.width + deltaX,
 						height: startingDimensions.height + deltaY
@@ -260,8 +252,6 @@ class Box extends PureComponent {
 						y: currentPosition.top - boundingBoxPosition.y,
 						left: currentPosition.left - boundingBoxPosition.x,
 						top: currentPosition.top - boundingBoxPosition.y,
-						deltaX,
-						deltaY,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
@@ -282,8 +272,6 @@ class Box extends PureComponent {
 					x: dimensions.left - boundingBoxPosition.x,
 					top: dimensions.top - boundingBoxPosition.y,
 					left: dimensions.left - boundingBoxPosition.x,
-					deltaX,
-					deltaY,
 					node: this.box.current
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
