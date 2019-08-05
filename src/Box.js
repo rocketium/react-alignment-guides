@@ -14,7 +14,6 @@ class Box extends PureComponent {
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
-		this.getDimensionsWrapperWidth = this.getDimensionsWrapperWidth.bind(this);
 	}
 
 	onDragStart(e) {
@@ -292,12 +291,6 @@ class Box extends PureComponent {
 		}
 	}
 
-	getDimensionsWrapperWidth() {
-		if (this.props.isSelected && this.height && this.height.current) {
-			return this.height.current.offsetWidth;
-		}
-	}
-
 	render() {
 		const { biggestBox, boxStyle, id, isSelected, position } = this.props;
 		let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
@@ -346,8 +339,7 @@ class Box extends PureComponent {
 				isSelected ?
 					<span
 						className={`${styles.dimensions} ${styles.height}`}
-						ref={this.height}
-						style={{ height: `${position.height}px`, left: `${position.width + this.getDimensionsWrapperWidth() + 10}px` }}
+						style={{ height: `${position.height}px`, left: `${position.width}px` }}
 					>
 						{Math.round(position.height)}
 					</span> :

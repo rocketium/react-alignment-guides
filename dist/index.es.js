@@ -205,7 +205,6 @@ function (_PureComponent) {
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
     _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized(_this));
-    _this.getDimensionsWrapperWidth = _this.getDimensionsWrapperWidth.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -493,13 +492,6 @@ function (_PureComponent) {
       }
     }
   }, {
-    key: "getDimensionsWrapperWidth",
-    value: function getDimensionsWrapperWidth() {
-      if (this.props.isSelected && this.height && this.height.current) {
-        return this.height.current.offsetWidth;
-      }
-    }
-  }, {
     key: "render",
     value: function render() {
       var _this4 = this;
@@ -543,10 +535,9 @@ function (_PureComponent) {
         }
       }, Math.round(position.width)) : null, isSelected ? React.createElement("span", {
         className: "".concat(styles.dimensions, " ").concat(styles.height),
-        ref: this.height,
         style: {
           height: "".concat(position.height, "px"),
-          left: "".concat(position.width + this.getDimensionsWrapperWidth() + 10, "px")
+          left: "".concat(position.width, "px")
         }
       }, Math.round(position.height)) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
         var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
