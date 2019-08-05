@@ -326,7 +326,7 @@ class Box extends PureComponent {
 					<span
 						ref={this.coordinates}
 						className={styles.coordinates}
-						style={{ left: `-${this.getCoordinatesWrapperWidth() + 10}px` }}
+						style={{ left: `-${this.getCoordinatesWrapperWidth() + 20}px` }}
 					>
 						{`${position.left}, ${position.top}`}
 					</span> :
@@ -342,7 +342,7 @@ class Box extends PureComponent {
 					<span
 						className={`${styles.dimensions} ${styles.height}`}
 						ref={this.height}
-						style={{ height: `${position.height}px`, left: `-${this.getDimensionsWrapperWidth() + 10}px` }}
+						style={{ height: `${position.height}px`, left: `${position.width + this.getDimensionsWrapperWidth() + 10}px` }}
 					>
 						{position.height}
 					</span> :
