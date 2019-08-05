@@ -282,70 +282,127 @@ function (_PureComponent) {
   }, {
     key: "shortcutHandler",
     value: function shortcutHandler(e) {
+      var position = this.props.position;
+
       if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-        this.setState({
-          left: this.state.left + 1
+        var data = Object.assign({}, position, {
+          node: this.box.current,
+          left: position.left + 1,
+          x: position.x + 1
         });
+        this.props.onKeyUp && this.props.onKeyUp(e, data);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-        this.setState({
-          left: this.state.left + 10
+        var _data3 = Object.assign({}, position, {
+          node: this.box.current,
+          left: position.left + 10,
+          x: position.x + 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data3);
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-        this.setState({
-          left: this.state.left - 1
+        var _data4 = Object.assign({}, position, {
+          node: this.box.current,
+          left: position.left - 1,
+          x: position.x - 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data4);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-        this.setState({
-          left: this.state.left - 10
+        var _data5 = Object.assign({}, position, {
+          node: this.box.current,
+          left: position.left - 10,
+          x: position.x - 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data5);
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-        this.setState({
-          top: this.state.top - 1
+        var _data6 = Object.assign({}, position, {
+          node: this.box.current,
+          top: position.top - 1,
+          y: position.y - 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data6);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-        this.setState({
-          top: this.state.top - 10
+        var _data7 = Object.assign({}, position, {
+          node: this.box.current,
+          top: position.top - 10,
+          y: position.y - 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data7);
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-        this.setState({
-          top: this.state.top + 1
+        var _data8 = Object.assign({}, position, {
+          node: this.box.current,
+          top: position.top + 1,
+          y: position.y + 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data8);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-        this.setState({
-          top: this.state.top + 10
+        var _data9 = Object.assign({}, position, {
+          node: this.box.current,
+          top: position.top + 10,
+          y: position.y + 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data9);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
-        this.setState({
-          width: this.state.width + 1
+        var _data10 = Object.assign({}, position, {
+          node: this.box.current,
+          width: position.width + 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data10);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
-        this.setState({
-          width: this.state.width + 10
+        var _data11 = Object.assign({}, position, {
+          node: this.box.current,
+          width: position.width + 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data11);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
-        this.setState({
-          width: this.state.width - 1
+        var _data12 = Object.assign({}, position, {
+          node: this.box.current,
+          width: position.width - 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data12);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
-        this.setState({
-          width: this.state.width - 10
+        var _data13 = Object.assign({}, position, {
+          node: this.box.current,
+          width: position.width - 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data13);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
-        this.setState({
-          height: this.state.height + 1
+        var _data14 = Object.assign({}, position, {
+          node: this.box.current,
+          height: position.height + 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data14);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
-        this.setState({
-          height: this.state.height + 10
+        var _data15 = Object.assign({}, position, {
+          node: this.box.current,
+          height: position.height + 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data15);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
-        this.setState({
-          height: this.state.height - 1
+        var _data16 = Object.assign({}, position, {
+          node: this.box.current,
+          height: position.height - 1
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data16);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
-        this.setState({
-          height: this.state.height - 10
+        var _data17 = Object.assign({}, position, {
+          node: this.box.current,
+          height: position.height - 10
         });
+
+        this.props.onKeyUp && this.props.onKeyUp(e, _data17);
       }
     }
   }, {
@@ -378,7 +435,7 @@ function (_PureComponent) {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
             };
-            var _data3 = {
+            var _data18 = {
               width: currentDimensions.width,
               height: currentDimensions.height,
               x: startingDimensions.left - boundingBoxPosition.x,
@@ -387,7 +444,7 @@ function (_PureComponent) {
               top: startingDimensions.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data3);
+            _this3.props.onResize && _this3.props.onResize(e, _data18);
           } else if (target.id === 'bl') {
             var _deltaX = startingDimensions.left - e.clientX;
 
@@ -401,7 +458,7 @@ function (_PureComponent) {
               top: startingDimensions.top,
               left: startingDimensions.left - _deltaX
             };
-            var _data4 = {
+            var _data19 = {
               width: _currentDimensions.width,
               height: _currentDimensions.height,
               x: currentPosition.left - boundingBoxPosition.x,
@@ -410,7 +467,7 @@ function (_PureComponent) {
               top: currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data4);
+            _this3.props.onResize && _this3.props.onResize(e, _data19);
           } else if (target.id === 'tr') {
             var _deltaX2 = e.clientX - startingDimensions.left;
 
@@ -424,7 +481,7 @@ function (_PureComponent) {
               top: startingDimensions.top - _deltaY2,
               left: startingDimensions.left
             };
-            var _data5 = {
+            var _data20 = {
               width: _currentDimensions2.width,
               height: _currentDimensions2.height,
               x: _currentPosition.left - boundingBoxPosition.x,
@@ -433,7 +490,7 @@ function (_PureComponent) {
               top: _currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data5);
+            _this3.props.onResize && _this3.props.onResize(e, _data20);
           } else if (target.id === 'tl') {
             var _deltaX3 = startingDimensions.left - e.clientX;
 
@@ -447,7 +504,7 @@ function (_PureComponent) {
               top: startingDimensions.top - _deltaY3,
               left: startingDimensions.left - _deltaX3
             };
-            var _data6 = {
+            var _data21 = {
               width: _currentDimensions3.width,
               height: _currentDimensions3.height,
               x: _currentPosition2.left - boundingBoxPosition.x,
@@ -456,7 +513,7 @@ function (_PureComponent) {
               top: _currentPosition2.top - boundingBoxPosition.y,
               node: _this3.box.current
             };
-            _this3.props.onResize && _this3.props.onResize(e, _data6);
+            _this3.props.onResize && _this3.props.onResize(e, _data21);
           }
         }
       };
@@ -468,7 +525,7 @@ function (_PureComponent) {
 
           var dimensions = _this3.box.current.getBoundingClientRect().toJSON();
 
-          var _data7 = {
+          var _data22 = {
             width: dimensions.width,
             height: dimensions.height,
             y: dimensions.top - boundingBoxPosition.y,
@@ -477,7 +534,7 @@ function (_PureComponent) {
             left: dimensions.left - boundingBoxPosition.x,
             node: _this3.box.current
           };
-          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data7);
+          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data22);
         }
       };
 
@@ -518,7 +575,6 @@ function (_PureComponent) {
         onMouseUp: this.props.selectBox,
         onMouseDown: this.onDragStart,
         onKeyUp: this.shortcutHandler,
-        onKeyDown: this.shortcutHandler,
         ref: this.box,
         style: boxStyles,
         tabIndex: "0"
@@ -558,15 +614,16 @@ Box.propTypes = {
   id: PropTypes.string,
   isSelected: PropTypes.bool,
   keybindings: PropTypes.bool,
-  onRotateStart: PropTypes.func,
-  onRotate: PropTypes.func,
-  onRotateEnd: PropTypes.func,
-  onResizeStart: PropTypes.func,
-  onResize: PropTypes.func,
-  onResizeEnd: PropTypes.func,
   onDragStart: PropTypes.func,
   onDrag: PropTypes.func,
   onDragEnd: PropTypes.func,
+  onKeyUp: PropTypes.func,
+  onResizeStart: PropTypes.func,
+  onResize: PropTypes.func,
+  onResizeEnd: PropTypes.func,
+  onRotateStart: PropTypes.func,
+  onRotate: PropTypes.func,
+  onRotateEnd: PropTypes.func,
   position: PropTypes.object.isRequired,
   resize: PropTypes.bool,
   rotate: PropTypes.bool
@@ -626,6 +683,7 @@ function (_Component) {
     _this.resizeStartHandler = _this.resizeStartHandler.bind(_assertThisInitialized$1(_this));
     _this.resizeHandler = _this.resizeHandler.bind(_assertThisInitialized$1(_this));
     _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized$1(_this));
+    _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized$1(_this));
     return _this;
   } // TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
 
@@ -922,6 +980,29 @@ function (_Component) {
       });
     }
   }, {
+    key: "keyUpHandler",
+    value: function keyUpHandler(e, data) {
+      this.props.onKeyUp && this.props.onKeyUp(e, data);
+      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+        x: data.x,
+        y: data.y,
+        left: data.left,
+        top: data.top,
+        width: data.width,
+        height: data.height
+      })));
+      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        x: calculateGuidePositions(boxes[data.node.id], 'x'),
+        y: calculateGuidePositions(boxes[data.node.id], 'y')
+      })));
+      this.setState({
+        boxes: boxes,
+        guides: guides,
+        resizing: false,
+        guidesActive: false
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this3 = this;
@@ -945,6 +1026,7 @@ function (_Component) {
           onDragStart: _this3.dragStartHandler,
           onDrag: _this3.dragHandler,
           onDragEnd: _this3.dragEndHandler,
+          onKeyUp: _this3.keyUpHandler,
           onResizeStart: _this3.resizeStartHandler,
           onResize: _this3.resizeHandler,
           onResizeEnd: _this3.resizeEndHandler,
@@ -1012,6 +1094,7 @@ AlignmentGuides.propTypes = {
   onDragStart: PropTypes.func,
   onDrag: PropTypes.func,
   onDragEnd: PropTypes.func,
+  onKeyUp: PropTypes.func,
   onResizeStart: PropTypes.func,
   onResize: PropTypes.func,
   onResizeEnd: PropTypes.func,

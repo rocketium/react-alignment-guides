@@ -28,6 +28,7 @@ class AlignmentGuides extends Component {
 		this.resizeStartHandler = this.resizeStartHandler.bind(this);
 		this.resizeHandler = this.resizeHandler.bind(this);
 		this.resizeEndHandler = this.resizeEndHandler.bind(this);
+		this.keyUpHandler = this.keyUpHandler.bind(this);
 	}
 
 	// TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
@@ -321,6 +322,34 @@ class AlignmentGuides extends Component {
 		});
 	}
 
+	keyUpHandler(e, data) {
+		this.props.onKeyUp && this.props.onKeyUp(e, data);
+
+		const boxes = Object.assign({}, this.state.boxes, {
+			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+				x: data.x,
+				y: data.y,
+				left: data.left,
+				top: data.top,
+				width: data.width,
+				height: data.height
+			})
+		});
+		const guides = Object.assign({}, this.state.guides, {
+			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+				x: calculateGuidePositions(boxes[data.node.id], 'x'),
+				y: calculateGuidePositions(boxes[data.node.id], 'y')
+			})
+		});
+
+		this.setState({
+			boxes,
+			guides,
+			resizing: false,
+			guidesActive: false
+		});
+	}
+
 	render() {
 		const { active, boxes, guides } = this.state;
 
@@ -341,6 +370,7 @@ class AlignmentGuides extends Component {
 				onDragStart={this.dragStartHandler}
 				onDrag={this.dragHandler}
 				onDragEnd={this.dragEndHandler}
+				onKeyUp={this.keyUpHandler}
 				onResizeStart={this.resizeStartHandler}
 				onResize={this.resizeHandler}
 				onResizeEnd={this.resizeEndHandler}
@@ -412,6 +442,7 @@ AlignmentGuides.propTypes = {
 	onDragStart: PropTypes.func,
 	onDrag: PropTypes.func,
 	onDragEnd: PropTypes.func,
+	onKeyUp: PropTypes.func,
 	onResizeStart: PropTypes.func,
 	onResize: PropTypes.func,
 	onResizeEnd: PropTypes.func,
