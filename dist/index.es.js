@@ -159,8 +159,8 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_biggest__1UnNV {\n  z-index: 9; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 11; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
-var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","biggest":"styles_biggest__1UnNV","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_biggest__1UnNV {\n  z-index: 9; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 11; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  color: #EB4B48; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px;\n  top: -20px; }\n\n.styles_height__3vgtd {\n  width: auto;\n  left: -30px; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
+var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","biggest":"styles_biggest__1UnNV","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","height":"styles_height__3vgtd","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
 styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -199,9 +199,13 @@ function (_PureComponent) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(Box).call(this, props));
     _this.box = React.createRef();
+    _this.coordinates = React.createRef();
+    _this.height = React.createRef();
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
+    _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized(_this));
+    _this.getDimensionsWrapperWidth = _this.getDimensionsWrapperWidth.bind(_assertThisInitialized(_this));
     return _this;
   }
 
@@ -482,6 +486,20 @@ function (_PureComponent) {
       document.addEventListener('mouseup', onResizeEnd);
     }
   }, {
+    key: "getCoordinatesWrapperWidth",
+    value: function getCoordinatesWrapperWidth() {
+      if (this.props.isSelected && this.coordinates && this.coordinates.current) {
+        return this.coordinates.current.offsetWidth;
+      }
+    }
+  }, {
+    key: "getDimensionsWrapperWidth",
+    value: function getDimensionsWrapperWidth() {
+      if (this.props.isSelected && this.height && this.height.current) {
+        return this.height.current.offsetWidth;
+      }
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this4 = this;
@@ -512,7 +530,25 @@ function (_PureComponent) {
         ref: this.box,
         style: boxStyles,
         tabIndex: "0"
-      }, isSelected ? RESIZE_HANDLES.map(function (handle) {
+      }, isSelected ? React.createElement("span", {
+        ref: this.coordinates,
+        className: styles.coordinates,
+        style: {
+          left: "-".concat(this.getCoordinatesWrapperWidth() + 10, "px")
+        }
+      }, "".concat(position.left, ", ").concat(position.top)) : null, isSelected ? React.createElement("span", {
+        className: "".concat(styles.dimensions, " ").concat(styles.width),
+        style: {
+          width: "".concat(position.width, "px")
+        }
+      }, position.width) : null, isSelected ? React.createElement("span", {
+        className: "".concat(styles.dimensions, " ").concat(styles.height),
+        ref: this.height,
+        style: {
+          height: "".concat(position.height, "px"),
+          left: "-".concat(this.getDimensionsWrapperWidth() + 10, "px")
+        }
+      }, position.height) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
         var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
         return React.createElement("div", {
           key: handle,

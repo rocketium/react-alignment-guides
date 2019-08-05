@@ -52,6 +52,33 @@
 	width: 100%;
 }
 
+// Displaying coordinates and dimensions
+.coordinates {
+	font-size: 10px;
+	position: absolute;
+	top: -20px;
+	color: #EB4B48;
+}
+
+.dimensions {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	position: absolute;
+	font-size: 10px;
+	color: #EB4B48;
+}
+
+.width {
+	height: 10px;
+	top: -20px;
+}
+
+.height {
+	width: auto;
+	left: -30px;
+}
+
 // Resize Handles
 .resizeHandle {
 	width: 10px;

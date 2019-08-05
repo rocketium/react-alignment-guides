@@ -8,9 +8,13 @@ class Box extends PureComponent {
 	constructor(props) {
 		super(props);
 		this.box = React.createRef();
+		this.coordinates = React.createRef();
+		this.height = React.createRef();
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+		this.getDimensionsWrapperWidth = this.getDimensionsWrapperWidth.bind(this);
 	}
 
 	onDragStart(e) {
@@ -282,6 +286,18 @@ class Box extends PureComponent {
 		document.addEventListener('mouseup', onResizeEnd);
 	}
 
+	getCoordinatesWrapperWidth() {
+		if (this.props.isSelected && this.coordinates && this.coordinates.current) {
+			return this.coordinates.current.offsetWidth;
+		}
+	}
+
+	getDimensionsWrapperWidth() {
+		if (this.props.isSelected && this.height && this.height.current) {
+			return this.height.current.offsetWidth;
+		}
+	}
+
 	render() {
 		const { biggestBox, boxStyle, id, isSelected, position } = this.props;
 		let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
@@ -305,6 +321,33 @@ class Box extends PureComponent {
 			style={boxStyles}
 			tabIndex="0"
 		>
+			{
+				isSelected ?
+					<span
+						ref={this.coordinates}
+						className={styles.coordinates}
+						style={{ left: `-${this.getCoordinatesWrapperWidth() + 10}px` }}
+					>
+						{`${position.left}, ${position.top}`}
+					</span> :
+					null
+			}
+			{
+				isSelected ?
+					<span className={`${styles.dimensions} ${styles.width}`} style={{ width: `${position.width}px` }}>{position.width}</span> :
+					null
+			}
+			{
+				isSelected ?
+					<span
+						className={`${styles.dimensions} ${styles.height}`}
+						ref={this.height}
+						style={{ height: `${position.height}px`, left: `-${this.getDimensionsWrapperWidth() + 10}px` }}
+					>
+						{position.height}
+					</span> :
+					null
+			}
 			{
 				isSelected ?
 					RESIZE_HANDLES.map(handle => {
