@@ -536,19 +536,19 @@ function (_PureComponent) {
         style: {
           left: "-".concat(this.getCoordinatesWrapperWidth() + 20, "px")
         }
-      }, "".concat(position.left, ", ").concat(position.top)) : null, isSelected ? React.createElement("span", {
+      }, "".concat(Math.round(position.left), ", ").concat(Math.round(position.top))) : null, isSelected ? React.createElement("span", {
         className: "".concat(styles.dimensions, " ").concat(styles.width),
         style: {
           width: "".concat(position.width, "px")
         }
-      }, position.width) : null, isSelected ? React.createElement("span", {
+      }, Math.round(position.width)) : null, isSelected ? React.createElement("span", {
         className: "".concat(styles.dimensions, " ").concat(styles.height),
         ref: this.height,
         style: {
           height: "".concat(position.height, "px"),
           left: "".concat(position.width + this.getDimensionsWrapperWidth() + 10, "px")
         }
-      }, position.height) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
+      }, Math.round(position.height)) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
         var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
         return React.createElement("div", {
           key: handle,
