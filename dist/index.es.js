@@ -800,7 +800,8 @@ function (_Component) {
           top: boxDimensions.top - boundingBoxPosition.y,
           width: boxDimensions.width,
           height: boxDimensions.height,
-          node: e.target
+          node: e.target,
+          metadata: this.state.boxes[e.target.id].metadata
         };
         this.setState({
           active: e.target.id
@@ -816,7 +817,8 @@ function (_Component) {
           top: _boxDimensions.top - boundingBoxPosition.y,
           width: _boxDimensions.width,
           height: _boxDimensions.height,
-          node: e.target.parentNode
+          node: e.target.parentNode,
+          metadata: this.state.boxes[e.target.parentNode.id].metadata
         };
         this.setState({
           active: e.target.parentNode.id
@@ -841,7 +843,10 @@ function (_Component) {
         active: data.node.id,
         dragging: true
       });
-      this.props.onDragStart && this.props.onDragStart(e, data);
+      var newData = Object.assign({}, data, {
+        metadata: this.state.boxes[data.node.id].metadata
+      });
+      this.props.onDragStart && this.props.onDragStart(e, newData);
     }
   }, {
     key: "dragHandler",
@@ -849,7 +854,10 @@ function (_Component) {
       var _this2 = this;
 
       if (this.state.dragging) {
-        this.props.onDrag && this.props.onDrag(e, data);
+        var newData = Object.assign({}, data, {
+          metadata: this.state.boxes[this.state.active].metadata
+        });
+        this.props.onDrag && this.props.onDrag(e, newData);
       }
 
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
@@ -919,7 +927,10 @@ function (_Component) {
         dragging: false,
         guidesActive: false
       });
-      this.props.onDragEnd && this.props.onDragEnd(e, data);
+      var newData = Object.assign({}, data, {
+        metadata: this.state.boxes[this.state.active].metadata
+      });
+      this.props.onDragEnd && this.props.onDragEnd(e, newData);
     }
   }, {
     key: "resizeStartHandler",
@@ -928,13 +939,19 @@ function (_Component) {
         active: data.node.id,
         resizing: true
       });
-      this.props.onResizeStart && this.props.onResizeStart(e, data);
+      var newData = Object.assign({}, data, {
+        metadata: this.state.boxes[data.node.id].metadata
+      });
+      this.props.onResizeStart && this.props.onResizeStart(e, newData);
     }
   }, {
     key: "resizeHandler",
     value: function resizeHandler(e, data) {
       if (this.state.resizing) {
-        this.props.onResize && this.props.onResize(e, data);
+        var newData = Object.assign({}, data, {
+          metadata: this.state.boxes[this.state.active].metadata
+        });
+        this.props.onResize && this.props.onResize(e, newData);
       }
 
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
@@ -958,7 +975,10 @@ function (_Component) {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
       if (this.state.resizing) {
-        this.props.onResizeEnd && this.props.onResizeEnd(e, data);
+        var newData = Object.assign({}, data, {
+          metadata: this.state.boxes[this.state.active].metadata
+        });
+        this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
       }
 
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
@@ -983,7 +1003,10 @@ function (_Component) {
   }, {
     key: "keyUpHandler",
     value: function keyUpHandler(e, data) {
-      this.props.onKeyUp && this.props.onKeyUp(e, data);
+      var newData = Object.assign({}, data, {
+        metadata: this.state.boxes[data.node.id].metadata
+      });
+      this.props.onKeyUp && this.props.onKeyUp(e, newData);
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
         x: data.x,
         y: data.y,

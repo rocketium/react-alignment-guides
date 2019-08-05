@@ -139,7 +139,8 @@ class AlignmentGuides extends Component {
 				top: boxDimensions.top - boundingBoxPosition.y,
 				width: boxDimensions.width,
 				height: boxDimensions.height,
-				node: e.target
+				node: e.target,
+				metadata: this.state.boxes[e.target.id].metadata
 			};
 			this.setState({
 				active: e.target.id
@@ -154,7 +155,8 @@ class AlignmentGuides extends Component {
 				top: boxDimensions.top - boundingBoxPosition.y,
 				width: boxDimensions.width,
 				height: boxDimensions.height,
-				node: e.target.parentNode
+				node: e.target.parentNode,
+				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
 			this.setState({
 				active: e.target.parentNode.id
@@ -177,12 +179,18 @@ class AlignmentGuides extends Component {
 			active: data.node.id,
 			dragging: true
 		});
-		this.props.onDragStart && this.props.onDragStart(e, data);
+		const newData = Object.assign({}, data, {
+			metadata: this.state.boxes[data.node.id].metadata
+		});
+		this.props.onDragStart && this.props.onDragStart(e, newData);
 	}
 
 	dragHandler(e, data) {
 		if (this.state.dragging) {
-			this.props.onDrag && this.props.onDrag(e, data);
+			const newData = Object.assign({}, data, {
+				metadata: this.state.boxes[this.state.active].metadata
+			});
+			this.props.onDrag && this.props.onDrag(e, newData);
 		}
 
 		const boxes = Object.assign({}, this.state.boxes, {
@@ -254,7 +262,10 @@ class AlignmentGuides extends Component {
 			dragging: false,
 			guidesActive: false
 		});
-		this.props.onDragEnd && this.props.onDragEnd(e, data);
+		const newData = Object.assign({}, data, {
+			metadata: this.state.boxes[this.state.active].metadata
+		});
+		this.props.onDragEnd && this.props.onDragEnd(e, newData);
 	}
 
 	resizeStartHandler(e, data) {
@@ -262,12 +273,18 @@ class AlignmentGuides extends Component {
 			active: data.node.id,
 			resizing: true
 		});
-		this.props.onResizeStart && this.props.onResizeStart(e, data);
+		const newData = Object.assign({}, data, {
+			metadata: this.state.boxes[data.node.id].metadata
+		});
+		this.props.onResizeStart && this.props.onResizeStart(e, newData);
 	}
 
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
-			this.props.onResize && this.props.onResize(e, data);
+			const newData = Object.assign({}, data, {
+				metadata: this.state.boxes[this.state.active].metadata
+			});
+			this.props.onResize && this.props.onResize(e, newData);
 		}
 
 		const boxes = Object.assign({}, this.state.boxes, {
@@ -295,7 +312,10 @@ class AlignmentGuides extends Component {
 
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
-			this.props.onResizeEnd && this.props.onResizeEnd(e, data);
+			const newData = Object.assign({}, data, {
+				metadata: this.state.boxes[this.state.active].metadata
+			});
+			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
 		}
 
 		const boxes = Object.assign({}, this.state.boxes, {
@@ -324,7 +344,10 @@ class AlignmentGuides extends Component {
 	}
 
 	keyUpHandler(e, data) {
-		this.props.onKeyUp && this.props.onKeyUp(e, data);
+		const newData = Object.assign({}, data, {
+			metadata: this.state.boxes[data.node.id].metadata
+		});
+		this.props.onKeyUp && this.props.onKeyUp(e, newData);
 
 		const boxes = Object.assign({}, this.state.boxes, {
 			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
