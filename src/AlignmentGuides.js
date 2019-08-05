@@ -168,6 +168,7 @@ class AlignmentGuides extends Component {
 			this.setState({
 				active: ''
 			});
+			this.props.onUnselect && this.props.onUnselect(e);
 		}
 	}
 
@@ -450,6 +451,7 @@ AlignmentGuides.propTypes = {
 	onRotate: PropTypes.func,
 	onRotateEnd: PropTypes.func,
 	onSelect: PropTypes.func,
+	onUnselect: PropTypes.func,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
 	style: PropTypes.object
