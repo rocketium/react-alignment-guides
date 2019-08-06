@@ -318,26 +318,7 @@ class AlignmentGuides extends Component {
 			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
 		}
 
-		const boxes = Object.assign({}, this.state.boxes, {
-			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-				x: data.x,
-				y: data.y,
-				left: data.left,
-				top: data.top,
-				width: data.width,
-				height: data.height
-			})
-		});
-		const guides = Object.assign({}, this.state.guides, {
-			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-				x: calculateGuidePositions(boxes[data.node.id], 'x'),
-				y: calculateGuidePositions(boxes[data.node.id], 'y')
-			})
-		});
-
 		this.setState({
-			boxes,
-			guides,
 			resizing: false,
 			guidesActive: false
 		});

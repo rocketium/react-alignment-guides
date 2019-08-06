@@ -310,14 +310,14 @@ class Box extends PureComponent {
 				document.removeEventListener('mousemove', onResize);
 				document.removeEventListener('mouseup', onResizeEnd);
 
-				const dimensions = this.box.current.getBoundingClientRect().toJSON();
+				const { position } = this.props;
 				const data = {
-					width: dimensions.width,
-					height: dimensions.height,
-					y: dimensions.top - boundingBoxPosition.y,
-					x: dimensions.left - boundingBoxPosition.x,
-					top: dimensions.top - boundingBoxPosition.y,
-					left: dimensions.left - boundingBoxPosition.x,
+					width: position.width,
+					height: position.height,
+					y: position.top - boundingBoxPosition.y,
+					x: position.left - boundingBoxPosition.x,
+					top: position.top - boundingBoxPosition.y,
+					left: position.left - boundingBoxPosition.x,
 					node: this.box.current
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
