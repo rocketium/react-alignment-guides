@@ -104,7 +104,7 @@ var findBiggestBox = function findBiggestBox(boxes) {
     }
   });
 };
-var calculateBoundaries = function calculateBoundaries(left, top, width, height, bounds) {
+var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, width, height, bounds) {
   if (left >= 0 && left <= bounds.width - width && top >= 0 && top <= bounds.height - height) {
     return {
       left: left,
@@ -124,6 +124,65 @@ var calculateBoundaries = function calculateBoundaries(left, top, width, height,
     return {
       left: left < 0 ? 0 : bounds.width - width,
       top: top < 0 ? 0 : bounds.height - height
+    };
+  }
+};
+var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds) {
+  var widthDifference = 0;
+  var heightDifference = 0;
+
+  if (left >= 0 && left + width <= bounds.width && top >= 0 && top + height <= bounds.height) {
+    return {
+      left: left,
+      top: top,
+      width: width,
+      height: height
+    };
+  } else if (left < 0 && top < 0) {
+    return {
+      left: 0,
+      top: 0,
+      width: width + left,
+      height: height + top
+    };
+  } else if (left < 0) {
+    return {
+      left: 0,
+      top: top,
+      width: width + left,
+      height: height < bounds.height ? height : bounds.height
+    };
+  } else if (top < 0) {
+    return {
+      left: left,
+      top: 0,
+      width: width < bounds.width ? width : bounds.width,
+      height: height + top
+    };
+  } else if (left >= 0 && left + width <= bounds.width) {
+    heightDifference = top + height - bounds.height;
+    return {
+      left: left,
+      top: top < 0 ? 0 : top,
+      width: width,
+      height: height - heightDifference
+    };
+  } else if (top >= 0 && top + height <= bounds.height) {
+    widthDifference = left + width - bounds.width;
+    return {
+      left: left < 0 ? 0 : left,
+      top: top,
+      width: width - widthDifference,
+      height: height
+    };
+  } else {
+    widthDifference = left + width - bounds.width;
+    heightDifference = top + height - bounds.height;
+    return {
+      left: left < 0 ? 0 : left,
+      top: top < 0 ? 0 : top,
+      width: width - widthDifference,
+      height: height - heightDifference
     };
   }
 };
@@ -243,7 +302,7 @@ function (_PureComponent) {
           var boxHeight = _this2.props.position.height;
           var left = e.clientX - deltaX;
           var top = e.clientY - deltaY;
-          var currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+          var currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
           data = {
             x: currentPosition.left,
             y: currentPosition.top,
@@ -424,13 +483,16 @@ function (_PureComponent) {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
             };
+            var left = startingDimensions.left - boundingBoxPosition.x;
+            var top = startingDimensions.top - boundingBoxPosition.y;
+            var currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
             data = {
-              width: currentDimensions.width,
-              height: currentDimensions.height,
-              x: startingDimensions.left - boundingBoxPosition.x,
-              y: startingDimensions.top - boundingBoxPosition.y,
-              left: startingDimensions.left - boundingBoxPosition.x,
-              top: startingDimensions.top - boundingBoxPosition.y,
+              width: currentPosition.width,
+              height: currentPosition.height,
+              x: currentPosition.left,
+              y: currentPosition.top,
+              left: currentPosition.left,
+              top: currentPosition.top,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);
@@ -441,17 +503,24 @@ function (_PureComponent) {
               width: startingDimensions.width + deltaX,
               height: startingDimensions.height - deltaY
             };
-            var currentPosition = {
+            var calculatedPosition = {
               top: startingDimensions.top,
               left: startingDimensions.left - deltaX
             };
+
+            var _left = calculatedPosition.left - boundingBoxPosition.x;
+
+            var _top = calculatedPosition.top - boundingBoxPosition.y;
+
+            var _currentPosition = calculateBoundariesForResize(_left, _top, _currentDimensions.width, _currentDimensions.height, boundingBoxPosition);
+
             data = {
-              width: _currentDimensions.width,
-              height: _currentDimensions.height,
-              x: currentPosition.left - boundingBoxPosition.x,
-              y: currentPosition.top - boundingBoxPosition.y,
-              left: currentPosition.left - boundingBoxPosition.x,
-              top: currentPosition.top - boundingBoxPosition.y,
+              width: _currentPosition.width,
+              height: _currentPosition.height,
+              x: _currentPosition.left,
+              y: _currentPosition.top,
+              left: _currentPosition.left,
+              top: _currentPosition.top,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);
@@ -464,17 +533,24 @@ function (_PureComponent) {
               width: _deltaX,
               height: startingDimensions.height + _deltaY
             };
-            var _currentPosition = {
+            var _calculatedPosition = {
               top: startingDimensions.top - _deltaY,
               left: startingDimensions.left
             };
+
+            var _left2 = _calculatedPosition.left - boundingBoxPosition.x;
+
+            var _top2 = _calculatedPosition.top - boundingBoxPosition.y;
+
+            var _currentPosition2 = calculateBoundariesForResize(_left2, _top2, _currentDimensions2.width, _currentDimensions2.height, boundingBoxPosition);
+
             data = {
-              width: _currentDimensions2.width,
-              height: _currentDimensions2.height,
-              x: _currentPosition.left - boundingBoxPosition.x,
-              y: _currentPosition.top - boundingBoxPosition.y,
-              left: _currentPosition.left - boundingBoxPosition.x,
-              top: _currentPosition.top - boundingBoxPosition.y,
+              width: _currentPosition2.width,
+              height: _currentPosition2.height,
+              x: _currentPosition2.left,
+              y: _currentPosition2.top,
+              left: _currentPosition2.left,
+              top: _currentPosition2.top,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);
@@ -487,17 +563,24 @@ function (_PureComponent) {
               width: startingDimensions.width + _deltaX2,
               height: startingDimensions.height + _deltaY2
             };
-            var _currentPosition2 = {
+            var _calculatedPosition2 = {
               top: startingDimensions.top - _deltaY2,
               left: startingDimensions.left - _deltaX2
             };
+
+            var _left3 = _calculatedPosition2.left - boundingBoxPosition.x;
+
+            var _top3 = _calculatedPosition2.top - boundingBoxPosition.y;
+
+            var _currentPosition3 = calculateBoundariesForResize(_left3, _top3, _currentDimensions3.width, _currentDimensions3.height, boundingBoxPosition);
+
             data = {
-              width: _currentDimensions3.width,
-              height: _currentDimensions3.height,
-              x: _currentPosition2.left - boundingBoxPosition.x,
-              y: _currentPosition2.top - boundingBoxPosition.y,
-              left: _currentPosition2.left - boundingBoxPosition.x,
-              top: _currentPosition2.top - boundingBoxPosition.y,
+              width: _currentPosition3.width,
+              height: _currentPosition3.height,
+              x: _currentPosition3.left,
+              y: _currentPosition3.top,
+              left: _currentPosition3.left,
+              top: _currentPosition3.top,
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);

@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { calculateBoundaries } from './utils/helpers';
+import { calculateBoundariesForDrag, calculateBoundariesForResize } from './utils/helpers';
 import { RESIZE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
@@ -46,7 +46,7 @@ class Box extends PureComponent {
 				const left = e.clientX - deltaX;
 				const top = e.clientY - deltaY;
 
-				const currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+				const currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
 				data = {
 					x: currentPosition.left,
 					y: currentPosition.top,
@@ -207,14 +207,17 @@ class Box extends PureComponent {
 						width: e.clientX - startingDimensions.left,
 						height: e.clientY - startingDimensions.top
 					};
+					const left = startingDimensions.left - boundingBoxPosition.x;
+					const top = startingDimensions.top - boundingBoxPosition.y;
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
 
 					data = {
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						x: startingDimensions.left - boundingBoxPosition.x,
-						y: startingDimensions.top - boundingBoxPosition.y,
-						left: startingDimensions.left - boundingBoxPosition.x,
-						top: startingDimensions.top - boundingBoxPosition.y,
+						width: currentPosition.width,
+						height: currentPosition.height,
+						x: currentPosition.left,
+						y: currentPosition.top,
+						left: currentPosition.left,
+						top: currentPosition.top,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
@@ -226,18 +229,21 @@ class Box extends PureComponent {
 						height: startingDimensions.height - deltaY
 					};
 
-					const currentPosition = {
+					const calculatedPosition = {
 						top: startingDimensions.top,
 						left: startingDimensions.left - deltaX
 					};
+					const left = calculatedPosition.left - boundingBoxPosition.x;
+					const top = calculatedPosition.top - boundingBoxPosition.y;
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
 
 					data = {
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						x: currentPosition.left - boundingBoxPosition.x,
-						y: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x,
-						top: currentPosition.top - boundingBoxPosition.y,
+						width: currentPosition.width,
+						height: currentPosition.height,
+						x: currentPosition.left,
+						y: currentPosition.top,
+						left: currentPosition.left,
+						top: currentPosition.top,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
@@ -249,18 +255,21 @@ class Box extends PureComponent {
 						height: startingDimensions.height + deltaY
 					};
 
-					const currentPosition = {
+					const calculatedPosition = {
 						top: startingDimensions.top - deltaY,
 						left: startingDimensions.left
 					};
+					const left = calculatedPosition.left - boundingBoxPosition.x;
+					const top = calculatedPosition.top - boundingBoxPosition.y;
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
 
 					data = {
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						x: currentPosition.left - boundingBoxPosition.x,
-						y: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x,
-						top: currentPosition.top - boundingBoxPosition.y,
+						width: currentPosition.width,
+						height: currentPosition.height,
+						x: currentPosition.left,
+						y: currentPosition.top,
+						left: currentPosition.left,
+						top: currentPosition.top,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
@@ -272,17 +281,21 @@ class Box extends PureComponent {
 						height: startingDimensions.height + deltaY
 					};
 
-					const currentPosition = {
+					const calculatedPosition = {
 						top: startingDimensions.top - deltaY,
 						left: startingDimensions.left - deltaX
 					};
+					const left = calculatedPosition.left - boundingBoxPosition.x;
+					const top = calculatedPosition.top - boundingBoxPosition.y;
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+
 					data = {
-						width: currentDimensions.width,
-						height: currentDimensions.height,
-						x: currentPosition.left - boundingBoxPosition.x,
-						y: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x,
-						top: currentPosition.top - boundingBoxPosition.y,
+						width: currentPosition.width,
+						height: currentPosition.height,
+						x: currentPosition.left,
+						y: currentPosition.top,
+						left: currentPosition.left,
+						top: currentPosition.top,
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);

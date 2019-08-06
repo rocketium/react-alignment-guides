@@ -91,7 +91,7 @@ export const findBiggestBox = (boxes) => {
 	});
 };
 
-export const calculateBoundaries = (left, top, width, height, bounds) => {
+export const calculateBoundariesForDrag = (left, top, width, height, bounds) => {
 	if (left >= 0 && left <= bounds.width - width && top >= 0 && top <= bounds.height - height) {
 		return {
 			left,
@@ -111,6 +111,65 @@ export const calculateBoundaries = (left, top, width, height, bounds) => {
 		return {
 			left: left < 0 ? 0 : (bounds.width - width),
 			top: top < 0 ? 0 : (bounds.height - height)
+		};
+	}
+};
+
+export const calculateBoundariesForResize = (left, top, width, height, bounds) => {
+	let widthDifference = 0;
+	let heightDifference = 0;
+	if (left >= 0 && left + width <= bounds.width && top >= 0 && top + height <= bounds.height) {
+		return {
+			left,
+			top,
+			width,
+			height
+		};
+	} else if (left < 0 && top < 0) {
+		return {
+			left: 0,
+			top: 0,
+			width: width + left,
+			height: height + top
+		};
+	} else if (left < 0) {
+		return {
+			left: 0,
+			top,
+			width: width + left,
+			height: height < bounds.height ? height : bounds.height
+		};
+	} else if (top < 0) {
+		return {
+			left,
+			top: 0,
+			width: width < bounds.width ? width : bounds.width,
+			height: height + top
+		};
+	} else if (left >= 0 && left + width <= bounds.width) {
+		heightDifference = (top + height) - bounds.height;
+		return {
+			left,
+			top: top < 0 ? 0 : top,
+			width,
+			height: height - heightDifference
+		};
+	} else if (top >= 0 && top + height <= bounds.height) {
+		widthDifference = (left + width) - bounds.width;
+		return {
+			left: left < 0 ? 0 : left,
+			top,
+			width: width - widthDifference,
+			height
+		};
+	} else {
+		widthDifference = (left + width) - bounds.width;
+		heightDifference = (top + height) - bounds.height;
+		return {
+			left: left < 0 ? 0 : left,
+			top: top < 0 ? 0 : top,
+			width: width - widthDifference,
+			height: height - heightDifference
 		};
 	}
 };
