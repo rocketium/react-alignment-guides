@@ -201,7 +201,7 @@ class Box extends PureComponent {
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingDimensions = this.box.current.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-		const data = {
+		let data = {
 			width: startingDimensions.width,
 			height: startingDimensions.height,
 			x: startingDimensions.left - boundingBoxPosition.x,
@@ -211,8 +211,6 @@ class Box extends PureComponent {
 			node: this.box.current
 		};
 		this.props.onResizeStart && this.props.onResizeStart(e, data);
-		const deltaX = target.offsetLeft - e.clientX;
-		const deltaY = target.offsetTop - e.clientY;
 
 		const onResize = (e) => {
 			if (this.props.resizing) {
@@ -223,7 +221,7 @@ class Box extends PureComponent {
 						height: e.clientY - startingDimensions.top
 					};
 
-					const data = {
+					data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						x: startingDimensions.left - boundingBoxPosition.x,
@@ -246,7 +244,7 @@ class Box extends PureComponent {
 						left: startingDimensions.left - deltaX
 					};
 
-					const data = {
+					data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
@@ -269,7 +267,7 @@ class Box extends PureComponent {
 						left: startingDimensions.left
 					};
 
-					const data = {
+					data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
@@ -291,7 +289,7 @@ class Box extends PureComponent {
 						top: startingDimensions.top - deltaY,
 						left: startingDimensions.left - deltaX
 					};
-					const data = {
+					data = {
 						width: currentDimensions.width,
 						height: currentDimensions.height,
 						x: currentPosition.left - boundingBoxPosition.x,
@@ -310,16 +308,6 @@ class Box extends PureComponent {
 				document.removeEventListener('mousemove', onResize);
 				document.removeEventListener('mouseup', onResizeEnd);
 
-				const { position } = this.props;
-				const data = {
-					width: position.width,
-					height: position.height,
-					y: position.y,
-					x: position.x,
-					top: position.top,
-					left: position.left,
-					node: this.box.current
-				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 			}
 		};
