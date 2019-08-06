@@ -244,7 +244,7 @@ function (_PureComponent) {
           var left = e.clientX - deltaX;
           var top = e.clientY - deltaY;
           var currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
-          var _data = {
+          data = {
             x: currentPosition.left,
             y: currentPosition.top,
             top: currentPosition.top,
@@ -253,26 +253,13 @@ function (_PureComponent) {
             height: _this2.props.position.height,
             node: _this2.box.current
           };
-          _this2.props.onDrag && _this2.props.onDrag(e, _data);
+          _this2.props.onDrag && _this2.props.onDrag(e, data);
         }
       };
 
       var onDragEnd = function onDragEnd(e) {
         if (_this2.props.dragging) {
-          var endPosition = {
-            left: e.clientX - deltaX,
-            top: e.clientY - deltaY
-          };
-          var _data2 = {
-            x: endPosition.left,
-            y: endPosition.top,
-            top: endPosition.top,
-            left: endPosition.left,
-            width: _this2.props.position.width,
-            height: _this2.props.position.height,
-            node: _this2.box.current
-          };
-          _this2.props.onDragEnd && _this2.props.onDragEnd(e, _data2);
+          _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
           document.removeEventListener('mousemove', onDrag);
           document.removeEventListener('mouseup', onDragEnd);
         }
@@ -294,117 +281,117 @@ function (_PureComponent) {
         });
         this.props.onKeyUp && this.props.onKeyUp(e, data);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-        var _data3 = Object.assign({}, position, {
+        var _data = Object.assign({}, position, {
           node: this.box.current,
           left: position.left + 10,
           x: position.x + 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data3);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data);
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-        var _data4 = Object.assign({}, position, {
+        var _data2 = Object.assign({}, position, {
           node: this.box.current,
           left: position.left - 1,
           x: position.x - 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data4);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data2);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-        var _data5 = Object.assign({}, position, {
+        var _data3 = Object.assign({}, position, {
           node: this.box.current,
           left: position.left - 10,
           x: position.x - 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data5);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data3);
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-        var _data6 = Object.assign({}, position, {
+        var _data4 = Object.assign({}, position, {
           node: this.box.current,
           top: position.top - 1,
           y: position.y - 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data6);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data4);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-        var _data7 = Object.assign({}, position, {
+        var _data5 = Object.assign({}, position, {
           node: this.box.current,
           top: position.top - 10,
           y: position.y - 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data7);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data5);
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-        var _data8 = Object.assign({}, position, {
+        var _data6 = Object.assign({}, position, {
           node: this.box.current,
           top: position.top + 1,
           y: position.y + 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data8);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data6);
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-        var _data9 = Object.assign({}, position, {
+        var _data7 = Object.assign({}, position, {
           node: this.box.current,
           top: position.top + 10,
           y: position.y + 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data9);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data7);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
-        var _data10 = Object.assign({}, position, {
+        var _data8 = Object.assign({}, position, {
           node: this.box.current,
           width: position.width + 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data10);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data8);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
-        var _data11 = Object.assign({}, position, {
+        var _data9 = Object.assign({}, position, {
           node: this.box.current,
           width: position.width + 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data11);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data9);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
-        var _data12 = Object.assign({}, position, {
+        var _data10 = Object.assign({}, position, {
           node: this.box.current,
           width: position.width - 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data12);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data10);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
-        var _data13 = Object.assign({}, position, {
+        var _data11 = Object.assign({}, position, {
           node: this.box.current,
           width: position.width - 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data13);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data11);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
-        var _data14 = Object.assign({}, position, {
+        var _data12 = Object.assign({}, position, {
           node: this.box.current,
           height: position.height + 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data14);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data12);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
-        var _data15 = Object.assign({}, position, {
+        var _data13 = Object.assign({}, position, {
           node: this.box.current,
           height: position.height + 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data15);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data13);
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
-        var _data16 = Object.assign({}, position, {
+        var _data14 = Object.assign({}, position, {
           node: this.box.current,
           height: position.height - 1
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data16);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data14);
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
-        var _data17 = Object.assign({}, position, {
+        var _data15 = Object.assign({}, position, {
           node: this.box.current,
           height: position.height - 10
         });
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data17);
+        this.props.onKeyUp && this.props.onKeyUp(e, _data15);
       }
     }
   }, {

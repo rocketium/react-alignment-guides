@@ -22,7 +22,7 @@ class Box extends PureComponent {
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingPosition = target.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-		const data = {
+		let data = {
 			x: startingPosition.x - boundingBoxPosition.x,
 			y: startingPosition.y - boundingBoxPosition.y,
 			top: startingPosition.y - boundingBoxPosition.y,
@@ -47,7 +47,7 @@ class Box extends PureComponent {
 				const top = e.clientY - deltaY;
 
 				const currentPosition = calculateBoundaries(left, top, boxWidth, boxHeight, boundingBoxDimensions);
-				const data = {
+				data = {
 					x: currentPosition.left,
 					y: currentPosition.top,
 					top: currentPosition.top,
@@ -63,19 +63,6 @@ class Box extends PureComponent {
 
 		const onDragEnd = (e) => {
 			if (this.props.dragging) {
-				const endPosition = {
-					left: e.clientX - deltaX,
-					top: e.clientY - deltaY
-				};
-				const data = {
-					x: endPosition.left,
-					y: endPosition.top,
-					top: endPosition.top,
-					left: endPosition.left,
-					width: this.props.position.width,
-					height: this.props.position.height,
-					node: this.box.current
-				};
 				this.props.onDragEnd && this.props.onDragEnd(e, data);
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
