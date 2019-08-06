@@ -233,6 +233,8 @@ function (_PureComponent) {
 
       var onDrag = function onDrag(e) {
         if (_this2.props.dragging) {
+          e.stopImmediatePropagation();
+
           var _boundingBox = _this2.props.getBoundingBoxElement();
 
           var boundingBoxDimensions = _boundingBox.current.getBoundingClientRect().toJSON();
@@ -430,6 +432,8 @@ function (_PureComponent) {
 
       var onResize = function onResize(e) {
         if (_this3.props.resizing) {
+          e.stopImmediatePropagation();
+
           if (target.id === 'br') {
             var currentDimensions = {
               width: e.clientX - startingDimensions.left,

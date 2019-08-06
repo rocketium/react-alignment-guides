@@ -38,6 +38,7 @@ class Box extends PureComponent {
 
 		const onDrag = (e) => {
 			if (this.props.dragging) {
+				e.stopImmediatePropagation();
 				const boundingBox = this.props.getBoundingBoxElement();
 				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
 				const boxWidth = this.props.position.width;
@@ -215,6 +216,7 @@ class Box extends PureComponent {
 
 		const onResize = (e) => {
 			if (this.props.resizing) {
+				e.stopImmediatePropagation();
 				if (target.id === 'br') {
 					const currentDimensions = {
 						width: e.clientX - startingDimensions.left,
