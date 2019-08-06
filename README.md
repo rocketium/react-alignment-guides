@@ -47,8 +47,7 @@ class Example extends Component {
 | onResizeEnd | false |  | Function to call when resize ends |
 | onSelect | false |  | Function to call when a box is clicked |
 | onUnselect | false |  | Function to call when a box goes inactive |
-| style | false | {} | Styles to be applied to the component. It should follow the convention described [here](https://reactjs.org/docs/dom-elements.html#style). 
-| | | |_Note: Do not override `position`_ |
+| style | false | {} | Styles to be applied to the component. It should follow the convention described [here](https://reactjs.org/docs/dom-elements.html#style). _Note: Do not override `position`_ |
 
 ## License
 
