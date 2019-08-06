@@ -66,8 +66,11 @@ class AlignmentGuides extends Component {
 
 	componentWillUpdate(nextProps, nextState, nextContext) {
 		const { active } = this.state;
-		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
-		if (nextProps.boxes !== this.props.boxes) {
+		// Set the dimensions of the bounding box and the draggable boxes
+		// when the component receives new boxes and/or style props.
+		// This is to allow dynamically updating the component by changing the number of boxes,
+		// updating existing boxes by external methods or updating the size of the bounding box
+		if (nextProps.boxes !== this.props.boxes || nextProps.style !== this.props.style) {
 			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};
