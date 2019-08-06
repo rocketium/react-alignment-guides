@@ -530,10 +530,10 @@ function (_PureComponent) {
           var _data22 = {
             width: position.width,
             height: position.height,
-            y: position.top - boundingBoxPosition.y,
-            x: position.left - boundingBoxPosition.x,
-            top: position.top - boundingBoxPosition.y,
-            left: position.left - boundingBoxPosition.x,
+            y: position.y,
+            x: position.x,
+            top: position.top,
+            left: position.left,
             node: _this3.box.current
           };
           _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, _data22);

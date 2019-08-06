@@ -314,10 +314,10 @@ class Box extends PureComponent {
 				const data = {
 					width: position.width,
 					height: position.height,
-					y: position.top - boundingBoxPosition.y,
-					x: position.left - boundingBoxPosition.x,
-					top: position.top - boundingBoxPosition.y,
-					left: position.left - boundingBoxPosition.x,
+					y: position.y,
+					x: position.x,
+					top: position.top,
+					left: position.left,
 					node: this.box.current
 				};
 				this.props.onResizeEnd && this.props.onResizeEnd(e, data);
