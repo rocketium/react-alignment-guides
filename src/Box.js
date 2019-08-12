@@ -18,10 +18,18 @@ class Box extends PureComponent {
 
 	onDragStart(e) {
 		e.stopPropagation();
+		const { scale } = this.props;
 		const target = this.box.current;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingPosition = target.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		let xFactor = 1;
+		let yFactor = 1;
+
+		if (scale) {
+			xFactor = scale.width / boundingBoxPosition.width;
+			yFactor = scale.height / boundingBoxPosition.height;
+		}
 		let data = {
 			x: startingPosition.x - boundingBoxPosition.x,
 			y: startingPosition.y - boundingBoxPosition.y,
@@ -43,10 +51,10 @@ class Box extends PureComponent {
 				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
 				const boxWidth = this.props.position.width;
 				const boxHeight = this.props.position.height;
-				const left = e.clientX - deltaX;
-				const top = e.clientY - deltaY;
+				const left = (e.clientX - deltaX) * xFactor;
+				const top = (e.clientY - deltaY) * yFactor;
 
-				const currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+				const currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions, scale);
 				data = {
 					x: currentPosition.left,
 					y: currentPosition.top,
@@ -74,7 +82,6 @@ class Box extends PureComponent {
 	}
 
 	shortcutHandler(e) {
-		const { position } = this.props;
 		if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
@@ -184,10 +191,18 @@ class Box extends PureComponent {
 
 	onResizeStart(e) {
 		e.stopPropagation();
+		const { scale } = this.props;
 		const { target } = e;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingDimensions = this.box.current.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		let xFactor = 1;
+		let yFactor = 1;
+
+		if (scale) {
+			xFactor = scale.width / boundingBoxPosition.width;
+			yFactor = scale.height / boundingBoxPosition.height;
+		}
 		let data = {
 			width: startingDimensions.width,
 			height: startingDimensions.height,
@@ -204,12 +219,12 @@ class Box extends PureComponent {
 				e.stopImmediatePropagation();
 				if (target.id === 'br') {
 					const currentDimensions = {
-						width: e.clientX - startingDimensions.left,
-						height: e.clientY - startingDimensions.top
+						width: Math.round((e.clientX - startingDimensions.left) * xFactor),
+						height: Math.round((e.clientY - startingDimensions.top) * yFactor)
 					};
-					const left = startingDimensions.left - boundingBoxPosition.x;
-					const top = startingDimensions.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+					const left = Math.round((startingDimensions.left - boundingBoxPosition.x) * xFactor);
+					const top = Math.round((startingDimensions.top - boundingBoxPosition.y) * yFactor);
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition, scale);
 
 					data = {
 						width: currentPosition.width,
@@ -225,17 +240,17 @@ class Box extends PureComponent {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
 					const currentDimensions = {
-						width: startingDimensions.width + deltaX,
-						height: startingDimensions.height - deltaY
+						width: Math.round((startingDimensions.width + deltaX) * xFactor),
+						height: Math.round((startingDimensions.height - deltaY) * yFactor)
 					};
 
 					const calculatedPosition = {
 						top: startingDimensions.top,
 						left: startingDimensions.left - deltaX
 					};
-					const left = calculatedPosition.left - boundingBoxPosition.x;
-					const top = calculatedPosition.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+					const left = Math.round((calculatedPosition.left - boundingBoxPosition.x) * xFactor);
+					const top = Math.round((calculatedPosition.top - boundingBoxPosition.y) * yFactor);
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition, scale);
 
 					data = {
 						width: currentPosition.width,
@@ -251,17 +266,17 @@ class Box extends PureComponent {
 					const deltaX = e.clientX - startingDimensions.left;
 					const deltaY = startingDimensions.top - e.clientY;
 					const currentDimensions = {
-						width: deltaX,
-						height: startingDimensions.height + deltaY
+						width: Math.round(deltaX * xFactor),
+						height: Math.round((startingDimensions.height + deltaY) * yFactor)
 					};
 
 					const calculatedPosition = {
 						top: startingDimensions.top - deltaY,
 						left: startingDimensions.left
 					};
-					const left = calculatedPosition.left - boundingBoxPosition.x;
-					const top = calculatedPosition.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+					const left = Math.round((calculatedPosition.left - boundingBoxPosition.x) * xFactor);
+					const top = Math.round((calculatedPosition.top - boundingBoxPosition.y) * yFactor);
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition, scale);
 
 					data = {
 						width: currentPosition.width,
@@ -277,17 +292,17 @@ class Box extends PureComponent {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top - e.clientY;
 					const currentDimensions = {
-						width: startingDimensions.width + deltaX,
-						height: startingDimensions.height + deltaY
+						width: Math.round((startingDimensions.width + deltaX) * xFactor),
+						height: Math.round((startingDimensions.height + deltaY) * yFactor)
 					};
 
 					const calculatedPosition = {
 						top: startingDimensions.top - deltaY,
 						left: startingDimensions.left - deltaX
 					};
-					const left = calculatedPosition.left - boundingBoxPosition.x;
-					const top = calculatedPosition.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+					const left = Math.round((calculatedPosition.left - boundingBoxPosition.x) * xFactor);
+					const top = Math.round((calculatedPosition.top - boundingBoxPosition.y) * yFactor);
+					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition, scale);
 
 					data = {
 						width: currentPosition.width,
@@ -323,15 +338,25 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { biggestBox, boxStyle, id, isSelected, position } = this.props;
+		const { biggestBox, boxStyle, id, isSelected, position, scale } = this.props;
+		const boundingBox = this.props.getBoundingBoxElement();
+		const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
+		let xFactor = 1;
+		let yFactor = 1;
+
+		if (scale) {
+			xFactor = scale.width / boundingBoxDimensions.width;
+			yFactor = scale.height / boundingBoxDimensions.height;
+		}
+
 		let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
 		boxClassNames = biggestBox === id ? `${boxClassNames} ${styles.biggest}` : boxClassNames;
 		const boxStyles = {
 			...boxStyle,
-			width: `${position.width}px`,
-			height: `${position.height}px`,
-			top: `${position.top}px`,
-			left: `${position.left}px`
+			width: `${position.width / xFactor}px`,
+			height: `${position.height / yFactor}px`,
+			top: `${position.top / yFactor}px`,
+			left: `${position.left / xFactor}px`
 		};
 
 		return <div
@@ -339,7 +364,7 @@ class Box extends PureComponent {
 			id={id}
 			onMouseUp={this.props.selectBox}
 			onMouseDown={this.onDragStart}
-			onKeyUp={this.shortcutHandler}
+			onKeyDown={this.shortcutHandler}
 			ref={this.box}
 			style={boxStyles}
 			tabIndex="0"
@@ -350,7 +375,7 @@ class Box extends PureComponent {
 						ref={this.coordinates}
 						className={styles.coordinates}
 					>
-						{`(${Math.round(position.left)}, ${Math.round(position.top)})`}
+						{`(${position.left}, ${position.top})`}
 					</span> :
 					null
 			}
@@ -358,7 +383,7 @@ class Box extends PureComponent {
 				isSelected ?
 					<span
 						className={`${styles.dimensions} ${styles.width}`}
-						style={{ width: `${position.width}px` }}
+						style={{ width: `${position.width / xFactor}px` }}
 					>
 						{Math.round(position.width)}
 					</span> :
@@ -368,7 +393,7 @@ class Box extends PureComponent {
 				isSelected ?
 					<span
 						className={`${styles.dimensions} ${styles.height}`}
-						style={{ height: `${position.height}px`, left: `${position.width + 10}px` }}
+						style={{ height: `${position.height / yFactor}px`, left: `${(position.width / xFactor) + 10}px` }}
 					>
 						{Math.round(position.height)}
 					</span> :
@@ -405,7 +430,8 @@ Box.propTypes = {
 	onRotateEnd: PropTypes.func,
 	position: PropTypes.object.isRequired,
 	resize: PropTypes.bool,
-	rotate: PropTypes.bool
+	rotate: PropTypes.bool,
+	scale: PropTypes.object
 };
 
 export default Box;

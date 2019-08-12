@@ -91,34 +91,44 @@ export const findBiggestBox = (boxes) => {
 	});
 };
 
-export const calculateBoundariesForDrag = (left, top, width, height, bounds) => {
-	if (left >= 0 && left <= bounds.width - width && top >= 0 && top <= bounds.height - height) {
+export const calculateBoundariesForDrag = (left, top, width, height, bounds, scale) => {
+	let boundingBox = { ...bounds };
+	if (scale && scale.width && scale.height) {
+		boundingBox.width = scale.width;
+		boundingBox.height = scale.height;
+	}
+	if (left >= 0 && left <= boundingBox.width - width && top >= 0 && top <= boundingBox.height - height) {
 		return {
 			left,
 			top
 		};
-	} else if (left >= 0 && left <= bounds.width - width) {
+	} else if (left >= 0 && left <= boundingBox.width - width) {
 		return {
 			left,
-			top: top < 0 ? 0 : (bounds.height - height)
+			top: top < 0 ? 0 : (boundingBox.height - height)
 		};
-	} else if (top >= 0 && top <= bounds.height - height) {
+	} else if (top >= 0 && top <= boundingBox.height - height) {
 		return {
-			left: left < 0 ? 0 : (bounds.width - width),
+			left: left < 0 ? 0 : (boundingBox.width - width),
 			top
 		};
 	} else {
 		return {
-			left: left < 0 ? 0 : (bounds.width - width),
-			top: top < 0 ? 0 : (bounds.height - height)
+			left: left < 0 ? 0 : (boundingBox.width - width),
+			top: top < 0 ? 0 : (boundingBox.height - height)
 		};
 	}
 };
 
-export const calculateBoundariesForResize = (left, top, width, height, bounds) => {
+export const calculateBoundariesForResize = (left, top, width, height, bounds, scale) => {
+	let boundingBox = { ...bounds };
+	if (scale && scale.width && scale.height) {
+		boundingBox.width = scale.width;
+		boundingBox.height = scale.height;
+	}
 	let widthDifference = 0;
 	let heightDifference = 0;
-	if (left >= 0 && left + width <= bounds.width && top >= 0 && top + height <= bounds.height) {
+	if (left >= 0 && left + width <= boundingBox.width && top >= 0 && top + height <= boundingBox.height) {
 		return {
 			left,
 			top,
@@ -129,33 +139,33 @@ export const calculateBoundariesForResize = (left, top, width, height, bounds) =
 		return {
 			left: 0,
 			top: 0,
-			width: width + left,
-			height: height + top
+			width: width + left <= boundingBox.width ? width + left : boundingBox.width,
+			height: height + top <= boundingBox.height ? height + top : boundingBox.height
 		};
 	} else if (left < 0) {
 		return {
 			left: 0,
 			top,
-			width: width + left,
-			height: height < bounds.height ? height : bounds.height
+			width: width + left <= boundingBox.width ? width + left : boundingBox.width,
+			height: height + top <= boundingBox.height ? height : boundingBox.height - top
 		};
 	} else if (top < 0) {
 		return {
 			left,
 			top: 0,
-			width: width < bounds.width ? width : bounds.width,
-			height: height + top
+			width: width + left <= boundingBox.width ? width : boundingBox.width - left,
+			height: height + top <= boundingBox.height ? height + top : boundingBox.height
 		};
-	} else if (left >= 0 && left + width <= bounds.width) {
-		heightDifference = (top + height) - bounds.height;
+	} else if (left >= 0 && left + width <= boundingBox.width) {
+		heightDifference = (top + height) - boundingBox.height;
 		return {
 			left,
 			top: top < 0 ? 0 : top,
 			width,
 			height: height - heightDifference
 		};
-	} else if (top >= 0 && top + height <= bounds.height) {
-		widthDifference = (left + width) - bounds.width;
+	} else if (top >= 0 && top + height <= boundingBox.height) {
+		widthDifference = (left + width) - boundingBox.width;
 		return {
 			left: left < 0 ? 0 : left,
 			top,
@@ -163,8 +173,8 @@ export const calculateBoundariesForResize = (left, top, width, height, bounds) =
 			height
 		};
 	} else {
-		widthDifference = (left + width) - bounds.width;
-		heightDifference = (top + height) - bounds.height;
+		widthDifference = (left + width) - boundingBox.width;
+		heightDifference = (top + height) - boundingBox.height;
 		return {
 			left: left < 0 ? 0 : left,
 			top: top < 0 ? 0 : top,

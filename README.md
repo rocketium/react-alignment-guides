@@ -47,7 +47,8 @@ class Example extends Component {
 | onResizeEnd | false |  | Function to call when resize ends |
 | onSelect | false |  | Function to call when a box is clicked |
 | onUnselect | false |  | Function to call when a box goes inactive |
-| style | false | {} | Styles to be applied to the component. It should follow the convention described [here](https://reactjs.org/docs/dom-elements.html#style). _Note: Do not override `position`_ |
+| scale | false | null | Resolution to which you want to scale the boxes to. For example, the bounding box can be 1280x720 but you can display the coordinates and dimensions relative to 1920x1080. In this case, `scale` would be set to `{ width: 1920, height: 1080 }`. |
+| style | false | null | Styles to be applied to the component. It should follow the convention described [here](https://reactjs.org/docs/dom-elements.html#style). _Note: Do not override `position`_ |
 
 ## License
 
