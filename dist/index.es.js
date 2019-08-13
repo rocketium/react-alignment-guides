@@ -104,13 +104,8 @@ var findBiggestBox = function findBiggestBox(boxes) {
     }
   });
 };
-var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, width, height, bounds, scale) {
+var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, width, height, bounds) {
   var boundingBox = _objectSpread({}, bounds);
-
-  if (scale && scale.width && scale.height) {
-    boundingBox.width = scale.width;
-    boundingBox.height = scale.height;
-  }
 
   if (left >= 0 && left <= boundingBox.width - width && top >= 0 && top <= boundingBox.height - height) {
     return {
@@ -134,13 +129,8 @@ var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, 
     };
   }
 };
-var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds, scale) {
+var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds) {
   var boundingBox = _objectSpread({}, bounds);
-
-  if (scale && scale.width && scale.height) {
-    boundingBox.width = scale.width;
-    boundingBox.height = scale.height;
-  }
 
   var widthDifference = 0;
   var heightDifference = 0;
@@ -287,19 +277,10 @@ function (_PureComponent) {
       var _this2 = this;
 
       e.stopPropagation();
-      var scale = this.props.scale;
       var target = this.box.current;
       var boundingBox = this.props.getBoundingBoxElement();
       var startingPosition = target.getBoundingClientRect().toJSON();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-      var xFactor = 1;
-      var yFactor = 1;
-
-      if (scale) {
-        xFactor = scale.width / boundingBoxPosition.width;
-        yFactor = scale.height / boundingBoxPosition.height;
-      }
-
       var data = {
         x: startingPosition.x - boundingBoxPosition.x,
         y: startingPosition.y - boundingBoxPosition.y,
@@ -323,9 +304,9 @@ function (_PureComponent) {
 
           var boxWidth = _this2.props.position.width;
           var boxHeight = _this2.props.position.height;
-          var left = (e.clientX - deltaX) * xFactor;
-          var top = (e.clientY - deltaY) * yFactor;
-          var currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions, scale);
+          var left = e.clientX - deltaX;
+          var top = e.clientY - deltaY;
+          var currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
           data = {
             x: currentPosition.left,
             y: currentPosition.top,
@@ -353,6 +334,8 @@ function (_PureComponent) {
   }, {
     key: "shortcutHandler",
     value: function shortcutHandler(e) {
+      var position = this.props.position;
+
       if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
         var data = Object.assign({}, position, {
           node: this.box.current,
@@ -480,19 +463,10 @@ function (_PureComponent) {
       var _this3 = this;
 
       e.stopPropagation();
-      var scale = this.props.scale;
       var target = e.target;
       var boundingBox = this.props.getBoundingBoxElement();
       var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-      var xFactor = 1;
-      var yFactor = 1;
-
-      if (scale) {
-        xFactor = scale.width / boundingBoxPosition.width;
-        yFactor = scale.height / boundingBoxPosition.height;
-      }
-
       var data = {
         width: startingDimensions.width,
         height: startingDimensions.height,
@@ -510,12 +484,12 @@ function (_PureComponent) {
 
           if (target.id === 'br') {
             var currentDimensions = {
-              width: Math.round((e.clientX - startingDimensions.left) * xFactor),
-              height: Math.round((e.clientY - startingDimensions.top) * yFactor)
+              width: e.clientX - startingDimensions.left,
+              height: e.clientY - startingDimensions.top
             };
-            var left = Math.round((startingDimensions.left - boundingBoxPosition.x) * xFactor);
-            var top = Math.round((startingDimensions.top - boundingBoxPosition.y) * yFactor);
-            var currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition, scale);
+            var left = startingDimensions.left - boundingBoxPosition.x;
+            var top = startingDimensions.top - boundingBoxPosition.y;
+            var currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
             data = {
               width: currentPosition.width,
               height: currentPosition.height,
@@ -530,19 +504,19 @@ function (_PureComponent) {
             var deltaX = startingDimensions.left - e.clientX;
             var deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
             var _currentDimensions = {
-              width: Math.round((startingDimensions.width + deltaX) * xFactor),
-              height: Math.round((startingDimensions.height - deltaY) * yFactor)
+              width: startingDimensions.width + deltaX,
+              height: startingDimensions.height - deltaY
             };
             var calculatedPosition = {
               top: startingDimensions.top,
               left: startingDimensions.left - deltaX
             };
 
-            var _left = Math.round((calculatedPosition.left - boundingBoxPosition.x) * xFactor);
+            var _left = calculatedPosition.left - boundingBoxPosition.x;
 
-            var _top = Math.round((calculatedPosition.top - boundingBoxPosition.y) * yFactor);
+            var _top = calculatedPosition.top - boundingBoxPosition.y;
 
-            var _currentPosition = calculateBoundariesForResize(_left, _top, _currentDimensions.width, _currentDimensions.height, boundingBoxPosition, scale);
+            var _currentPosition = calculateBoundariesForResize(_left, _top, _currentDimensions.width, _currentDimensions.height, boundingBoxPosition);
 
             data = {
               width: _currentPosition.width,
@@ -560,19 +534,19 @@ function (_PureComponent) {
             var _deltaY = startingDimensions.top - e.clientY;
 
             var _currentDimensions2 = {
-              width: Math.round(_deltaX * xFactor),
-              height: Math.round((startingDimensions.height + _deltaY) * yFactor)
+              width: _deltaX,
+              height: startingDimensions.height + _deltaY
             };
             var _calculatedPosition = {
               top: startingDimensions.top - _deltaY,
               left: startingDimensions.left
             };
 
-            var _left2 = Math.round((_calculatedPosition.left - boundingBoxPosition.x) * xFactor);
+            var _left2 = _calculatedPosition.left - boundingBoxPosition.x;
 
-            var _top2 = Math.round((_calculatedPosition.top - boundingBoxPosition.y) * yFactor);
+            var _top2 = _calculatedPosition.top - boundingBoxPosition.y;
 
-            var _currentPosition2 = calculateBoundariesForResize(_left2, _top2, _currentDimensions2.width, _currentDimensions2.height, boundingBoxPosition, scale);
+            var _currentPosition2 = calculateBoundariesForResize(_left2, _top2, _currentDimensions2.width, _currentDimensions2.height, boundingBoxPosition);
 
             data = {
               width: _currentPosition2.width,
@@ -590,19 +564,19 @@ function (_PureComponent) {
             var _deltaY2 = startingDimensions.top - e.clientY;
 
             var _currentDimensions3 = {
-              width: Math.round((startingDimensions.width + _deltaX2) * xFactor),
-              height: Math.round((startingDimensions.height + _deltaY2) * yFactor)
+              width: startingDimensions.width + _deltaX2,
+              height: startingDimensions.height + _deltaY2
             };
             var _calculatedPosition2 = {
               top: startingDimensions.top - _deltaY2,
               left: startingDimensions.left - _deltaX2
             };
 
-            var _left3 = Math.round((_calculatedPosition2.left - boundingBoxPosition.x) * xFactor);
+            var _left3 = _calculatedPosition2.left - boundingBoxPosition.x;
 
-            var _top3 = Math.round((_calculatedPosition2.top - boundingBoxPosition.y) * yFactor);
+            var _top3 = _calculatedPosition2.top - boundingBoxPosition.y;
 
-            var _currentPosition3 = calculateBoundariesForResize(_left3, _top3, _currentDimensions3.width, _currentDimensions3.height, boundingBoxPosition, scale);
+            var _currentPosition3 = calculateBoundariesForResize(_left3, _top3, _currentDimensions3.width, _currentDimensions3.height, boundingBoxPosition);
 
             data = {
               width: _currentPosition3.width,
@@ -647,25 +621,25 @@ function (_PureComponent) {
           id = _this$props.id,
           isSelected = _this$props.isSelected,
           position = _this$props.position,
-          scale = _this$props.scale;
+          resolution = _this$props.resolution;
       var boundingBox = this.props.getBoundingBoxElement();
       var boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
       var xFactor = 1;
       var yFactor = 1;
 
-      if (scale) {
-        xFactor = scale.width / boundingBoxDimensions.width;
-        yFactor = scale.height / boundingBoxDimensions.height;
+      if (resolution && resolution.width && resolution.height) {
+        xFactor = resolution.width / boundingBoxDimensions.width;
+        yFactor = resolution.height / boundingBoxDimensions.height;
       }
 
       var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
       boxClassNames = biggestBox === id ? "".concat(boxClassNames, " ").concat(styles.biggest) : boxClassNames;
 
       var boxStyles = _objectSpread$1({}, boxStyle, {
-        width: "".concat(position.width / xFactor, "px"),
-        height: "".concat(position.height / yFactor, "px"),
-        top: "".concat(position.top / yFactor, "px"),
-        left: "".concat(position.left / xFactor, "px")
+        width: "".concat(position.width, "px"),
+        height: "".concat(position.height, "px"),
+        top: "".concat(position.top, "px"),
+        left: "".concat(position.left, "px")
       });
 
       return React.createElement("div", {
@@ -680,18 +654,18 @@ function (_PureComponent) {
       }, isSelected ? React.createElement("span", {
         ref: this.coordinates,
         className: styles.coordinates
-      }, "(".concat(position.left, ", ").concat(position.top, ")")) : null, isSelected ? React.createElement("span", {
+      }, "(".concat(Math.round(position.left * xFactor), ", ").concat(Math.round(position.top * yFactor), ")")) : null, isSelected ? React.createElement("span", {
         className: "".concat(styles.dimensions, " ").concat(styles.width),
         style: {
-          width: "".concat(position.width / xFactor, "px")
+          width: "".concat(position.width, "px")
         }
-      }, Math.round(position.width)) : null, isSelected ? React.createElement("span", {
+      }, Math.round(position.width * xFactor)) : null, isSelected ? React.createElement("span", {
         className: "".concat(styles.dimensions, " ").concat(styles.height),
         style: {
-          height: "".concat(position.height / yFactor, "px"),
-          left: "".concat(position.width / xFactor + 10, "px")
+          height: "".concat(position.height, "px"),
+          left: "".concat(position.width + 10, "px")
         }
-      }, Math.round(position.height)) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
+      }, Math.round(position.height * yFactor)) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
         var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
         return React.createElement("div", {
           key: handle,
@@ -725,8 +699,8 @@ Box.propTypes = {
   onRotateEnd: PropTypes.func,
   position: PropTypes.object.isRequired,
   resize: PropTypes.bool,
-  rotate: PropTypes.bool,
-  scale: PropTypes.object
+  resolution: PropTypes.object,
+  rotate: PropTypes.bool
 };
 
 function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
@@ -1218,7 +1192,7 @@ AlignmentGuides.propTypes = {
   onUnselect: PropTypes.func,
   resize: PropTypes.bool,
   rotate: PropTypes.bool,
-  scale: PropTypes.object,
+  resolution: PropTypes.object,
   style: PropTypes.object
 };
 

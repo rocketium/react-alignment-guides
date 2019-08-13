@@ -461,7 +461,7 @@ AlignmentGuides.propTypes = {
 	onUnselect: PropTypes.func,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
-	scale: PropTypes.object,
+	resolution: PropTypes.object,
 	style: PropTypes.object
 };
 

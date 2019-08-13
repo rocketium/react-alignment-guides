@@ -91,12 +91,8 @@ export const findBiggestBox = (boxes) => {
 	});
 };
 
-export const calculateBoundariesForDrag = (left, top, width, height, bounds, scale) => {
-	let boundingBox = { ...bounds };
-	if (scale && scale.width && scale.height) {
-		boundingBox.width = scale.width;
-		boundingBox.height = scale.height;
-	}
+export const calculateBoundariesForDrag = (left, top, width, height, bounds) => {
+	const boundingBox = { ...bounds };
 	if (left >= 0 && left <= boundingBox.width - width && top >= 0 && top <= boundingBox.height - height) {
 		return {
 			left,
@@ -120,12 +116,8 @@ export const calculateBoundariesForDrag = (left, top, width, height, bounds, sca
 	}
 };
 
-export const calculateBoundariesForResize = (left, top, width, height, bounds, scale) => {
-	let boundingBox = { ...bounds };
-	if (scale && scale.width && scale.height) {
-		boundingBox.width = scale.width;
-		boundingBox.height = scale.height;
-	}
+export const calculateBoundariesForResize = (left, top, width, height, bounds) => {
+	const boundingBox = { ...bounds };
 	let widthDifference = 0;
 	let heightDifference = 0;
 	if (left >= 0 && left + width <= boundingBox.width && top >= 0 && top + height <= boundingBox.height) {
