@@ -81,16 +81,6 @@ export const checkValueProximities = (activeBoxGuidesInOneAxis, allOtherGuidesIn
 	return { matchedArray, proximity, intersection };
 };
 
-export const findBiggestBox = (boxes) => {
-	return Object.keys(boxes).reduce((prev, current) => {
-		if (boxes[current].width > boxes[prev].width) {
-			return current;
-		} else {
-			return prev
-		}
-	});
-};
-
 export const calculateBoundariesForDrag = (left, top, width, height, bounds) => {
 	const boundingBox = { ...bounds };
 	if (left >= 0 && left <= boundingBox.width - width && top >= 0 && top <= boundingBox.height - height) {
