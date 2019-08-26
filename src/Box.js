@@ -370,19 +370,9 @@ class Box extends PureComponent {
 				isSelected ?
 					<span
 						className={`${styles.dimensions} ${styles.width}`}
-						style={{ width: `${position.width}px` }}
+						style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
 					>
-						{Math.round(position.width * xFactor)}
-					</span> :
-					null
-			}
-			{
-				isSelected ?
-					<span
-						className={`${styles.dimensions} ${styles.height}`}
-						style={{ height: `${position.height}px`, left: `${(position.width) + 10}px` }}
-					>
-						{Math.round(position.height * yFactor)}
+						{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
 					</span> :
 					null
 			}
