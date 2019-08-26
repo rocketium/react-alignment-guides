@@ -17,7 +17,7 @@ class Box extends PureComponent {
 	}
 
 	onDragStart(e) {
-		e.stopPropagation();
+		e.stopImmediatePropagation && e.stopImmediatePropagation();
 		const target = this.box.current;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingPosition = target.getBoundingClientRect().toJSON();
@@ -39,7 +39,7 @@ class Box extends PureComponent {
 
 		const onDrag = (e) => {
 			if (this.props.dragging) {
-				e.stopImmediatePropagation();
+				e.stopImmediatePropagation && e.stopImmediatePropagation();
 				const boundingBox = this.props.getBoundingBoxElement();
 				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
 				const boxWidth = this.props.position.width;
@@ -185,7 +185,7 @@ class Box extends PureComponent {
 	}
 
 	onResizeStart(e) {
-		e.stopPropagation();
+		e.stopImmediatePropagation && e.stopImmediatePropagation();
 		const { target } = e;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const startingDimensions = this.box.current.getBoundingClientRect().toJSON();
@@ -203,7 +203,7 @@ class Box extends PureComponent {
 
 		const onResize = (e) => {
 			if (this.props.resizing) {
-				e.stopImmediatePropagation();
+				e.stopImmediatePropagation && e.stopImmediatePropagation();
 				if (target.id === 'br') {
 					const currentDimensions = {
 						width: e.clientX - startingDimensions.left,
@@ -325,7 +325,7 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { biggestBox, boxStyle, id, isSelected, position, resolution } = this.props;
+		const { boxStyle, id, isSelected, position, resolution } = this.props;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
 		let xFactor = 1;
@@ -336,8 +336,7 @@ class Box extends PureComponent {
 			yFactor = resolution.height / boundingBoxDimensions.height;
 		}
 
-		let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
-		boxClassNames = biggestBox === id ? `${boxClassNames} ${styles.biggest}` : boxClassNames;
+		const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
 		const boxStyles = {
 			...boxStyle,
 			width: `${position.width}px`,
@@ -400,7 +399,6 @@ class Box extends PureComponent {
 }
 
 Box.propTypes = {
-	biggestBox: PropTypes.string,
 	drag: PropTypes.bool,
 	getBoundingBoxElement: PropTypes.func,
 	id: PropTypes.string,
