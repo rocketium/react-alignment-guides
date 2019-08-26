@@ -17,6 +17,7 @@ class Box extends PureComponent {
 	}
 
 	onDragStart(e) {
+		e.stopPropagation();
 		e.stopImmediatePropagation && e.stopImmediatePropagation();
 		const target = this.box.current;
 		const boundingBox = this.props.getBoundingBoxElement();
@@ -39,6 +40,7 @@ class Box extends PureComponent {
 
 		const onDrag = (e) => {
 			if (this.props.dragging) {
+				e.stopPropagation();
 				e.stopImmediatePropagation && e.stopImmediatePropagation();
 				const boundingBox = this.props.getBoundingBoxElement();
 				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
@@ -185,6 +187,7 @@ class Box extends PureComponent {
 	}
 
 	onResizeStart(e) {
+		e.stopPropagation();
 		e.stopImmediatePropagation && e.stopImmediatePropagation();
 		const { target } = e;
 		const boundingBox = this.props.getBoundingBoxElement();
@@ -203,6 +206,7 @@ class Box extends PureComponent {
 
 		const onResize = (e) => {
 			if (this.props.resizing) {
+				e.stopPropagation();
 				e.stopImmediatePropagation && e.stopImmediatePropagation();
 				if (target.id === 'br') {
 					const currentDimensions = {

@@ -267,6 +267,7 @@ function (_PureComponent) {
     value: function onDragStart(e) {
       var _this2 = this;
 
+      e.stopPropagation();
       e.stopImmediatePropagation && e.stopImmediatePropagation();
       var target = this.box.current;
       var boundingBox = this.props.getBoundingBoxElement();
@@ -287,6 +288,7 @@ function (_PureComponent) {
 
       var onDrag = function onDrag(e) {
         if (_this2.props.dragging) {
+          e.stopPropagation();
           e.stopImmediatePropagation && e.stopImmediatePropagation();
 
           var _boundingBox = _this2.props.getBoundingBoxElement();
@@ -453,6 +455,7 @@ function (_PureComponent) {
     value: function onResizeStart(e) {
       var _this3 = this;
 
+      e.stopPropagation();
       e.stopImmediatePropagation && e.stopImmediatePropagation();
       var target = e.target;
       var boundingBox = this.props.getBoundingBoxElement();
@@ -471,6 +474,7 @@ function (_PureComponent) {
 
       var onResize = function onResize(e) {
         if (_this3.props.resizing) {
+          e.stopPropagation();
           e.stopImmediatePropagation && e.stopImmediatePropagation();
 
           if (target.id === 'br') {
