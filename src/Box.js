@@ -343,7 +343,8 @@ class Box extends PureComponent {
 			width: `${position.width}px`,
 			height: `${position.height}px`,
 			top: `${position.top}px`,
-			left: `${position.left}px`
+			left: `${position.left}px`,
+			zIndex: position.zIndex
 		};
 
 		return <div

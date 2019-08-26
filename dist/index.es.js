@@ -639,7 +639,8 @@ function (_PureComponent) {
         width: "".concat(position.width, "px"),
         height: "".concat(position.height, "px"),
         top: "".concat(position.top, "px"),
-        left: "".concat(position.left, "px")
+        left: "".concat(position.left, "px"),
+        zIndex: position.zIndex
       });
 
       return React.createElement("div", {

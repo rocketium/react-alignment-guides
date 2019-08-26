@@ -1,6 +1,6 @@
 {
 	"name": "react-alignment-guides",
-	"version": "0.12.1",
+	"version": "0.12.2",
 	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
 	"keywords": [
 		"drag",
@@ -11,7 +11,7 @@
 		"smart guides",
 		"snap to guide"
 	],
-	"author": "Ilango <ilango@rocketium.com>",
+	"author": "Ilango <rajagopalilango@gmail.com>",
 	"license": "Apache-2.0",
 	"repository": {
 		"type": "git",
