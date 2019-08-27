@@ -268,7 +268,6 @@ function (_PureComponent) {
       var _this2 = this;
 
       e.stopPropagation();
-      e.stopImmediatePropagation && e.stopImmediatePropagation();
       var target = this.box.current;
       var boundingBox = this.props.getBoundingBoxElement();
       var startingPosition = target.getBoundingClientRect().toJSON();
@@ -289,7 +288,6 @@ function (_PureComponent) {
       var onDrag = function onDrag(e) {
         if (_this2.props.dragging) {
           e.stopPropagation();
-          e.stopImmediatePropagation && e.stopImmediatePropagation();
 
           var _boundingBox = _this2.props.getBoundingBoxElement();
 
@@ -456,7 +454,6 @@ function (_PureComponent) {
       var _this3 = this;
 
       e.stopPropagation();
-      e.stopImmediatePropagation && e.stopImmediatePropagation();
       var target = e.target;
       var boundingBox = this.props.getBoundingBoxElement();
       var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
@@ -475,7 +472,6 @@ function (_PureComponent) {
       var onResize = function onResize(e) {
         if (_this3.props.resizing) {
           e.stopPropagation();
-          e.stopImmediatePropagation && e.stopImmediatePropagation();
 
           if (target.id === 'br') {
             var currentDimensions = {
