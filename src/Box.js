@@ -10,10 +10,17 @@ class Box extends PureComponent {
 		this.box = React.createRef();
 		this.coordinates = React.createRef();
 		this.height = React.createRef();
+		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+	}
+
+	selectBox(e) {
+		if (this.props.isSelected) {
+			this.props.selectBox(e);
+		}
 	}
 
 	onDragStart(e) {
@@ -346,10 +353,14 @@ class Box extends PureComponent {
 			zIndex: position.zIndex
 		};
 
+		if (isSelected && (this.props.dragging || this.props.resizing)) {
+			boxStyles.zIndex = 99;
+		}
+
 		return <div
 			className={boxClassNames}
 			id={id}
-			onMouseUp={this.props.selectBox}
+			onMouseUp={this.selectBox}
 			onMouseDown={this.onDragStart}
 			onKeyDown={this.shortcutHandler}
 			ref={this.box}

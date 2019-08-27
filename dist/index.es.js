@@ -255,6 +255,7 @@ function (_PureComponent) {
     _this.box = React.createRef();
     _this.coordinates = React.createRef();
     _this.height = React.createRef();
+    _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
@@ -263,6 +264,13 @@ function (_PureComponent) {
   }
 
   _createClass(Box, [{
+    key: "selectBox",
+    value: function selectBox(e) {
+      if (this.props.isSelected) {
+        this.props.selectBox(e);
+      }
+    }
+  }, {
     key: "onDragStart",
     value: function onDragStart(e) {
       var _this2 = this;
@@ -632,10 +640,14 @@ function (_PureComponent) {
         zIndex: position.zIndex
       });
 
+      if (isSelected && (this.props.dragging || this.props.resizing)) {
+        boxStyles.zIndex = 99;
+      }
+
       return React.createElement("div", {
         className: boxClassNames,
         id: id,
-        onMouseUp: this.props.selectBox,
+        onMouseUp: this.selectBox,
         onMouseDown: this.onDragStart,
         onKeyDown: this.shortcutHandler,
         ref: this.box,
