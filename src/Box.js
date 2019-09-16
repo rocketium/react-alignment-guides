@@ -374,8 +374,8 @@ class Box extends PureComponent {
 							ref={this.coordinates}
 							className={styles.coordinates}
 						>
-						{`(${Math.round(position.left * xFactor)}, ${Math.round(position.top * yFactor)})`}
-					</span> :
+							{`(${Math.round(position.left * xFactor)}, ${Math.round(position.top * yFactor)})`}
+						</span> :
 						null
 				}
 				{
@@ -384,8 +384,8 @@ class Box extends PureComponent {
 							className={`${styles.dimensions} ${styles.width}`}
 							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
 						>
-						{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
-					</span> :
+							{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
+						</span> :
 						null
 				}
 				{
