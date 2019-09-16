@@ -333,69 +333,73 @@ class Box extends PureComponent {
 
 	render() {
 		const { boxStyle, id, isSelected, position, resolution } = this.props;
-		const boundingBox = this.props.getBoundingBoxElement();
-		const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
-		let xFactor = 1;
-		let yFactor = 1;
+		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
+			const boundingBox = this.props.getBoundingBoxElement();
+			const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
+			let xFactor = 1;
+			let yFactor = 1;
 
-		if (resolution && resolution.width && resolution.height) {
-			xFactor = resolution.width / boundingBoxDimensions.width;
-			yFactor = resolution.height / boundingBoxDimensions.height;
-		}
+			if (resolution && resolution.width && resolution.height) {
+				xFactor = resolution.width / boundingBoxDimensions.width;
+				yFactor = resolution.height / boundingBoxDimensions.height;
+			}
 
-		const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
-		const boxStyles = {
-			...boxStyle,
-			width: `${position.width}px`,
-			height: `${position.height}px`,
-			top: `${position.top}px`,
-			left: `${position.left}px`,
-			zIndex: position.zIndex
-		};
+			const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+			const boxStyles = {
+				...boxStyle,
+				width: `${position.width}px`,
+				height: `${position.height}px`,
+				top: `${position.top}px`,
+				left: `${position.left}px`,
+				zIndex: position.zIndex
+			};
 
-		if (isSelected && (this.props.dragging || this.props.resizing)) {
-			boxStyles.zIndex = 99;
-		}
+			if (isSelected && (this.props.dragging || this.props.resizing)) {
+				boxStyles.zIndex = 99;
+			}
 
-		return <div
-			className={boxClassNames}
-			id={id}
-			onMouseUp={this.selectBox}
-			onMouseDown={this.onDragStart}
-			onKeyDown={this.shortcutHandler}
-			ref={this.box}
-			style={boxStyles}
-			tabIndex="0"
-		>
-			{
-				isSelected ?
-					<span
-						ref={this.coordinates}
-						className={styles.coordinates}
-					>
+			return <div
+				className={boxClassNames}
+				id={id}
+				onMouseUp={this.selectBox}
+				onMouseDown={this.onDragStart}
+				onKeyDown={this.shortcutHandler}
+				ref={this.box}
+				style={boxStyles}
+				tabIndex="0"
+			>
+				{
+					isSelected ?
+						<span
+							ref={this.coordinates}
+							className={styles.coordinates}
+						>
 						{`(${Math.round(position.left * xFactor)}, ${Math.round(position.top * yFactor)})`}
 					</span> :
-					null
-			}
-			{
-				isSelected ?
-					<span
-						className={`${styles.dimensions} ${styles.width}`}
-						style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
-					>
+						null
+				}
+				{
+					isSelected ?
+						<span
+							className={`${styles.dimensions} ${styles.width}`}
+							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
+						>
 						{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
 					</span> :
-					null
-			}
-			{
-				isSelected ?
-					RESIZE_HANDLES.map(handle => {
-						const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
-						return <div key={handle} className={className} onMouseDown={this.onResizeStart} id={handle} />
-					}) :
-					null
-			}
-		</div>;
+						null
+				}
+				{
+					isSelected ?
+						RESIZE_HANDLES.map(handle => {
+							const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
+							return <div key={handle} className={className} onMouseDown={this.onResizeStart} id={handle} />
+						}) :
+						null
+				}
+			</div>;
+		}
+
+		return null;
 	}
 }
 

@@ -620,57 +620,62 @@ function (_PureComponent) {
           isSelected = _this$props.isSelected,
           position = _this$props.position,
           resolution = _this$props.resolution;
-      var boundingBox = this.props.getBoundingBoxElement();
-      var boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
-      var xFactor = 1;
-      var yFactor = 1;
 
-      if (resolution && resolution.width && resolution.height) {
-        xFactor = resolution.width / boundingBoxDimensions.width;
-        yFactor = resolution.height / boundingBoxDimensions.height;
-      }
+      if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
+        var boundingBox = this.props.getBoundingBoxElement();
+        var boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
+        var xFactor = 1;
+        var yFactor = 1;
 
-      var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
-
-      var boxStyles = _objectSpread$1({}, boxStyle, {
-        width: "".concat(position.width, "px"),
-        height: "".concat(position.height, "px"),
-        top: "".concat(position.top, "px"),
-        left: "".concat(position.left, "px"),
-        zIndex: position.zIndex
-      });
-
-      if (isSelected && (this.props.dragging || this.props.resizing)) {
-        boxStyles.zIndex = 99;
-      }
-
-      return React.createElement("div", {
-        className: boxClassNames,
-        id: id,
-        onMouseUp: this.selectBox,
-        onMouseDown: this.onDragStart,
-        onKeyDown: this.shortcutHandler,
-        ref: this.box,
-        style: boxStyles,
-        tabIndex: "0"
-      }, isSelected ? React.createElement("span", {
-        ref: this.coordinates,
-        className: styles.coordinates
-      }, "(".concat(Math.round(position.left * xFactor), ", ").concat(Math.round(position.top * yFactor), ")")) : null, isSelected ? React.createElement("span", {
-        className: "".concat(styles.dimensions, " ").concat(styles.width),
-        style: {
-          width: "".concat(position.width, "px"),
-          top: "".concat(position.height + 10, "px")
+        if (resolution && resolution.width && resolution.height) {
+          xFactor = resolution.width / boundingBoxDimensions.width;
+          yFactor = resolution.height / boundingBoxDimensions.height;
         }
-      }, "".concat(Math.round(position.width * xFactor), " x ").concat(Math.round(position.height * yFactor))) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
-        var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
-        return React.createElement("div", {
-          key: handle,
-          className: className,
-          onMouseDown: _this4.onResizeStart,
-          id: handle
+
+        var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
+
+        var boxStyles = _objectSpread$1({}, boxStyle, {
+          width: "".concat(position.width, "px"),
+          height: "".concat(position.height, "px"),
+          top: "".concat(position.top, "px"),
+          left: "".concat(position.left, "px"),
+          zIndex: position.zIndex
         });
-      }) : null);
+
+        if (isSelected && (this.props.dragging || this.props.resizing)) {
+          boxStyles.zIndex = 99;
+        }
+
+        return React.createElement("div", {
+          className: boxClassNames,
+          id: id,
+          onMouseUp: this.selectBox,
+          onMouseDown: this.onDragStart,
+          onKeyDown: this.shortcutHandler,
+          ref: this.box,
+          style: boxStyles,
+          tabIndex: "0"
+        }, isSelected ? React.createElement("span", {
+          ref: this.coordinates,
+          className: styles.coordinates
+        }, "(".concat(Math.round(position.left * xFactor), ", ").concat(Math.round(position.top * yFactor), ")")) : null, isSelected ? React.createElement("span", {
+          className: "".concat(styles.dimensions, " ").concat(styles.width),
+          style: {
+            width: "".concat(position.width, "px"),
+            top: "".concat(position.height + 10, "px")
+          }
+        }, "".concat(Math.round(position.width * xFactor), " x ").concat(Math.round(position.height * yFactor))) : null, isSelected ? RESIZE_HANDLES.map(function (handle) {
+          var className = "".concat(styles.resizeHandle, " ").concat(styles["resize-".concat(handle)]);
+          return React.createElement("div", {
+            key: handle,
+            className: className,
+            onMouseDown: _this4.onResizeStart,
+            id: handle
+          });
+        }) : null);
+      }
+
+      return null;
     }
   }]);
 
