@@ -13,6 +13,7 @@
 	position: absolute;
 	outline: none;
 	z-index: 10;
+	transform-origin: center center;
 
 	&:hover {
 		border: 2px solid #EB4B48;
@@ -77,12 +78,17 @@
 }
 
 // Resize Handles
-.resizeHandle {
+.resizeHandle,
+.rotateHandle {
 	width: 10px;
 	height: 10px;
 	background-color: #FFF;
 	border: 2px solid #EB4B48;
 	position: absolute;
+}
+
+.resizeHandle {
+	z-index: 99;
 }
 
 .resize-tr {
@@ -111,4 +117,69 @@
 
 .resize-tl, .resize-br {
 	cursor: nwse-resize;
+}
+
+// Rotate handles
+
+// Load the rotate icon svg and rotate it appropriately for each corner
+.rotateHandle {
+	width: 30px;
+	height: 30px;
+	z-index: 98;
+	opacity: 0;
+}
+
+@svg-load rotate-tr url(./assets/rotate.svg) {
+	fill: #333;
+	stroke: #FFF;
+	width: 15px;
+	height: 15px;
+}
+
+@svg-load rotate-tl url(./assets/rotate.svg) {
+	fill: #333;
+	stroke: #FFF;
+	width: 15px;
+	height: 15px;
+	transform: rotate(-90deg);
+}
+
+@svg-load rotate-br url(./assets/rotate.svg) {
+	fill: #333;
+	stroke: #FFF;
+	width: 15px;
+	height: 15px;
+	transform: rotate(90deg);
+}
+
+@svg-load rotate-bl url(./assets/rotate.svg) {
+	fill: #333;
+	stroke: #FFF;
+	width: 15px;
+	height: 15px;
+	transform: rotate(180deg);
+}
+
+.rotate-tr {
+	top: -25px;
+	right: -25px;
+	cursor: svg-inline(rotate-tr) 0 0, auto;
+}
+
+.rotate-tl {
+	top: -25px;
+	left: -25px;
+	cursor: svg-inline(rotate-tl) 0 0, auto;
+}
+
+.rotate-br {
+	bottom: -25px;
+	right: -25px;
+	cursor: svg-inline(rotate-br) 0 0, auto;
+}
+
+.rotate-bl {
+	bottom: -25px;
+	left: -25px;
+	cursor: svg-inline(rotate-bl) 0 0, auto;
 }

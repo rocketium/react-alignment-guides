@@ -106,6 +106,7 @@ export const calculateBoundariesForDrag = (left, top, width, height, bounds) => 
 	}
 };
 
+// Calculate boundaries for boxes given an output resolution
 export const calculateBoundariesForResize = (left, top, width, height, bounds) => {
 	const boundingBox = { ...bounds };
 	let widthDifference = 0;
@@ -164,4 +165,12 @@ export const calculateBoundariesForResize = (left, top, width, height, bounds) =
 			height: height - heightDifference
 		};
 	}
+};
+
+// Rotate helper
+export const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
+	const dot = x1 * x2 + y1 * y2;
+	const det = x1 * y2 - y1 * x2;
+	const angle = Math.atan2(det, dot) / Math.PI * 180;
+	return (angle + 360) % 360;
 };

@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { calculateBoundariesForDrag, calculateBoundariesForResize } from './utils/helpers';
-import { RESIZE_HANDLES } from './utils/constants';
+import { calculateBoundariesForDrag, calculateBoundariesForResize, getAngle } from './utils/helpers';
+import { RESIZE_HANDLES, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
 class Box extends PureComponent {
@@ -14,6 +14,7 @@ class Box extends PureComponent {
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.onResizeStart = this.onResizeStart.bind(this);
+		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
 	}
 
@@ -211,7 +212,7 @@ class Box extends PureComponent {
 		const onResize = (e) => {
 			if (this.props.resizing) {
 				e.stopPropagation();
-				if (target.id === 'br') {
+				if (target.id === 'resize-br') {
 					const currentDimensions = {
 						width: e.clientX - startingDimensions.left,
 						height: e.clientY - startingDimensions.top
@@ -230,7 +231,7 @@ class Box extends PureComponent {
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-				} else if (target.id === 'bl') {
+				} else if (target.id === 'resize-bl') {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
 					const currentDimensions = {
@@ -256,7 +257,7 @@ class Box extends PureComponent {
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-				} else if (target.id === 'tr') {
+				} else if (target.id === 'resize-tr') {
 					const deltaX = e.clientX - startingDimensions.left;
 					const deltaY = startingDimensions.top - e.clientY;
 					const currentDimensions = {
@@ -282,7 +283,7 @@ class Box extends PureComponent {
 						node: this.box.current
 					};
 					this.props.onResize && this.props.onResize(e, data);
-				} else if (target.id === 'tl') {
+				} else if (target.id === 'resize-tl') {
 					const deltaX = startingDimensions.left - e.clientX;
 					const deltaY = startingDimensions.top - e.clientY;
 					const currentDimensions = {
@@ -325,6 +326,57 @@ class Box extends PureComponent {
 		document.addEventListener('mouseup', onResizeEnd);
 	}
 
+	onRotateStart(e) {
+		e.stopPropagation();
+		const target = this.box.current;
+		const { clientX, clientY } = e;
+		const { position: { rotateAngle: startAngle } } = this.props;
+		const start = target.getBoundingClientRect().toJSON();
+		const center = {
+			x: start.left + start.width / 2,
+			y: start.top + start.height / 2
+		};
+		const startVector = {
+			x: clientX - center.x,
+			y: clientY - center.y
+		};
+		const data = {
+			node: target,
+			startAngle
+		};
+		let angle = startAngle;
+
+		this.props.onRotateStart && this.props.onRotateStart(e, data);
+		const onRotate = (e) => {
+			if (this.props.rotating) {
+				const { clientX, clientY } = e;
+				const rotateVector = {
+					x: clientX - center.x,
+					y: clientY - center.y
+				};
+				angle = getAngle(startVector, rotateVector);
+				this.props.onRotate && this.props.onRotate(angle, startAngle);
+			}
+		};
+
+		const onRotateEnd = (e) => {
+			if (this.props.rotating) {
+				const data = {
+					node: target,
+					startAngle,
+					angle
+				};
+
+				document.removeEventListener('mousemove', onRotate);
+				document.removeEventListener('mouseup', onRotateEnd);
+				this.props.onRotateEnd && this.props.onRotateEnd(e, data);
+			}
+		};
+
+		document.addEventListener('mousemove', onRotate);
+		document.addEventListener('mouseup', onRotateEnd);
+	}
+
 	getCoordinatesWrapperWidth() {
 		if (this.props.isSelected && this.coordinates && this.coordinates.current) {
 			return this.coordinates.current.offsetWidth;
@@ -345,13 +397,15 @@ class Box extends PureComponent {
 			}
 
 			const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
 				...boxStyle,
 				width: `${position.width}px`,
 				height: `${position.height}px`,
 				top: `${position.top}px`,
 				left: `${position.left}px`,
-				zIndex: position.zIndex
+				zIndex: position.zIndex,
+				transform: `rotate(${rotateAngle}deg)`
 			};
 
 			if (isSelected && (this.props.dragging || this.props.resizing)) {
@@ -393,6 +447,14 @@ class Box extends PureComponent {
 						RESIZE_HANDLES.map(handle => {
 							const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
 							return <div key={handle} className={className} onMouseDown={this.onResizeStart} id={handle} />
+						}) :
+						null
+				}
+				{
+					isSelected ?
+						ROTATE_HANDLES.map(handle => {
+							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
+							return <div key={handle} className={className} onMouseDown={this.onRotateStart} id={handle} />
 						}) :
 						null
 				}

@@ -16,7 +16,8 @@ class AlignmentGuides extends Component {
 			guides: {},
 			guidesActive: false,
 			match: {},
-			resizing: false
+			resizing: false,
+			rotating: false
 		};
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
 		this.selectBox = this.selectBox.bind(this);
@@ -27,6 +28,9 @@ class AlignmentGuides extends Component {
 		this.resizeStartHandler = this.resizeStartHandler.bind(this);
 		this.resizeHandler = this.resizeHandler.bind(this);
 		this.resizeEndHandler = this.resizeEndHandler.bind(this);
+		this.rotateStartHandler = this.rotateStartHandler.bind(this);
+		this.rotateHandler = this.rotateHandler.bind(this);
+		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
 	}
 
@@ -324,6 +328,33 @@ class AlignmentGuides extends Component {
 		});
 	}
 
+	rotateStartHandler(e, data) {
+		this.setState({
+			active: data.node.id,
+			rotating: true
+		});
+		this.props.onRotateStart && this.props.onRotateStart(e, data);
+	}
+
+	rotateHandler(angle, startAngle) {
+		const boxes = Object.assign({}, this.state.boxes, {
+			[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
+				...this.state.boxes[this.state.active],
+				rotateAngle: angle
+			})
+		});
+
+		this.setState({
+			boxes
+		});
+
+		this.props.onRotate && this.props.onRotate();
+	}
+
+	rotateEndHandler(e, data) {
+		this.props.onRotateEnd && this.props.onRotateEnd(e);
+	}
+
 	keyUpHandler(e, data) {
 		const newData = Object.assign({}, data, {
 			metadata: this.state.boxes[data.node.id].metadata
@@ -378,8 +409,12 @@ class AlignmentGuides extends Component {
 				onResizeStart={this.resizeStartHandler}
 				onResize={this.resizeHandler}
 				onResizeEnd={this.resizeEndHandler}
+				onRotateStart={this.rotateStartHandler}
+				onRotate={this.rotateHandler}
+				onRotateEnd={this.rotateEndHandler}
 				position={position}
 				resizing={this.state.resizing}
+				rotating={this.state.rotating}
 				selectBox={this.selectBox}
 			/>;
 		});

@@ -21,7 +21,11 @@ export default {
 	plugins: [
 		external(),
 		postcss({
-			modules: true
+			modules: true,
+			plugins: [
+				require('postcss-inline-svg'),
+				require('postcss-svgo')
+			]
 		}),
 		url(),
 		svgr(),

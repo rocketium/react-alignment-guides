@@ -119,7 +119,8 @@ var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, 
       top: top < 0 ? 0 : boundingBox.height - height
     };
   }
-};
+}; // Calculate boundaries for boxes given an output resolution
+
 var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds) {
   var boundingBox = _objectSpread({}, bounds);
 
@@ -180,11 +181,24 @@ var calculateBoundariesForResize = function calculateBoundariesForResize(left, t
       height: height - heightDifference
     };
   }
+}; // Rotate helper
+
+var getAngle = function getAngle(_ref, _ref2) {
+  var x1 = _ref.x,
+      y1 = _ref.y;
+  var x2 = _ref2.x,
+      y2 = _ref2.y;
+  var dot = x1 * x2 + y1 * y2;
+  var det = x1 * y2 - y1 * x2;
+  var angle = Math.atan2(det, dot) / Math.PI * 180;
+  return (angle + 360) % 360;
 };
 
 // Key map for changing the position and size of draggable boxes
 
 var RESIZE_HANDLES = ['tr', 'tl', 'br', 'bl']; // Positions for rotate handles
+
+var ROTATE_HANDLES = ['tr', 'tl', 'br', 'bl'];
 
 function styleInject(css, ref) {
   if ( ref === void 0 ) ref = {};
@@ -213,8 +227,8 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeHandle__1PLUu {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n";
-var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeHandle":"styles_resizeHandle__1PLUu","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_"};
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeHandle__1PLUu,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resizeHandle__1PLUu {\n  z-index: 99; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 30px;\n  height: 30px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -25px;\n  right: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -25px;\n  left: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -25px;\n  right: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -25px;\n  left: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
+var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeHandle":"styles_resizeHandle__1PLUu","rotateHandle":"styles_rotateHandle__26rVp","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
 styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -259,6 +273,7 @@ function (_PureComponent) {
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
+    _this.onRotateStart = _this.onRotateStart.bind(_assertThisInitialized(_this));
     _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized(_this));
     return _this;
   }
@@ -481,7 +496,7 @@ function (_PureComponent) {
         if (_this3.props.resizing) {
           e.stopPropagation();
 
-          if (target.id === 'br') {
+          if (target.id === 'resize-br') {
             var currentDimensions = {
               width: e.clientX - startingDimensions.left,
               height: e.clientY - startingDimensions.top
@@ -499,7 +514,7 @@ function (_PureComponent) {
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);
-          } else if (target.id === 'bl') {
+          } else if (target.id === 'resize-bl') {
             var deltaX = startingDimensions.left - e.clientX;
             var deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
             var _currentDimensions = {
@@ -527,7 +542,7 @@ function (_PureComponent) {
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);
-          } else if (target.id === 'tr') {
+          } else if (target.id === 'resize-tr') {
             var _deltaX = e.clientX - startingDimensions.left;
 
             var _deltaY = startingDimensions.top - e.clientY;
@@ -557,7 +572,7 @@ function (_PureComponent) {
               node: _this3.box.current
             };
             _this3.props.onResize && _this3.props.onResize(e, data);
-          } else if (target.id === 'tl') {
+          } else if (target.id === 'resize-tl') {
             var _deltaX2 = startingDimensions.left - e.clientX;
 
             var _deltaY2 = startingDimensions.top - e.clientY;
@@ -603,6 +618,61 @@ function (_PureComponent) {
       document.addEventListener('mouseup', onResizeEnd);
     }
   }, {
+    key: "onRotateStart",
+    value: function onRotateStart(e) {
+      var _this4 = this;
+
+      e.stopPropagation();
+      var target = this.box.current;
+      var clientX = e.clientX,
+          clientY = e.clientY;
+      var startAngle = this.props.position.rotateAngle;
+      var start = target.getBoundingClientRect().toJSON();
+      var center = {
+        x: start.left + start.width / 2,
+        y: start.top + start.height / 2
+      };
+      var startVector = {
+        x: clientX - center.x,
+        y: clientY - center.y
+      };
+      var data = {
+        node: target,
+        startAngle: startAngle
+      };
+      var angle = startAngle;
+      this.props.onRotateStart && this.props.onRotateStart(e, data);
+
+      var onRotate = function onRotate(e) {
+        if (_this4.props.rotating) {
+          var _clientX = e.clientX,
+              _clientY = e.clientY;
+          var rotateVector = {
+            x: _clientX - center.x,
+            y: _clientY - center.y
+          };
+          angle = getAngle(startVector, rotateVector);
+          _this4.props.onRotate && _this4.props.onRotate(angle, startAngle);
+        }
+      };
+
+      var onRotateEnd = function onRotateEnd(e) {
+        if (_this4.props.rotating) {
+          var _data16 = {
+            node: target,
+            startAngle: startAngle,
+            angle: angle
+          };
+          document.removeEventListener('mousemove', onRotate);
+          document.removeEventListener('mouseup', onRotateEnd);
+          _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, _data16);
+        }
+      };
+
+      document.addEventListener('mousemove', onRotate);
+      document.addEventListener('mouseup', onRotateEnd);
+    }
+  }, {
     key: "getCoordinatesWrapperWidth",
     value: function getCoordinatesWrapperWidth() {
       if (this.props.isSelected && this.coordinates && this.coordinates.current) {
@@ -612,7 +682,7 @@ function (_PureComponent) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var _this$props = this.props,
           boxStyle = _this$props.boxStyle,
@@ -633,13 +703,15 @@ function (_PureComponent) {
         }
 
         var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
+        var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 
         var boxStyles = _objectSpread$1({}, boxStyle, {
           width: "".concat(position.width, "px"),
           height: "".concat(position.height, "px"),
           top: "".concat(position.top, "px"),
           left: "".concat(position.left, "px"),
-          zIndex: position.zIndex
+          zIndex: position.zIndex,
+          transform: "rotate(".concat(rotateAngle, "deg)")
         });
 
         if (isSelected && (this.props.dragging || this.props.resizing)) {
@@ -669,7 +741,15 @@ function (_PureComponent) {
           return React.createElement("div", {
             key: handle,
             className: className,
-            onMouseDown: _this4.onResizeStart,
+            onMouseDown: _this5.onResizeStart,
+            id: handle
+          });
+        }) : null, isSelected ? ROTATE_HANDLES.map(function (handle) {
+          var className = "".concat(styles.rotateHandle, " ").concat(styles["rotate-".concat(handle)]);
+          return React.createElement("div", {
+            key: handle,
+            className: className,
+            onMouseDown: _this5.onRotateStart,
             id: handle
           });
         }) : null);
@@ -707,6 +787,10 @@ Box.propTypes = {
 function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+
+function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$2(source, true).forEach(function (key) { _defineProperty$2(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$2(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
@@ -746,7 +830,8 @@ function (_Component) {
       guides: {},
       guidesActive: false,
       match: {},
-      resizing: false
+      resizing: false,
+      rotating: false
     };
     _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized$1(_this));
     _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
@@ -757,6 +842,9 @@ function (_Component) {
     _this.resizeStartHandler = _this.resizeStartHandler.bind(_assertThisInitialized$1(_this));
     _this.resizeHandler = _this.resizeHandler.bind(_assertThisInitialized$1(_this));
     _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized$1(_this));
+    _this.rotateStartHandler = _this.rotateStartHandler.bind(_assertThisInitialized$1(_this));
+    _this.rotateHandler = _this.rotateHandler.bind(_assertThisInitialized$1(_this));
+    _this.rotateEndHandler = _this.rotateEndHandler.bind(_assertThisInitialized$1(_this));
     _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized$1(_this));
     return _this;
   } // TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
@@ -1062,6 +1150,31 @@ function (_Component) {
       });
     }
   }, {
+    key: "rotateStartHandler",
+    value: function rotateStartHandler(e, data) {
+      this.setState({
+        active: data.node.id,
+        rotating: true
+      });
+      this.props.onRotateStart && this.props.onRotateStart(e, data);
+    }
+  }, {
+    key: "rotateHandler",
+    value: function rotateHandler(angle, startAngle) {
+      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], _objectSpread$2({}, this.state.boxes[this.state.active], {
+        rotateAngle: angle
+      }))));
+      this.setState({
+        boxes: boxes
+      });
+      this.props.onRotate && this.props.onRotate();
+    }
+  }, {
+    key: "rotateEndHandler",
+    value: function rotateEndHandler(e, data) {
+      this.props.onRotateEnd && this.props.onRotateEnd(e);
+    }
+  }, {
     key: "keyUpHandler",
     value: function keyUpHandler(e, data) {
       var newData = Object.assign({}, data, {
@@ -1114,8 +1227,12 @@ function (_Component) {
           onResizeStart: _this3.resizeStartHandler,
           onResize: _this3.resizeHandler,
           onResizeEnd: _this3.resizeEndHandler,
+          onRotateStart: _this3.rotateStartHandler,
+          onRotate: _this3.rotateHandler,
+          onRotateEnd: _this3.rotateEndHandler,
           position: position,
           resizing: _this3.state.resizing,
+          rotating: _this3.state.rotating,
           selectBox: _this3.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
