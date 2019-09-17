@@ -181,7 +181,7 @@ var calculateBoundariesForResize = function calculateBoundariesForResize(left, t
       height: height - heightDifference
     };
   }
-}; // Rotate helper
+}; // Rotate helpers
 
 var getAngle = function getAngle(_ref, _ref2) {
   var x1 = _ref.x,
@@ -192,6 +192,43 @@ var getAngle = function getAngle(_ref, _ref2) {
   var det = x1 * y2 - y1 * x2;
   var angle = Math.atan2(det, dot) / Math.PI * 180;
   return (angle + 360) % 360;
+};
+var getNewCoordinates = function getNewCoordinates(rect) {
+  var x = rect.x,
+      y = rect.y,
+      width = rect.width,
+      height = rect.height,
+      rotateAngle = rect.rotateAngle,
+      node = rect.node;
+  var cx = x + width / 2;
+  var cy = y + height / 2;
+  var tempX = x - cx;
+  var tempY = y - cy;
+  var cosine = cos(rotateAngle);
+  var sine = sin(rotateAngle);
+  var rotatedX = cx + (tempX * cosine - tempY * sine);
+  var rotatedY = cy + (tempX * sine + tempY * cosine);
+  return {
+    x: rotatedX,
+    y: rotatedY,
+    top: rotatedX,
+    left: rotatedY,
+    width: width,
+    height: height,
+    rotateAngle: rotateAngle,
+    node: node
+  };
+};
+var degToRadian = function degToRadian(deg) {
+  return deg * Math.PI / 180;
+};
+
+var cos = function cos(deg) {
+  return Math.cos(degToRadian(deg));
+};
+
+var sin = function sin(deg) {
+  return Math.sin(degToRadian(deg));
 };
 
 // Key map for changing the position and size of draggable boxes
@@ -627,7 +664,9 @@ function (_PureComponent) {
       var clientX = e.clientX,
           clientY = e.clientY;
       var startAngle = this.props.position.rotateAngle;
+      var boundingBox = this.props.getBoundingBoxElement();
       var start = target.getBoundingClientRect().toJSON();
+      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
       var center = {
         x: start.left + start.width / 2,
         y: start.top + start.height / 2
@@ -636,12 +675,20 @@ function (_PureComponent) {
         x: clientX - center.x,
         y: clientY - center.y
       };
-      var data = {
-        node: target,
-        startAngle: startAngle
-      };
       var angle = startAngle;
-      this.props.onRotateStart && this.props.onRotateStart(e, data);
+      var rotateAngle = angle < 180 ? angle : angle - 360;
+      var data = {
+        x: start.x - boundingBoxPosition.x,
+        y: start.y - boundingBoxPosition.y,
+        top: start.top - boundingBoxPosition.top,
+        left: start.left - boundingBoxPosition.left,
+        width: start.width,
+        height: start.height,
+        rotateAngle: rotateAngle,
+        node: target
+      };
+      var newCoordinates = getNewCoordinates(data);
+      this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
 
       var onRotate = function onRotate(e) {
         if (_this4.props.rotating) {
@@ -652,20 +699,22 @@ function (_PureComponent) {
             y: _clientY - center.y
           };
           angle = getAngle(startVector, rotateVector);
-          _this4.props.onRotate && _this4.props.onRotate(angle, startAngle);
+          rotateAngle = angle < 180 ? angle : angle - 360;
+          data = Object.assign({}, data, {
+            rotateAngle: rotateAngle
+          });
+
+          var _newCoordinates = getNewCoordinates(data);
+
+          _this4.props.onRotate && _this4.props.onRotate(e, _newCoordinates);
         }
       };
 
       var onRotateEnd = function onRotateEnd(e) {
         if (_this4.props.rotating) {
-          var _data16 = {
-            node: target,
-            startAngle: startAngle,
-            angle: angle
-          };
           document.removeEventListener('mousemove', onRotate);
           document.removeEventListener('mouseup', onRotateEnd);
-          _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, _data16);
+          _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, data);
         }
       };
 
@@ -730,7 +779,7 @@ function (_PureComponent) {
         }, isSelected ? React.createElement("span", {
           ref: this.coordinates,
           className: styles.coordinates
-        }, "(".concat(Math.round(position.left * xFactor), ", ").concat(Math.round(position.top * yFactor), ")")) : null, isSelected ? React.createElement("span", {
+        }, "(".concat(Math.round(position.x * xFactor), ", ").concat(Math.round(position.y * yFactor), ")")) : null, isSelected ? React.createElement("span", {
           className: "".concat(styles.dimensions, " ").concat(styles.width),
           style: {
             width: "".concat(position.width, "px"),
@@ -1160,19 +1209,20 @@ function (_Component) {
     }
   }, {
     key: "rotateHandler",
-    value: function rotateHandler(angle, startAngle) {
+    value: function rotateHandler(e, data) {
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], _objectSpread$2({}, this.state.boxes[this.state.active], {
-        rotateAngle: angle
+        x: data.x,
+        y: data.y,
+        rotateAngle: data.rotateAngle
       }))));
       this.setState({
         boxes: boxes
       });
-      this.props.onRotate && this.props.onRotate();
+      this.props.onRotate && this.props.onRotate(e, data);
     }
   }, {
     key: "rotateEndHandler",
     value: function rotateEndHandler(e, data) {
-      console.log(data);
       this.props.onRotateEnd && this.props.onRotateEnd(e, data);
     }
   }, {

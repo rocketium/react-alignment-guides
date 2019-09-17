@@ -167,10 +167,30 @@ export const calculateBoundariesForResize = (left, top, width, height, bounds) =
 	}
 };
 
-// Rotate helper
+// Rotate helpers
 export const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
 	const dot = x1 * x2 + y1 * y2;
 	const det = x1 * y2 - y1 * x2;
 	const angle = Math.atan2(det, dot) / Math.PI * 180;
 	return (angle + 360) % 360;
 };
+
+export const getNewCoordinates = (rect) => {
+	const { x, y, width, height, rotateAngle, node } = rect;
+	const cx = x + (width / 2);
+	const cy = y + (height / 2);
+
+	const tempX = x - cx;
+	const tempY = y - cy;
+	const cosine = cos(rotateAngle);
+	const sine = sin(rotateAngle);
+
+	const rotatedX = cx + (tempX * cosine - tempY * sine);
+	const rotatedY = cy + (tempX * sine + tempY * cosine);
+
+	return { x: rotatedX, y: rotatedY, top: rotatedX, left: rotatedY, width, height, rotateAngle, node };
+};
+
+export const degToRadian = (deg) => deg * Math.PI / 180;
+const cos = (deg) => Math.cos(degToRadian(deg));
+const sin = (deg) => Math.sin(degToRadian(deg));

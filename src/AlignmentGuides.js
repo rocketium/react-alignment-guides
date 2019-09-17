@@ -336,11 +336,13 @@ class AlignmentGuides extends Component {
 		this.props.onRotateStart && this.props.onRotateStart(e, data);
 	}
 
-	rotateHandler(angle, startAngle) {
+	rotateHandler(e, data) {
 		const boxes = Object.assign({}, this.state.boxes, {
 			[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
 				...this.state.boxes[this.state.active],
-				rotateAngle: angle
+				x: data.x,
+				y: data.y,
+				rotateAngle: data.rotateAngle
 			})
 		});
 
@@ -348,11 +350,10 @@ class AlignmentGuides extends Component {
 			boxes
 		});
 
-		this.props.onRotate && this.props.onRotate();
+		this.props.onRotate && this.props.onRotate(e, data);
 	}
 
 	rotateEndHandler(e, data) {
-		console.log(data);
 		this.props.onRotateEnd && this.props.onRotateEnd(e, data);
 	}
 

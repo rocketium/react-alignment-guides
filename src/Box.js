@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { calculateBoundariesForDrag, calculateBoundariesForResize, getAngle } from './utils/helpers';
+import { calculateBoundariesForDrag, calculateBoundariesForResize, getAngle, getNewCoordinates } from './utils/helpers';
 import { RESIZE_HANDLES, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
@@ -331,7 +331,9 @@ class Box extends PureComponent {
 		const target = this.box.current;
 		const { clientX, clientY } = e;
 		const { position: { rotateAngle: startAngle } } = this.props;
+		const boundingBox = this.props.getBoundingBoxElement();
 		const start = target.getBoundingClientRect().toJSON();
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		const center = {
 			x: start.left + start.width / 2,
 			y: start.top + start.height / 2
@@ -340,13 +342,23 @@ class Box extends PureComponent {
 			x: clientX - center.x,
 			y: clientY - center.y
 		};
-		const data = {
-			node: target,
-			startAngle
-		};
-		let angle = startAngle;
 
-		this.props.onRotateStart && this.props.onRotateStart(e, data);
+		let angle = startAngle;
+		let rotateAngle = angle < 180 ? angle : angle - 360;
+		let data = {
+			x: start.x - boundingBoxPosition.x,
+			y: start.y - boundingBoxPosition.y,
+			top: start.top - boundingBoxPosition.top,
+			left: start.left - boundingBoxPosition.left,
+			width: start.width,
+			height: start.height,
+			rotateAngle,
+			node: target
+		};
+
+		const newCoordinates = getNewCoordinates(data);
+		this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
+
 		const onRotate = (e) => {
 			if (this.props.rotating) {
 				const { clientX, clientY } = e;
@@ -355,18 +367,18 @@ class Box extends PureComponent {
 					y: clientY - center.y
 				};
 				angle = getAngle(startVector, rotateVector);
-				this.props.onRotate && this.props.onRotate(angle, startAngle);
+				rotateAngle = angle < 180 ? angle : angle - 360;
+				data = Object.assign({}, data, {
+					rotateAngle
+				});
+
+				const newCoordinates = getNewCoordinates(data);
+				this.props.onRotate && this.props.onRotate(e, newCoordinates);
 			}
 		};
 
 		const onRotateEnd = (e) => {
 			if (this.props.rotating) {
-				const data = {
-					node: target,
-					startAngle,
-					angle
-				};
-
 				document.removeEventListener('mousemove', onRotate);
 				document.removeEventListener('mouseup', onRotateEnd);
 				this.props.onRotateEnd && this.props.onRotateEnd(e, data);
@@ -428,7 +440,7 @@ class Box extends PureComponent {
 							ref={this.coordinates}
 							className={styles.coordinates}
 						>
-							{`(${Math.round(position.left * xFactor)}, ${Math.round(position.top * yFactor)})`}
+							{`(${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)})`}
 						</span> :
 						null
 				}
