@@ -1172,7 +1172,8 @@ function (_Component) {
   }, {
     key: "rotateEndHandler",
     value: function rotateEndHandler(e, data) {
-      this.props.onRotateEnd && this.props.onRotateEnd(e);
+      console.log(data);
+      this.props.onRotateEnd && this.props.onRotateEnd(e, data);
     }
   }, {
     key: "keyUpHandler",

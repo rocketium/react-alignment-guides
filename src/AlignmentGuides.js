@@ -352,7 +352,8 @@ class AlignmentGuides extends Component {
 	}
 
 	rotateEndHandler(e, data) {
-		this.props.onRotateEnd && this.props.onRotateEnd(e);
+		console.log(data);
+		this.props.onRotateEnd && this.props.onRotateEnd(e, data);
 	}
 
 	keyUpHandler(e, data) {
