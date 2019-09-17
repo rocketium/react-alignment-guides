@@ -692,6 +692,7 @@ function (_PureComponent) {
 
       var onRotate = function onRotate(e) {
         if (_this4.props.rotating) {
+          e.stopPropagation();
           var _clientX = e.clientX,
               _clientY = e.clientY;
           var rotateVector = {
@@ -791,7 +792,7 @@ function (_PureComponent) {
             key: handle,
             className: className,
             onMouseDown: _this5.onResizeStart,
-            id: handle
+            id: "resize-".concat(handle)
           });
         }) : null, isSelected ? ROTATE_HANDLES.map(function (handle) {
           var className = "".concat(styles.rotateHandle, " ").concat(styles["rotate-".concat(handle)]);
@@ -799,7 +800,7 @@ function (_PureComponent) {
             key: handle,
             className: className,
             onMouseDown: _this5.onRotateStart,
-            id: handle
+            id: "rotate-".concat(handle)
           });
         }) : null);
       }

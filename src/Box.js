@@ -361,6 +361,7 @@ class Box extends PureComponent {
 
 		const onRotate = (e) => {
 			if (this.props.rotating) {
+				e.stopPropagation();
 				const { clientX, clientY } = e;
 				const rotateVector = {
 					x: clientX - center.x,
@@ -458,7 +459,7 @@ class Box extends PureComponent {
 					isSelected ?
 						RESIZE_HANDLES.map(handle => {
 							const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
-							return <div key={handle} className={className} onMouseDown={this.onResizeStart} id={handle} />
+							return <div key={handle} className={className} onMouseDown={this.onResizeStart} id={`resize-${handle}`} />
 						}) :
 						null
 				}
@@ -466,7 +467,7 @@ class Box extends PureComponent {
 					isSelected ?
 						ROTATE_HANDLES.map(handle => {
 							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
-							return <div key={handle} className={className} onMouseDown={this.onRotateStart} id={handle} />
+							return <div key={handle} className={className} onMouseDown={this.onRotateStart} id={`rotate-${handle}`} />
 						}) :
 						null
 				}
