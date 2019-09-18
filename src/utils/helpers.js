@@ -167,6 +167,17 @@ export const calculateBoundariesForResize = (left, top, width, height, bounds) =
 	}
 };
 
+export const getOffsetCoordinates = (node) => {
+	return {
+		x: node.offsetLeft,
+		y: node.offsetTop,
+		top: node.offsetTop,
+		left: node.offsetLeft,
+		width: node.offsetWidth,
+		height: node.offsetHeight
+	};
+};
+
 // Rotate helpers
 export const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
 	const dot = x1 * x2 + y1 * y2;

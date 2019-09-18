@@ -1,6 +1,12 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { calculateBoundariesForDrag, calculateBoundariesForResize, getAngle, getNewCoordinates } from './utils/helpers';
+import {
+	calculateBoundariesForDrag,
+	calculateBoundariesForResize,
+	getAngle,
+	getNewCoordinates,
+	getOffsetCoordinates,
+} from './utils/helpers'
 import { RESIZE_HANDLES, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
@@ -28,7 +34,8 @@ class Box extends PureComponent {
 		e.stopPropagation();
 		const target = this.box.current;
 		const boundingBox = this.props.getBoundingBoxElement();
-		const startingPosition = target.getBoundingClientRect().toJSON();
+		const { position } = this.props;
+		const startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 
 		let data = {
@@ -40,6 +47,17 @@ class Box extends PureComponent {
 			height: startingPosition.height,
 			node: target
 		};
+		if (position.rotateAngle !== 0) {
+			data = {
+				x: startingPosition.x,
+				y: startingPosition.y,
+				top: startingPosition.y,
+				left: startingPosition.x,
+				width: startingPosition.width,
+				height: startingPosition.height,
+				node: target
+			};
+		}
 		this.props.onDragStart && this.props.onDragStart(e, data);
 
 		const deltaX = Math.abs(target.offsetLeft - e.clientX);

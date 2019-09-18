@@ -181,6 +181,16 @@ var calculateBoundariesForResize = function calculateBoundariesForResize(left, t
       height: height - heightDifference
     };
   }
+};
+var getOffsetCoordinates = function getOffsetCoordinates(node) {
+  return {
+    x: node.offsetLeft,
+    y: node.offsetTop,
+    top: node.offsetTop,
+    left: node.offsetLeft,
+    width: node.offsetWidth,
+    height: node.offsetHeight
+  };
 }; // Rotate helpers
 
 var getAngle = function getAngle(_ref, _ref2) {
@@ -330,7 +340,8 @@ function (_PureComponent) {
       e.stopPropagation();
       var target = this.box.current;
       var boundingBox = this.props.getBoundingBoxElement();
-      var startingPosition = target.getBoundingClientRect().toJSON();
+      var position = this.props.position;
+      var startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
       var data = {
         x: startingPosition.x - boundingBoxPosition.x,
@@ -341,6 +352,19 @@ function (_PureComponent) {
         height: startingPosition.height,
         node: target
       };
+
+      if (position.rotateAngle !== 0) {
+        data = {
+          x: startingPosition.x,
+          y: startingPosition.y,
+          top: startingPosition.y,
+          left: startingPosition.x,
+          width: startingPosition.width,
+          height: startingPosition.height,
+          node: target
+        };
+      }
+
       this.props.onDragStart && this.props.onDragStart(e, data);
       var deltaX = Math.abs(target.offsetLeft - e.clientX);
       var deltaY = Math.abs(target.offsetTop - e.clientY);
