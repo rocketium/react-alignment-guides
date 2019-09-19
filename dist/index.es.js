@@ -120,68 +120,6 @@ var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, 
     };
   }
 }; // Calculate boundaries for boxes given an output resolution
-
-var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds) {
-  var boundingBox = _objectSpread({}, bounds);
-
-  var widthDifference = 0;
-  var heightDifference = 0;
-
-  if (left >= 0 && left + width <= boundingBox.width && top >= 0 && top + height <= boundingBox.height) {
-    return {
-      left: left,
-      top: top,
-      width: width,
-      height: height
-    };
-  } else if (left < 0 && top < 0) {
-    return {
-      left: 0,
-      top: 0,
-      width: width + left <= boundingBox.width ? width + left : boundingBox.width,
-      height: height + top <= boundingBox.height ? height + top : boundingBox.height
-    };
-  } else if (left < 0) {
-    return {
-      left: 0,
-      top: top,
-      width: width + left <= boundingBox.width ? width + left : boundingBox.width,
-      height: height + top <= boundingBox.height ? height : boundingBox.height - top
-    };
-  } else if (top < 0) {
-    return {
-      left: left,
-      top: 0,
-      width: width + left <= boundingBox.width ? width : boundingBox.width - left,
-      height: height + top <= boundingBox.height ? height + top : boundingBox.height
-    };
-  } else if (left >= 0 && left + width <= boundingBox.width) {
-    heightDifference = top + height - boundingBox.height;
-    return {
-      left: left,
-      top: top < 0 ? 0 : top,
-      width: width,
-      height: height - heightDifference
-    };
-  } else if (top >= 0 && top + height <= boundingBox.height) {
-    widthDifference = left + width - boundingBox.width;
-    return {
-      left: left < 0 ? 0 : left,
-      top: top,
-      width: width - widthDifference,
-      height: height
-    };
-  } else {
-    widthDifference = left + width - boundingBox.width;
-    heightDifference = top + height - boundingBox.height;
-    return {
-      left: left < 0 ? 0 : left,
-      top: top < 0 ? 0 : top,
-      width: width - widthDifference,
-      height: height - heightDifference
-    };
-  }
-};
 var getOffsetCoordinates = function getOffsetCoordinates(node) {
   return {
     x: node.offsetLeft,
@@ -191,13 +129,168 @@ var getOffsetCoordinates = function getOffsetCoordinates(node) {
     width: node.offsetWidth,
     height: node.offsetHeight
   };
+};
+var getLength = function getLength(x, y) {
+  return Math.sqrt(x * x + y * y);
+};
+var topLeftToCenter = function topLeftToCenter(_ref) {
+  var left = _ref.left,
+      top = _ref.top,
+      width = _ref.width,
+      height = _ref.height,
+      rotateAngle = _ref.rotateAngle;
+  return {
+    cx: left + width / 2,
+    cy: top + height / 2,
+    width: width,
+    height: height,
+    rotateAngle: rotateAngle
+  };
+};
+var centerToTopLeft = function centerToTopLeft(_ref2) {
+  var cx = _ref2.cx,
+      cy = _ref2.cy,
+      width = _ref2.width,
+      height = _ref2.height,
+      rotateAngle = _ref2.rotateAngle;
+  return {
+    top: cy - height / 2,
+    left: cx - width / 2,
+    width: width,
+    height: height,
+    rotateAngle: rotateAngle
+  };
+};
+
+var setWidthAndDeltaW = function setWidthAndDeltaW(width, deltaW, minWidth) {
+  var expectedWidth = width + deltaW;
+
+  if (expectedWidth > minWidth) {
+    width = expectedWidth;
+  } else {
+    deltaW = minWidth - width;
+    width = minWidth;
+  }
+
+  return {
+    width: width,
+    deltaW: deltaW
+  };
+};
+
+var setHeightAndDeltaH = function setHeightAndDeltaH(height, deltaH, minHeight) {
+  var expectedHeight = height + deltaH;
+
+  if (expectedHeight > minHeight) {
+    height = expectedHeight;
+  } else {
+    deltaH = minHeight - height;
+    height = minHeight;
+  }
+
+  return {
+    height: height,
+    deltaH: deltaH
+  };
+};
+
+var getNewStyle = function getNewStyle(type, rect, deltaW, deltaH, minWidth, minHeight) {
+  var width = rect.width,
+      height = rect.height,
+      cx = rect.cx,
+      cy = rect.cy,
+      rotateAngle = rect.rotateAngle;
+  var widthFlag = width < 0 ? -1 : 1;
+  var heightFlag = height < 0 ? -1 : 1;
+  width = Math.abs(width);
+  height = Math.abs(height);
+
+  switch (type) {
+    case 'tr':
+      {
+        deltaH = -deltaH;
+        var widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth);
+        width = widthAndDeltaW.width;
+        deltaW = widthAndDeltaW.deltaW;
+        var heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight);
+        height = heightAndDeltaH.height;
+        deltaH = heightAndDeltaH.deltaH;
+        cx += deltaW / 2 * cos(rotateAngle) + deltaH / 2 * sin(rotateAngle);
+        cy += deltaW / 2 * sin(rotateAngle) - deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+
+    case 'br':
+      {
+        var _widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW.width;
+        deltaW = _widthAndDeltaW.deltaW;
+
+        var _heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH.height;
+        deltaH = _heightAndDeltaH.deltaH;
+        cx += deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle);
+        cy += deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+
+    case 'bl':
+      {
+        deltaW = -deltaW;
+
+        var _widthAndDeltaW2 = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW2.width;
+        deltaW = _widthAndDeltaW2.deltaW;
+
+        var _heightAndDeltaH2 = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH2.height;
+        deltaH = _heightAndDeltaH2.deltaH;
+        cx -= deltaW / 2 * cos(rotateAngle) + deltaH / 2 * sin(rotateAngle);
+        cy -= deltaW / 2 * sin(rotateAngle) - deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+
+    case 'tl':
+      {
+        deltaW = -deltaW;
+        deltaH = -deltaH;
+
+        var _widthAndDeltaW3 = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW3.width;
+        deltaW = _widthAndDeltaW3.deltaW;
+
+        var _heightAndDeltaH3 = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH3.height;
+        deltaH = _heightAndDeltaH3.deltaH;
+        cx -= deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle);
+        cy -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+  }
+
+  return {
+    position: {
+      cx: cx,
+      cy: cy
+    },
+    size: {
+      width: width * widthFlag,
+      height: height * heightFlag
+    }
+  };
 }; // Rotate helpers
 
-var getAngle = function getAngle(_ref, _ref2) {
-  var x1 = _ref.x,
-      y1 = _ref.y;
-  var x2 = _ref2.x,
-      y2 = _ref2.y;
+var getAngle = function getAngle(_ref3, _ref4) {
+  var x1 = _ref3.x,
+      y1 = _ref3.y;
+  var x2 = _ref4.x,
+      y2 = _ref4.y;
   var dot = x1 * x2 + y1 * y2;
   var det = x1 * y2 - y1 * x2;
   var angle = Math.atan2(det, dot) / Math.PI * 180;
@@ -538,10 +631,36 @@ function (_PureComponent) {
       var _this3 = this;
 
       e.stopPropagation();
-      var target = e.target;
+      var target = e.target,
+          startX = e.clientX,
+          startY = e.clientY;
       var boundingBox = this.props.getBoundingBoxElement();
+      var position = this.props.position;
+      var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
       var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+      var left = startingDimensions.left,
+          top = startingDimensions.top,
+          width = startingDimensions.width,
+          height = startingDimensions.height;
+
+      var _topLeftToCenter = topLeftToCenter({
+        left: left,
+        top: top,
+        width: width,
+        height: height,
+        rotateAngle: rotateAngle
+      }),
+          cx = _topLeftToCenter.cx,
+          cy = _topLeftToCenter.cy;
+
+      var rect = {
+        width: width,
+        height: height,
+        cx: cx,
+        cy: cy,
+        rotateAngle: rotateAngle
+      };
       var data = {
         width: startingDimensions.width,
         height: startingDimensions.height,
@@ -555,115 +674,46 @@ function (_PureComponent) {
 
       var onResize = function onResize(e) {
         if (_this3.props.resizing) {
-          e.stopPropagation();
+          var clientX = e.clientX,
+              clientY = e.clientY;
+          var deltaX = clientX - startX;
+          var deltaY = clientY - startY;
+          var alpha = Math.atan2(deltaY, deltaX);
+          var deltaL = getLength(deltaX, deltaY); // const { minWidth, minHeight } = this.props;
 
-          if (target.id === 'resize-br') {
-            var currentDimensions = {
-              width: e.clientX - startingDimensions.left,
-              height: e.clientY - startingDimensions.top
-            };
-            var left = startingDimensions.left - boundingBoxPosition.x;
-            var top = startingDimensions.top - boundingBoxPosition.y;
-            var currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
-            data = {
-              width: currentPosition.width,
-              height: currentPosition.height,
-              x: currentPosition.left,
-              y: currentPosition.top,
-              left: currentPosition.left,
-              top: currentPosition.top,
-              node: _this3.box.current
-            };
-            _this3.props.onResize && _this3.props.onResize(e, data);
-          } else if (target.id === 'resize-bl') {
-            var deltaX = startingDimensions.left - e.clientX;
-            var deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
-            var _currentDimensions = {
-              width: startingDimensions.width + deltaX,
-              height: startingDimensions.height - deltaY
-            };
-            var calculatedPosition = {
-              top: startingDimensions.top,
-              left: startingDimensions.left - deltaX
-            };
+          var beta = alpha - degToRadian(rotateAngle);
+          var deltaW = deltaL * Math.cos(beta);
+          var deltaH = deltaL * Math.sin(beta); // TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
+          // const ratio = rect.width / rect.height;
 
-            var _left = calculatedPosition.left - boundingBoxPosition.x;
+          var type = target.id.replace('resize-', '');
 
-            var _top = calculatedPosition.top - boundingBoxPosition.y;
+          var _getNewStyle = getNewStyle(type, rect, deltaW, deltaH, 10, 10),
+              _getNewStyle$position = _getNewStyle.position,
+              _cx = _getNewStyle$position.cx,
+              _cy = _getNewStyle$position.cy,
+              _getNewStyle$size = _getNewStyle.size,
+              _width = _getNewStyle$size.width,
+              _height = _getNewStyle$size.height; // Use a better way to set minWidth and minHeight
 
-            var _currentPosition = calculateBoundariesForResize(_left, _top, _currentDimensions.width, _currentDimensions.height, boundingBoxPosition);
 
-            data = {
-              width: _currentPosition.width,
-              height: _currentPosition.height,
-              x: _currentPosition.left,
-              y: _currentPosition.top,
-              left: _currentPosition.left,
-              top: _currentPosition.top,
-              node: _this3.box.current
-            };
-            _this3.props.onResize && _this3.props.onResize(e, data);
-          } else if (target.id === 'resize-tr') {
-            var _deltaX = e.clientX - startingDimensions.left;
-
-            var _deltaY = startingDimensions.top - e.clientY;
-
-            var _currentDimensions2 = {
-              width: _deltaX,
-              height: startingDimensions.height + _deltaY
-            };
-            var _calculatedPosition = {
-              top: startingDimensions.top - _deltaY,
-              left: startingDimensions.left
-            };
-
-            var _left2 = _calculatedPosition.left - boundingBoxPosition.x;
-
-            var _top2 = _calculatedPosition.top - boundingBoxPosition.y;
-
-            var _currentPosition2 = calculateBoundariesForResize(_left2, _top2, _currentDimensions2.width, _currentDimensions2.height, boundingBoxPosition);
-
-            data = {
-              width: _currentPosition2.width,
-              height: _currentPosition2.height,
-              x: _currentPosition2.left,
-              y: _currentPosition2.top,
-              left: _currentPosition2.left,
-              top: _currentPosition2.top,
-              node: _this3.box.current
-            };
-            _this3.props.onResize && _this3.props.onResize(e, data);
-          } else if (target.id === 'resize-tl') {
-            var _deltaX2 = startingDimensions.left - e.clientX;
-
-            var _deltaY2 = startingDimensions.top - e.clientY;
-
-            var _currentDimensions3 = {
-              width: startingDimensions.width + _deltaX2,
-              height: startingDimensions.height + _deltaY2
-            };
-            var _calculatedPosition2 = {
-              top: startingDimensions.top - _deltaY2,
-              left: startingDimensions.left - _deltaX2
-            };
-
-            var _left3 = _calculatedPosition2.left - boundingBoxPosition.x;
-
-            var _top3 = _calculatedPosition2.top - boundingBoxPosition.y;
-
-            var _currentPosition3 = calculateBoundariesForResize(_left3, _top3, _currentDimensions3.width, _currentDimensions3.height, boundingBoxPosition);
-
-            data = {
-              width: _currentPosition3.width,
-              height: _currentPosition3.height,
-              x: _currentPosition3.left,
-              y: _currentPosition3.top,
-              left: _currentPosition3.left,
-              top: _currentPosition3.top,
-              node: _this3.box.current
-            };
-            _this3.props.onResize && _this3.props.onResize(e, data);
-          }
+          var currentPosition = centerToTopLeft({
+            cx: _cx,
+            cy: _cy,
+            width: _width,
+            height: _height,
+            rotateAngle: rotateAngle
+          });
+          data = {
+            width: currentPosition.width,
+            height: currentPosition.height,
+            x: currentPosition.left - boundingBoxPosition.x,
+            y: currentPosition.top - boundingBoxPosition.y,
+            left: currentPosition.left - boundingBoxPosition.x,
+            top: currentPosition.top - boundingBoxPosition.y,
+            node: _this3.box.current
+          };
+          _this3.props.onResize && _this3.props.onResize(e, data);
         }
       };
 

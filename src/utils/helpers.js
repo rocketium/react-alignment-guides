@@ -178,6 +178,115 @@ export const getOffsetCoordinates = (node) => {
 	};
 };
 
+export const getLength = (x, y) => Math.sqrt(x * x + y * y);
+
+export const topLeftToCenter = ({ left, top, width, height, rotateAngle }) => ({
+	cx: left + width / 2,
+	cy: top + height / 2,
+	width,
+	height,
+	rotateAngle
+});
+
+export const centerToTopLeft = ({ cx, cy, width, height, rotateAngle }) => ({
+	top: cy - height / 2,
+	left: cx - width / 2,
+	width,
+	height,
+	rotateAngle
+});
+
+const setWidthAndDeltaW = (width, deltaW, minWidth) => {
+	const expectedWidth = width + deltaW
+	if (expectedWidth > minWidth) {
+		width = expectedWidth
+	} else {
+		deltaW = minWidth - width
+		width = minWidth
+	}
+	return { width, deltaW }
+}
+
+const setHeightAndDeltaH = (height, deltaH, minHeight) => {
+	const expectedHeight = height + deltaH
+	if (expectedHeight > minHeight) {
+		height = expectedHeight
+	} else {
+		deltaH = minHeight - height
+		height = minHeight
+	}
+	return { height, deltaH }
+}
+
+export const getNewStyle = (type, rect, deltaW, deltaH, minWidth, minHeight) => {
+	let { width, height, cx, cy, rotateAngle } = rect;
+	const widthFlag = width < 0 ? -1 : 1;
+	const heightFlag = height < 0 ? -1 : 1;
+	width = Math.abs(width)
+	height = Math.abs(height)
+	switch (type) {
+		case 'tr': {
+			deltaH = -deltaH
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx += deltaW / 2 * cos(rotateAngle) + deltaH / 2 * sin(rotateAngle)
+			cy += deltaW / 2 * sin(rotateAngle) - deltaH / 2 * cos(rotateAngle)
+			break
+		}
+		case 'br': {
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx += deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle)
+			cy += deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle)
+			break
+		}
+		case 'bl': {
+			deltaW = -deltaW
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx -= deltaW / 2 * cos(rotateAngle) + deltaH / 2 * sin(rotateAngle)
+			cy -= deltaW / 2 * sin(rotateAngle) - deltaH / 2 * cos(rotateAngle)
+			break
+		}
+		case 'tl': {
+			deltaW = -deltaW
+			deltaH = -deltaH
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx -= deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle)
+			cy -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle)
+			break
+		}
+	}
+
+	return {
+		position: {
+			cx,
+			cy
+		},
+		size: {
+			width: width * widthFlag,
+			height: height * heightFlag
+		}
+	}
+}
+
 // Rotate helpers
 export const getAngle = ({ x: x1, y: y1 }, { x: x2, y: y2 }) => {
 	const dot = x1 * x2 + y1 * y2;

@@ -3,9 +3,13 @@ import PropTypes from 'prop-types';
 import {
 	calculateBoundariesForDrag,
 	calculateBoundariesForResize,
+	degToRadian,
 	getAngle,
+	topLeftToCenter,
+	getLength,
 	getNewCoordinates,
-	getOffsetCoordinates,
+	getNewStyle,
+	getOffsetCoordinates, centerToTopLeft,
 } from './utils/helpers'
 import { RESIZE_HANDLES, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
@@ -212,10 +216,15 @@ class Box extends PureComponent {
 
 	onResizeStart(e) {
 		e.stopPropagation();
-		const { target } = e;
+		const { target, clientX: startX, clientY: startY } = e;
 		const boundingBox = this.props.getBoundingBoxElement();
+		const { position } = this.props;
+		const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 		const startingDimensions = this.box.current.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		const { left, top, width, height } = startingDimensions;
+		const { cx, cy } = topLeftToCenter({ left, top, width, height, rotateAngle });
+		const rect = { width, height, cx, cy, rotateAngle };
 		let data = {
 			width: startingDimensions.width,
 			height: startingDimensions.height,
@@ -229,105 +238,34 @@ class Box extends PureComponent {
 
 		const onResize = (e) => {
 			if (this.props.resizing) {
-				e.stopPropagation();
-				if (target.id === 'resize-br') {
-					const currentDimensions = {
-						width: e.clientX - startingDimensions.left,
-						height: e.clientY - startingDimensions.top
-					};
-					const left = startingDimensions.left - boundingBoxPosition.x;
-					const top = startingDimensions.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+				const { clientX, clientY } = e;
+				const deltaX = clientX - startX;
+				const deltaY = clientY - startY;
+				const alpha = Math.atan2(deltaY, deltaX);
+				const deltaL = getLength(deltaX, deltaY);
 
-					data = {
-						width: currentPosition.width,
-						height: currentPosition.height,
-						x: currentPosition.left,
-						y: currentPosition.top,
-						left: currentPosition.left,
-						top: currentPosition.top,
-						node: this.box.current
-					};
-					this.props.onResize && this.props.onResize(e, data);
-				} else if (target.id === 'resize-bl') {
-					const deltaX = startingDimensions.left - e.clientX;
-					const deltaY = startingDimensions.top + startingDimensions.height - e.clientY;
-					const currentDimensions = {
-						width: startingDimensions.width + deltaX,
-						height: startingDimensions.height - deltaY
-					};
+				// const { minWidth, minHeight } = this.props;
+				const beta = alpha - degToRadian(rotateAngle);
+				const deltaW = deltaL * Math.cos(beta);
+				const deltaH = deltaL * Math.sin(beta);
+				// TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
+				// const ratio = rect.width / rect.height;
+				const type = target.id.replace('resize-', '');
 
-					const calculatedPosition = {
-						top: startingDimensions.top,
-						left: startingDimensions.left - deltaX
-					};
-					const left = calculatedPosition.left - boundingBoxPosition.x;
-					const top = calculatedPosition.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
+				const { position: { cx, cy }, size: { width, height } } = getNewStyle(type, rect, deltaW, deltaH, 10, 10); // Use a better way to set minWidth and minHeight
+				const currentPosition = centerToTopLeft({ cx, cy, width, height, rotateAngle });
 
-					data = {
-						width: currentPosition.width,
-						height: currentPosition.height,
-						x: currentPosition.left,
-						y: currentPosition.top,
-						left: currentPosition.left,
-						top: currentPosition.top,
-						node: this.box.current
-					};
-					this.props.onResize && this.props.onResize(e, data);
-				} else if (target.id === 'resize-tr') {
-					const deltaX = e.clientX - startingDimensions.left;
-					const deltaY = startingDimensions.top - e.clientY;
-					const currentDimensions = {
-						width: deltaX,
-						height: startingDimensions.height + deltaY
-					};
+				data = {
+					width: currentPosition.width,
+					height: currentPosition.height,
+					x: currentPosition.left - boundingBoxPosition.x,
+					y: currentPosition.top - boundingBoxPosition.y,
+					left: currentPosition.left - boundingBoxPosition.x,
+					top: currentPosition.top - boundingBoxPosition.y,
+					node: this.box.current
+				};
 
-					const calculatedPosition = {
-						top: startingDimensions.top - deltaY,
-						left: startingDimensions.left
-					};
-					const left = calculatedPosition.left - boundingBoxPosition.x;
-					const top = calculatedPosition.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
-
-					data = {
-						width: currentPosition.width,
-						height: currentPosition.height,
-						x: currentPosition.left,
-						y: currentPosition.top,
-						left: currentPosition.left,
-						top: currentPosition.top,
-						node: this.box.current
-					};
-					this.props.onResize && this.props.onResize(e, data);
-				} else if (target.id === 'resize-tl') {
-					const deltaX = startingDimensions.left - e.clientX;
-					const deltaY = startingDimensions.top - e.clientY;
-					const currentDimensions = {
-						width: startingDimensions.width + deltaX,
-						height: startingDimensions.height + deltaY
-					};
-
-					const calculatedPosition = {
-						top: startingDimensions.top - deltaY,
-						left: startingDimensions.left - deltaX
-					};
-					const left = calculatedPosition.left - boundingBoxPosition.x;
-					const top = calculatedPosition.top - boundingBoxPosition.y;
-					const currentPosition = calculateBoundariesForResize(left, top, currentDimensions.width, currentDimensions.height, boundingBoxPosition);
-
-					data = {
-						width: currentPosition.width,
-						height: currentPosition.height,
-						x: currentPosition.left,
-						y: currentPosition.top,
-						left: currentPosition.left,
-						top: currentPosition.top,
-						node: this.box.current
-					};
-					this.props.onResize && this.props.onResize(e, data);
-				}
+				this.props.onResize && this.props.onResize(e, data);
 			}
 		};
 
