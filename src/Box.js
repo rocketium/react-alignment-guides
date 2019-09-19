@@ -286,7 +286,7 @@ class Box extends PureComponent {
 		e.stopPropagation();
 		const target = this.box.current;
 		const { clientX, clientY } = e;
-		const { position: { rotateAngle: startAngle } } = this.props;
+		const { rotateAngle } = this.props.position;
 		const boundingBox = this.props.getBoundingBoxElement();
 		const start = target.getBoundingClientRect().toJSON();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
@@ -299,8 +299,8 @@ class Box extends PureComponent {
 			y: clientY - center.y
 		};
 
-		let angle = startAngle;
-		let rotateAngle = angle < 180 ? angle : angle - 360;
+		const startAngle = rotateAngle ? rotateAngle : 0;
+		let angle = startAngle ? startAngle : 0;
 		let data = {
 			x: start.x - boundingBoxPosition.x,
 			y: start.y - boundingBoxPosition.y,
@@ -308,7 +308,7 @@ class Box extends PureComponent {
 			left: start.left - boundingBoxPosition.left,
 			width: start.width,
 			height: start.height,
-			rotateAngle,
+			rotateAngle: angle,
 			node: target
 		};
 
@@ -324,7 +324,22 @@ class Box extends PureComponent {
 					y: clientY - center.y
 				};
 				angle = getAngle(startVector, rotateVector);
-				rotateAngle = angle < 180 ? angle : angle - 360;
+				// Snap box during rotation at certain angles - 0, 90, 180, 270, 360
+				let rotateAngle = Math.round(startAngle + angle)
+				if (rotateAngle >= 360) {
+					rotateAngle -= 360
+				} else if (rotateAngle < 0) {
+					rotateAngle += 360
+				}
+				if (rotateAngle > 356 || rotateAngle < 4) {
+					rotateAngle = 0
+				} else if (rotateAngle > 86 && rotateAngle < 94) {
+					rotateAngle = 90
+				} else if (rotateAngle > 176 && rotateAngle < 184) {
+					rotateAngle = 180
+				} else if (rotateAngle > 266 && rotateAngle < 274) {
+					rotateAngle = 270
+				}
 				data = Object.assign({}, data, {
 					rotateAngle
 				});

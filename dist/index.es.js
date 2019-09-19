@@ -737,7 +737,7 @@ function (_PureComponent) {
       var target = this.box.current;
       var clientX = e.clientX,
           clientY = e.clientY;
-      var startAngle = this.props.position.rotateAngle;
+      var rotateAngle = this.props.position.rotateAngle;
       var boundingBox = this.props.getBoundingBoxElement();
       var start = target.getBoundingClientRect().toJSON();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
@@ -749,8 +749,8 @@ function (_PureComponent) {
         x: clientX - center.x,
         y: clientY - center.y
       };
-      var angle = startAngle;
-      var rotateAngle = angle < 180 ? angle : angle - 360;
+      var startAngle = rotateAngle ? rotateAngle : 0;
+      var angle = startAngle ? startAngle : 0;
       var data = {
         x: start.x - boundingBoxPosition.x,
         y: start.y - boundingBoxPosition.y,
@@ -758,7 +758,7 @@ function (_PureComponent) {
         left: start.left - boundingBoxPosition.left,
         width: start.width,
         height: start.height,
-        rotateAngle: rotateAngle,
+        rotateAngle: angle,
         node: target
       };
       var newCoordinates = getNewCoordinates(data);
@@ -773,10 +773,28 @@ function (_PureComponent) {
             x: _clientX - center.x,
             y: _clientY - center.y
           };
-          angle = getAngle(startVector, rotateVector);
-          rotateAngle = angle < 180 ? angle : angle - 360;
+          angle = getAngle(startVector, rotateVector); // Snap box during rotation at certain angles - 0, 90, 180, 270, 360
+
+          var _rotateAngle = Math.round(startAngle + angle);
+
+          if (_rotateAngle >= 360) {
+            _rotateAngle -= 360;
+          } else if (_rotateAngle < 0) {
+            _rotateAngle += 360;
+          }
+
+          if (_rotateAngle > 356 || _rotateAngle < 4) {
+            _rotateAngle = 0;
+          } else if (_rotateAngle > 86 && _rotateAngle < 94) {
+            _rotateAngle = 90;
+          } else if (_rotateAngle > 176 && _rotateAngle < 184) {
+            _rotateAngle = 180;
+          } else if (_rotateAngle > 266 && _rotateAngle < 274) {
+            _rotateAngle = 270;
+          }
+
           data = Object.assign({}, data, {
-            rotateAngle: rotateAngle
+            rotateAngle: _rotateAngle
           });
 
           var _newCoordinates = getNewCoordinates(data);
