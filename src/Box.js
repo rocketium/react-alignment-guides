@@ -268,6 +268,10 @@ class Box extends PureComponent {
 						node: this.box.current
 					};
 
+					// Calculate the restrictions if resize goes out of bounds
+					const restrictResizeWithinBoundaries = calculateBoundariesForResize(data.left, data.top, currentPosition.width, currentPosition.height, boundingBoxPosition);
+					data = Object.assign({}, data, restrictResizeWithinBoundaries);
+
 					this.props.onResize && this.props.onResize(e, data);
 				}
 			};

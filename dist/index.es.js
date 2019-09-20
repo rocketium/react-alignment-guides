@@ -120,6 +120,68 @@ var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, 
     };
   }
 }; // Calculate boundaries for boxes given an output resolution
+
+var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds) {
+  var boundingBox = _objectSpread({}, bounds);
+
+  var widthDifference = 0;
+  var heightDifference = 0;
+
+  if (left >= 0 && left + width <= boundingBox.width && top >= 0 && top + height <= boundingBox.height) {
+    return {
+      left: left,
+      top: top,
+      width: width,
+      height: height
+    };
+  } else if (left < 0 && top < 0) {
+    return {
+      left: 0,
+      top: 0,
+      width: width + left <= boundingBox.width ? width + left : boundingBox.width,
+      height: height + top <= boundingBox.height ? height + top : boundingBox.height
+    };
+  } else if (left < 0) {
+    return {
+      left: 0,
+      top: top,
+      width: width + left <= boundingBox.width ? width + left : boundingBox.width,
+      height: height + top <= boundingBox.height ? height : boundingBox.height - top
+    };
+  } else if (top < 0) {
+    return {
+      left: left,
+      top: 0,
+      width: width + left <= boundingBox.width ? width : boundingBox.width - left,
+      height: height + top <= boundingBox.height ? height + top : boundingBox.height
+    };
+  } else if (left >= 0 && left + width <= boundingBox.width) {
+    heightDifference = top + height - boundingBox.height;
+    return {
+      left: left,
+      top: top < 0 ? 0 : top,
+      width: width,
+      height: height - heightDifference
+    };
+  } else if (top >= 0 && top + height <= boundingBox.height) {
+    widthDifference = left + width - boundingBox.width;
+    return {
+      left: left < 0 ? 0 : left,
+      top: top,
+      width: width - widthDifference,
+      height: height
+    };
+  } else {
+    widthDifference = left + width - boundingBox.width;
+    heightDifference = top + height - boundingBox.height;
+    return {
+      left: left < 0 ? 0 : left,
+      top: top < 0 ? 0 : top,
+      width: width - widthDifference,
+      height: height - heightDifference
+    };
+  }
+};
 var getOffsetCoordinates = function getOffsetCoordinates(node) {
   return {
     x: node.offsetLeft,
@@ -717,7 +779,10 @@ function (_PureComponent) {
               left: currentPosition.left - boundingBoxPosition.x,
               top: currentPosition.top - boundingBoxPosition.y,
               node: _this3.box.current
-            };
+            }; // Calculate the restrictions if resize goes out of bounds
+
+            var restrictResizeWithinBoundaries = calculateBoundariesForResize(data.left, data.top, currentPosition.width, currentPosition.height, boundingBoxPosition);
+            data = Object.assign({}, data, restrictResizeWithinBoundaries);
             _this3.props.onResize && _this3.props.onResize(e, data);
           }
         };
