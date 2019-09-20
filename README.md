@@ -56,6 +56,13 @@ class Example extends Component {
 | drag | `true` | Boolean. Allow or disallow dragging for this box |
 | resize | `true` | Boolean. Allow or disallow resizing for this box |
 | rotate | `true` | Boolean. Allow or disallow rotating for this box |
+| x |  | Number |
+| y |  | Number |
+| left |  | Number |
+| top |  | Number |
+| width |  | Number |
+| height |  | Number |
+| rotateAngle |  | Number in the range -180 to 180 |
 
 ## License
 
