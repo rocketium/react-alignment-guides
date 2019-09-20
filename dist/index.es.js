@@ -367,7 +367,7 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeHandle__1PLUu,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resizeHandle__1PLUu {\n  z-index: 99; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 30px;\n  height: 30px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -25px;\n  right: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -25px;\n  left: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -25px;\n  right: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -25px;\n  left: -25px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    border: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  border: 2px solid #EB4B48; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeHandle__1PLUu,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resizeHandle__1PLUu {\n  z-index: 99; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
 var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeHandle":"styles_resizeHandle__1PLUu","rotateHandle":"styles_rotateHandle__26rVp","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
 styleInject(css);
 
@@ -421,7 +421,7 @@ function (_PureComponent) {
   _createClass(Box, [{
     key: "selectBox",
     value: function selectBox(e) {
-      if (this.props.isSelected) {
+      if (!this.props.isSelected) {
         this.props.selectBox(e);
       }
     }
@@ -430,74 +430,77 @@ function (_PureComponent) {
     value: function onDragStart(e) {
       var _this2 = this;
 
-      e.stopPropagation();
-      var target = this.box.current;
-      var boundingBox = this.props.getBoundingBoxElement();
-      var position = this.props.position;
-      var startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
-      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-      var data = {
-        x: startingPosition.x - boundingBoxPosition.x,
-        y: startingPosition.y - boundingBoxPosition.y,
-        top: startingPosition.y - boundingBoxPosition.y,
-        left: startingPosition.x - boundingBoxPosition.x,
-        width: startingPosition.width,
-        height: startingPosition.height,
-        node: target
-      };
-
-      if (position.rotateAngle !== 0) {
-        data = {
-          x: startingPosition.x,
-          y: startingPosition.y,
-          top: startingPosition.y,
-          left: startingPosition.x,
+      if ((this.props.position.drag || this.props.position.drag === undefined) && e.target.id.indexOf('box') !== -1) {
+        // Allow drag only if drag property for the box is true or undefined
+        e.stopPropagation();
+        var target = this.box.current;
+        var boundingBox = this.props.getBoundingBoxElement();
+        var position = this.props.position;
+        var startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
+        var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+        var data = {
+          x: startingPosition.x - boundingBoxPosition.x,
+          y: startingPosition.y - boundingBoxPosition.y,
+          top: startingPosition.y - boundingBoxPosition.y,
+          left: startingPosition.x - boundingBoxPosition.x,
           width: startingPosition.width,
           height: startingPosition.height,
           node: target
         };
-      }
 
-      this.props.onDragStart && this.props.onDragStart(e, data);
-      var deltaX = Math.abs(target.offsetLeft - e.clientX);
-      var deltaY = Math.abs(target.offsetTop - e.clientY);
-
-      var onDrag = function onDrag(e) {
-        if (_this2.props.dragging) {
-          e.stopPropagation();
-
-          var _boundingBox = _this2.props.getBoundingBoxElement();
-
-          var boundingBoxDimensions = _boundingBox.current.getBoundingClientRect().toJSON();
-
-          var boxWidth = _this2.props.position.width;
-          var boxHeight = _this2.props.position.height;
-          var left = e.clientX - deltaX;
-          var top = e.clientY - deltaY;
-          var currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+        if (position.rotateAngle !== 0) {
           data = {
-            x: currentPosition.left,
-            y: currentPosition.top,
-            top: currentPosition.top,
-            left: currentPosition.left,
-            width: _this2.props.position.width,
-            height: _this2.props.position.height,
-            node: _this2.box.current
+            x: startingPosition.x,
+            y: startingPosition.y,
+            top: startingPosition.y,
+            left: startingPosition.x,
+            width: startingPosition.width,
+            height: startingPosition.height,
+            node: target
           };
-          _this2.props.onDrag && _this2.props.onDrag(e, data);
         }
-      };
 
-      var onDragEnd = function onDragEnd(e) {
-        if (_this2.props.dragging) {
-          _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
-          document.removeEventListener('mousemove', onDrag);
-          document.removeEventListener('mouseup', onDragEnd);
-        }
-      };
+        this.props.onDragStart && this.props.onDragStart(e, data);
+        var deltaX = Math.abs(target.offsetLeft - e.clientX);
+        var deltaY = Math.abs(target.offsetTop - e.clientY);
 
-      document.addEventListener('mousemove', onDrag);
-      document.addEventListener('mouseup', onDragEnd);
+        var onDrag = function onDrag(e) {
+          if (_this2.props.dragging) {
+            e.stopPropagation();
+
+            var _boundingBox = _this2.props.getBoundingBoxElement();
+
+            var boundingBoxDimensions = _boundingBox.current.getBoundingClientRect().toJSON();
+
+            var boxWidth = _this2.props.position.width;
+            var boxHeight = _this2.props.position.height;
+            var left = e.clientX - deltaX;
+            var top = e.clientY - deltaY;
+            var currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+            data = {
+              x: currentPosition.left,
+              y: currentPosition.top,
+              top: currentPosition.top,
+              left: currentPosition.left,
+              width: _this2.props.position.width,
+              height: _this2.props.position.height,
+              node: _this2.box.current
+            };
+            _this2.props.onDrag && _this2.props.onDrag(e, data);
+          }
+        };
+
+        var onDragEnd = function onDragEnd(e) {
+          if (_this2.props.dragging) {
+            _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', onDragEnd);
+          }
+        };
+
+        document.addEventListener('mousemove', onDrag);
+        document.addEventListener('mouseup', onDragEnd);
+      }
     }
   }, {
     key: "shortcutHandler",
@@ -630,189 +633,194 @@ function (_PureComponent) {
     value: function onResizeStart(e) {
       var _this3 = this;
 
-      e.stopPropagation();
-      var target = e.target,
-          startX = e.clientX,
-          startY = e.clientY;
-      var boundingBox = this.props.getBoundingBoxElement();
-      var position = this.props.position;
-      var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
-      var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
-      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-      var left = startingDimensions.left,
-          top = startingDimensions.top,
-          width = startingDimensions.width,
-          height = startingDimensions.height;
+      if (this.props.position.resize || this.props.position.resize === undefined) {
+        // Allow resize only if resize property for the box is true or undefined
+        e.stopPropagation();
+        var target = e.target,
+            startX = e.clientX,
+            startY = e.clientY;
+        var boundingBox = this.props.getBoundingBoxElement();
+        var position = this.props.position;
+        var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
+        var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
+        var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+        var left = startingDimensions.left,
+            top = startingDimensions.top,
+            width = startingDimensions.width,
+            height = startingDimensions.height;
 
-      var _topLeftToCenter = topLeftToCenter({
-        left: left,
-        top: top,
-        width: width,
-        height: height,
-        rotateAngle: rotateAngle
-      }),
-          cx = _topLeftToCenter.cx,
-          cy = _topLeftToCenter.cy;
+        var _topLeftToCenter = topLeftToCenter({
+          left: left,
+          top: top,
+          width: width,
+          height: height,
+          rotateAngle: rotateAngle
+        }),
+            cx = _topLeftToCenter.cx,
+            cy = _topLeftToCenter.cy;
 
-      var rect = {
-        width: width,
-        height: height,
-        cx: cx,
-        cy: cy,
-        rotateAngle: rotateAngle
-      };
-      var data = {
-        width: startingDimensions.width,
-        height: startingDimensions.height,
-        x: startingDimensions.left - boundingBoxPosition.x,
-        y: startingDimensions.top - boundingBoxPosition.y,
-        left: startingDimensions.left - boundingBoxPosition.x,
-        top: startingDimensions.top - boundingBoxPosition.y,
-        node: this.box.current
-      };
-      this.props.onResizeStart && this.props.onResizeStart(e, data);
+        var rect = {
+          width: width,
+          height: height,
+          cx: cx,
+          cy: cy,
+          rotateAngle: rotateAngle
+        };
+        var data = {
+          width: startingDimensions.width,
+          height: startingDimensions.height,
+          x: startingDimensions.left - boundingBoxPosition.x,
+          y: startingDimensions.top - boundingBoxPosition.y,
+          left: startingDimensions.left - boundingBoxPosition.x,
+          top: startingDimensions.top - boundingBoxPosition.y,
+          node: this.box.current
+        };
+        this.props.onResizeStart && this.props.onResizeStart(e, data);
 
-      var onResize = function onResize(e) {
-        if (_this3.props.resizing) {
-          var clientX = e.clientX,
-              clientY = e.clientY;
-          var deltaX = clientX - startX;
-          var deltaY = clientY - startY;
-          var alpha = Math.atan2(deltaY, deltaX);
-          var deltaL = getLength(deltaX, deltaY); // const { minWidth, minHeight } = this.props;
+        var onResize = function onResize(e) {
+          if (_this3.props.resizing) {
+            var clientX = e.clientX,
+                clientY = e.clientY;
+            var deltaX = clientX - startX;
+            var deltaY = clientY - startY;
+            var alpha = Math.atan2(deltaY, deltaX);
+            var deltaL = getLength(deltaX, deltaY); // const { minWidth, minHeight } = this.props;
 
-          var beta = alpha - degToRadian(rotateAngle);
-          var deltaW = deltaL * Math.cos(beta);
-          var deltaH = deltaL * Math.sin(beta); // TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
-          // const ratio = rect.width / rect.height;
+            var beta = alpha - degToRadian(rotateAngle);
+            var deltaW = deltaL * Math.cos(beta);
+            var deltaH = deltaL * Math.sin(beta); // TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
+            // const ratio = rect.width / rect.height;
 
-          var type = target.id.replace('resize-', '');
+            var type = target.id.replace('resize-', '');
 
-          var _getNewStyle = getNewStyle(type, rect, deltaW, deltaH, 10, 10),
-              _getNewStyle$position = _getNewStyle.position,
-              _cx = _getNewStyle$position.cx,
-              _cy = _getNewStyle$position.cy,
-              _getNewStyle$size = _getNewStyle.size,
-              _width = _getNewStyle$size.width,
-              _height = _getNewStyle$size.height; // Use a better way to set minWidth and minHeight
+            var _getNewStyle = getNewStyle(type, rect, deltaW, deltaH, 10, 10),
+                _getNewStyle$position = _getNewStyle.position,
+                _cx = _getNewStyle$position.cx,
+                _cy = _getNewStyle$position.cy,
+                _getNewStyle$size = _getNewStyle.size,
+                _width = _getNewStyle$size.width,
+                _height = _getNewStyle$size.height; // Use a better way to set minWidth and minHeight
 
 
-          var currentPosition = centerToTopLeft({
-            cx: _cx,
-            cy: _cy,
-            width: _width,
-            height: _height,
-            rotateAngle: rotateAngle
-          });
-          data = {
-            width: currentPosition.width,
-            height: currentPosition.height,
-            x: currentPosition.left - boundingBoxPosition.x,
-            y: currentPosition.top - boundingBoxPosition.y,
-            left: currentPosition.left - boundingBoxPosition.x,
-            top: currentPosition.top - boundingBoxPosition.y,
-            node: _this3.box.current
-          };
-          _this3.props.onResize && _this3.props.onResize(e, data);
-        }
-      };
+            var currentPosition = centerToTopLeft({
+              cx: _cx,
+              cy: _cy,
+              width: _width,
+              height: _height,
+              rotateAngle: rotateAngle
+            });
+            data = {
+              width: currentPosition.width,
+              height: currentPosition.height,
+              x: currentPosition.left - boundingBoxPosition.x,
+              y: currentPosition.top - boundingBoxPosition.y,
+              left: currentPosition.left - boundingBoxPosition.x,
+              top: currentPosition.top - boundingBoxPosition.y,
+              node: _this3.box.current
+            };
+            _this3.props.onResize && _this3.props.onResize(e, data);
+          }
+        };
 
-      var onResizeEnd = function onResizeEnd(e) {
-        if (_this3.props.resizing) {
-          document.removeEventListener('mousemove', onResize);
-          document.removeEventListener('mouseup', onResizeEnd);
-          _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
-        }
-      };
+        var onResizeEnd = function onResizeEnd(e) {
+          if (_this3.props.resizing) {
+            document.removeEventListener('mousemove', onResize);
+            document.removeEventListener('mouseup', onResizeEnd);
+            _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
+          }
+        };
 
-      document.addEventListener('mousemove', onResize);
-      document.addEventListener('mouseup', onResizeEnd);
+        document.addEventListener('mousemove', onResize);
+        document.addEventListener('mouseup', onResizeEnd);
+      }
     }
   }, {
     key: "onRotateStart",
     value: function onRotateStart(e) {
       var _this4 = this;
 
-      e.stopPropagation();
-      var target = this.box.current;
-      var clientX = e.clientX,
-          clientY = e.clientY;
-      var rotateAngle = this.props.position.rotateAngle;
-      var boundingBox = this.props.getBoundingBoxElement();
-      var start = target.getBoundingClientRect().toJSON();
-      var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-      var center = {
-        x: start.left + start.width / 2,
-        y: start.top + start.height / 2
-      };
-      var startVector = {
-        x: clientX - center.x,
-        y: clientY - center.y
-      };
-      var startAngle = rotateAngle ? rotateAngle : 0;
-      var angle = startAngle ? startAngle : 0;
-      var data = {
-        x: start.x - boundingBoxPosition.x,
-        y: start.y - boundingBoxPosition.y,
-        top: start.top - boundingBoxPosition.top,
-        left: start.left - boundingBoxPosition.left,
-        width: start.width,
-        height: start.height,
-        rotateAngle: angle,
-        node: target
-      };
-      var newCoordinates = getNewCoordinates(data);
-      this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
+      if (this.props.position.rotate || this.props.position.rotate === undefined) {
+        e.stopPropagation();
+        var target = this.box.current;
+        var clientX = e.clientX,
+            clientY = e.clientY;
+        var rotateAngle = this.props.position.rotateAngle;
+        var boundingBox = this.props.getBoundingBoxElement();
+        var start = target.getBoundingClientRect().toJSON();
+        var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+        var center = {
+          x: start.left + start.width / 2,
+          y: start.top + start.height / 2
+        };
+        var startVector = {
+          x: clientX - center.x,
+          y: clientY - center.y
+        };
+        var startAngle = rotateAngle ? rotateAngle : 0;
+        var angle = startAngle ? startAngle : 0;
+        var data = {
+          x: start.x - boundingBoxPosition.x,
+          y: start.y - boundingBoxPosition.y,
+          top: start.top - boundingBoxPosition.top,
+          left: start.left - boundingBoxPosition.left,
+          width: start.width,
+          height: start.height,
+          rotateAngle: angle,
+          node: target
+        };
+        var newCoordinates = getNewCoordinates(data);
+        this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
 
-      var onRotate = function onRotate(e) {
-        if (_this4.props.rotating) {
-          e.stopPropagation();
-          var _clientX = e.clientX,
-              _clientY = e.clientY;
-          var rotateVector = {
-            x: _clientX - center.x,
-            y: _clientY - center.y
-          };
-          angle = getAngle(startVector, rotateVector); // Snap box during rotation at certain angles - 0, 90, 180, 270, 360
+        var onRotate = function onRotate(e) {
+          if (_this4.props.rotating) {
+            e.stopPropagation();
+            var _clientX = e.clientX,
+                _clientY = e.clientY;
+            var rotateVector = {
+              x: _clientX - center.x,
+              y: _clientY - center.y
+            };
+            angle = getAngle(startVector, rotateVector); // Snap box during rotation at certain angles - 0, 90, 180, 270, 360
 
-          var _rotateAngle = Math.round(startAngle + angle);
+            var _rotateAngle = Math.round(startAngle + angle);
 
-          if (_rotateAngle >= 360) {
-            _rotateAngle -= 360;
-          } else if (_rotateAngle < 0) {
-            _rotateAngle += 360;
+            if (_rotateAngle >= 360) {
+              _rotateAngle -= 360;
+            } else if (_rotateAngle < 0) {
+              _rotateAngle += 360;
+            }
+
+            if (_rotateAngle > 356 || _rotateAngle < 4) {
+              _rotateAngle = 0;
+            } else if (_rotateAngle > 86 && _rotateAngle < 94) {
+              _rotateAngle = 90;
+            } else if (_rotateAngle > 176 && _rotateAngle < 184) {
+              _rotateAngle = 180;
+            } else if (_rotateAngle > 266 && _rotateAngle < 274) {
+              _rotateAngle = 270;
+            }
+
+            data = Object.assign({}, data, {
+              rotateAngle: _rotateAngle
+            });
+
+            var _newCoordinates = getNewCoordinates(data);
+
+            _this4.props.onRotate && _this4.props.onRotate(e, _newCoordinates);
           }
+        };
 
-          if (_rotateAngle > 356 || _rotateAngle < 4) {
-            _rotateAngle = 0;
-          } else if (_rotateAngle > 86 && _rotateAngle < 94) {
-            _rotateAngle = 90;
-          } else if (_rotateAngle > 176 && _rotateAngle < 184) {
-            _rotateAngle = 180;
-          } else if (_rotateAngle > 266 && _rotateAngle < 274) {
-            _rotateAngle = 270;
+        var onRotateEnd = function onRotateEnd(e) {
+          if (_this4.props.rotating) {
+            document.removeEventListener('mousemove', onRotate);
+            document.removeEventListener('mouseup', onRotateEnd);
+            _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, data);
           }
+        };
 
-          data = Object.assign({}, data, {
-            rotateAngle: _rotateAngle
-          });
-
-          var _newCoordinates = getNewCoordinates(data);
-
-          _this4.props.onRotate && _this4.props.onRotate(e, _newCoordinates);
-        }
-      };
-
-      var onRotateEnd = function onRotateEnd(e) {
-        if (_this4.props.rotating) {
-          document.removeEventListener('mousemove', onRotate);
-          document.removeEventListener('mouseup', onRotateEnd);
-          _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, data);
-        }
-      };
-
-      document.addEventListener('mousemove', onRotate);
-      document.addEventListener('mouseup', onRotateEnd);
+        document.addEventListener('mousemove', onRotate);
+        document.addEventListener('mouseup', onRotateEnd);
+      }
     }
   }, {
     key: "getCoordinatesWrapperWidth",
@@ -864,7 +872,8 @@ function (_PureComponent) {
           className: boxClassNames,
           id: id,
           onMouseUp: this.selectBox,
-          onMouseDown: this.onDragStart,
+          onMouseDown: this.props.drag ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
+          ,
           onKeyDown: this.shortcutHandler,
           ref: this.box,
           style: boxStyles,
@@ -883,7 +892,8 @@ function (_PureComponent) {
           return React.createElement("div", {
             key: handle,
             className: className,
-            onMouseDown: _this5.onResizeStart,
+            onMouseDown: _this5.props.resize ? _this5.onResizeStart : null // If this.props.resize is false then remove the mouseDown event handler for resize
+            ,
             id: "resize-".concat(handle)
           });
         }) : null, isSelected ? ROTATE_HANDLES.map(function (handle) {
@@ -891,7 +901,8 @@ function (_PureComponent) {
           return React.createElement("div", {
             key: handle,
             className: className,
-            onMouseDown: _this5.onRotateStart,
+            onMouseDown: _this5.props.rotate ? _this5.onRotateStart : null // If this.props.rotate is false then remove the mouseDown event handler for rotate
+            ,
             id: "rotate-".concat(handle)
           });
         }) : null);
@@ -1428,7 +1439,8 @@ function (_Component) {
   }]);
 
   return AlignmentGuides;
-}(Component);
+}(Component); // Typechecking props for AlignmentGuides component
+
 
 AlignmentGuides.propTypes = {
   boxes: PropTypes.array.isRequired,
@@ -1452,6 +1464,13 @@ AlignmentGuides.propTypes = {
   rotate: PropTypes.bool,
   resolution: PropTypes.object,
   style: PropTypes.object
+}; // Default values for props
+
+AlignmentGuides.defaultProps = {
+  boxes: [],
+  drag: true,
+  resize: true,
+  rotate: true
 };
 
 // 	<AlignmentGuides />,

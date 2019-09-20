@@ -474,6 +474,7 @@ class AlignmentGuides extends Component {
 	}
 }
 
+// Typechecking props for AlignmentGuides component
 AlignmentGuides.propTypes = {
 	boxes: PropTypes.array.isRequired,
 	boxStyle: PropTypes.object,
@@ -496,6 +497,14 @@ AlignmentGuides.propTypes = {
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
 	style: PropTypes.object
+};
+
+// Default values for props
+AlignmentGuides.defaultProps = {
+	boxes: [],
+	drag: true,
+	resize: true,
+	rotate: true
 };
 
 export default AlignmentGuides;

@@ -53,9 +53,9 @@ class Example extends Component {
 ## Box object
 | Prop | Default | Description |
 | ------------- | ------------- | ------------- |
-| drag | `undefined` | Boolean. Allow or disallow dragging for this box |
-| resize | `undefined` | Boolean. Allow or disallow resizing for this box |
-| rotate | `undefined` | Boolean. Allow or disallow rotating for this box |
+| drag | `true` | Boolean. Allow or disallow dragging for this box |
+| resize | `true` | Boolean. Allow or disallow resizing for this box |
+| rotate | `true` | Boolean. Allow or disallow rotating for this box |
 
 ## License
 
