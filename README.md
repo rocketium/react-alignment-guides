@@ -35,7 +35,7 @@ class Example extends Component {
 ## Props
 | Prop  | Required | Default | Description |
 | ------------- | ------------- | ------------- | ------------- |
-| boxes  | true | [] | An array of objects where each object follows this structure: `{ x: 0, y: 0, left: 0, right: 0, width: 100, height: 100 }`.  |
+| boxes  | true | [] | An array of [box objects](#Box-object)  |
 | boxStyle | false | {} | Styles to be applied to the boxes. It should follow the convention described [here](https://reactjs.org/docs/dom-elements.html#style). |
 | className | false | empty string | CSS classes. _Note: Do not override `position`_ |
 | onDragStart | false |  | Function to call when drag starts |
@@ -49,6 +49,13 @@ class Example extends Component {
 | onUnselect | false |  | Function to call when a box goes inactive |
 | resolution | false | null | Resolution to which you want to scale the boxes to. For example, the bounding box can be 1280x720 but you can display the coordinates and dimensions relative to 1920x1080. In this case, `resolution` would be set to `{ width: 1920, height: 1080 }`. |
 | style | false | null | Styles to be applied to the component. It should follow the convention described [here](https://reactjs.org/docs/dom-elements.html#style). _Note: Do not override `position`_ |
+
+## Box object
+| Prop | Default | Description |
+| ------------- | ------------- | ------------- |
+| drag | `undefined` | Boolean. Allow or disallow dragging for this box |
+| resize | `undefined` | Boolean. Allow or disallow resizing for this box |
+| rotate | `undefined` | Boolean. Allow or disallow rotating for this box |
 
 ## License
 
