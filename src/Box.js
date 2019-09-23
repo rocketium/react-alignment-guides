@@ -223,20 +223,32 @@ class Box extends PureComponent {
 			const boundingBox = this.props.getBoundingBoxElement();
 			const { position } = this.props;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
-			const startingDimensions = this.box.current.getBoundingClientRect().toJSON();
-			const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+			const startingDimensions = getOffsetCoordinates(this.box.current);
+			const boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
 			const { left, top, width, height } = startingDimensions;
 			const { cx, cy } = topLeftToCenter({ left, top, width, height, rotateAngle });
 			const rect = { width, height, cx, cy, rotateAngle };
 			let data = {
 				width: startingDimensions.width,
 				height: startingDimensions.height,
-				x: startingDimensions.left - boundingBoxPosition.x,
-				y: startingDimensions.top - boundingBoxPosition.y,
-				left: startingDimensions.left - boundingBoxPosition.x,
-				top: startingDimensions.top - boundingBoxPosition.y,
+				x: startingDimensions.left + boundingBoxPosition.x,
+				y: startingDimensions.top + boundingBoxPosition.y,
+				left: startingDimensions.left + boundingBoxPosition.x,
+				top: startingDimensions.top + boundingBoxPosition.y,
 				node: this.box.current
 			};
+
+			// if (rotateAngle !== 0) {
+			// 	data = {
+			// 		width: startingDimensions.width,
+			// 		height: startingDimensions.height,
+			// 		x: startingDimensions.left + boundingBoxPosition.x,
+			// 		y: startingDimensions.top + boundingBoxPosition.y,
+			// 		left: startingDimensions.left + boundingBoxPosition.x,
+			// 		top: startingDimensions.top + boundingBoxPosition.y,
+			// 		node: this.box.current
+			// 	};
+			// }
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 
 			const onResize = (e) => {
@@ -261,16 +273,33 @@ class Box extends PureComponent {
 					data = {
 						width: currentPosition.width,
 						height: currentPosition.height,
-						x: currentPosition.left - boundingBoxPosition.x,
-						y: currentPosition.top - boundingBoxPosition.y,
-						left: currentPosition.left - boundingBoxPosition.x,
-						top: currentPosition.top - boundingBoxPosition.y,
+						x: currentPosition.left,
+						y: currentPosition.top,
+						left: currentPosition.left,
+						top: currentPosition.top,
+						rotateAngle,
 						node: this.box.current
 					};
 
+					// if (rotateAngle !== 0) {
+					// 	data = {
+					// 		width: currentPosition.width,
+					// 		height: currentPosition.height,
+					// 		x: currentPosition.left,
+					// 		y: currentPosition.top,
+					// 		left: currentPosition.left,
+					// 		top: currentPosition.top,
+					// 		rotateAngle,
+					// 		node: this.box.current
+					// 	};
+					// }
+
 					// Calculate the restrictions if resize goes out of bounds
 					const restrictResizeWithinBoundaries = calculateBoundariesForResize(data.left, data.top, currentPosition.width, currentPosition.height, boundingBoxPosition);
-					data = Object.assign({}, data, restrictResizeWithinBoundaries);
+					data = Object.assign({}, data, restrictResizeWithinBoundaries, {
+						x: restrictResizeWithinBoundaries.left,
+						y: restrictResizeWithinBoundaries.top
+					});
 
 					this.props.onResize && this.props.onResize(e, data);
 				}

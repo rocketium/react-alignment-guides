@@ -704,8 +704,8 @@ function (_PureComponent) {
         var boundingBox = this.props.getBoundingBoxElement();
         var position = this.props.position;
         var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
-        var startingDimensions = this.box.current.getBoundingClientRect().toJSON();
-        var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+        var startingDimensions = getOffsetCoordinates(this.box.current);
+        var boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
         var left = startingDimensions.left,
             top = startingDimensions.top,
             width = startingDimensions.width,
@@ -731,12 +731,23 @@ function (_PureComponent) {
         var data = {
           width: startingDimensions.width,
           height: startingDimensions.height,
-          x: startingDimensions.left - boundingBoxPosition.x,
-          y: startingDimensions.top - boundingBoxPosition.y,
-          left: startingDimensions.left - boundingBoxPosition.x,
-          top: startingDimensions.top - boundingBoxPosition.y,
+          x: startingDimensions.left + boundingBoxPosition.x,
+          y: startingDimensions.top + boundingBoxPosition.y,
+          left: startingDimensions.left + boundingBoxPosition.x,
+          top: startingDimensions.top + boundingBoxPosition.y,
           node: this.box.current
-        };
+        }; // if (rotateAngle !== 0) {
+        // 	data = {
+        // 		width: startingDimensions.width,
+        // 		height: startingDimensions.height,
+        // 		x: startingDimensions.left + boundingBoxPosition.x,
+        // 		y: startingDimensions.top + boundingBoxPosition.y,
+        // 		left: startingDimensions.left + boundingBoxPosition.x,
+        // 		top: startingDimensions.top + boundingBoxPosition.y,
+        // 		node: this.box.current
+        // 	};
+        // }
+
         this.props.onResizeStart && this.props.onResizeStart(e, data);
 
         var onResize = function onResize(e) {
@@ -774,15 +785,31 @@ function (_PureComponent) {
             data = {
               width: currentPosition.width,
               height: currentPosition.height,
-              x: currentPosition.left - boundingBoxPosition.x,
-              y: currentPosition.top - boundingBoxPosition.y,
-              left: currentPosition.left - boundingBoxPosition.x,
-              top: currentPosition.top - boundingBoxPosition.y,
+              x: currentPosition.left,
+              y: currentPosition.top,
+              left: currentPosition.left,
+              top: currentPosition.top,
+              rotateAngle: rotateAngle,
               node: _this3.box.current
-            }; // Calculate the restrictions if resize goes out of bounds
+            }; // if (rotateAngle !== 0) {
+            // 	data = {
+            // 		width: currentPosition.width,
+            // 		height: currentPosition.height,
+            // 		x: currentPosition.left,
+            // 		y: currentPosition.top,
+            // 		left: currentPosition.left,
+            // 		top: currentPosition.top,
+            // 		rotateAngle,
+            // 		node: this.box.current
+            // 	};
+            // }
+            // Calculate the restrictions if resize goes out of bounds
 
             var restrictResizeWithinBoundaries = calculateBoundariesForResize(data.left, data.top, currentPosition.width, currentPosition.height, boundingBoxPosition);
-            data = Object.assign({}, data, restrictResizeWithinBoundaries);
+            data = Object.assign({}, data, restrictResizeWithinBoundaries, {
+              x: restrictResizeWithinBoundaries.left,
+              y: restrictResizeWithinBoundaries.top
+            });
             _this3.props.onResize && _this3.props.onResize(e, data);
           }
         };
