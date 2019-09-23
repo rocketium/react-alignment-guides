@@ -219,45 +219,47 @@ class AlignmentGuides extends Component {
 			boxes,
 			guides
 		}, () => {
-			const match = proximityListener(this.state.active, this.state.guides);
-			let newActiveBoxLeft = this.state.boxes[this.state.active].left;
-			let newActiveBoxTop = this.state.boxes[this.state.active].top;
-			for (let axis in match) {
-				const { activeBoxGuides, matchedArray, proximity } = match[axis];
-				const activeBoxProximityIndex = proximity.activeBoxIndex;
-				const matchedBoxProximityIndex = proximity.matchedBoxIndex;
+			if (this.props.snap) {
+				const match = proximityListener(this.state.active, this.state.guides);
+				let newActiveBoxLeft = this.state.boxes[this.state.active].left;
+				let newActiveBoxTop = this.state.boxes[this.state.active].top;
+				for (let axis in match) {
+					const { activeBoxGuides, matchedArray, proximity } = match[axis];
+					const activeBoxProximityIndex = proximity.activeBoxIndex;
+					const matchedBoxProximityIndex = proximity.matchedBoxIndex;
 
-				if (axis === 'x') {
-					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-						newActiveBoxLeft = this.state.boxes[this.state.active].left - proximity.value;
+					if (axis === 'x') {
+						if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+							newActiveBoxLeft = this.state.boxes[this.state.active].left - proximity.value;
+						} else {
+							newActiveBoxLeft = this.state.boxes[this.state.active].left + proximity.value;
+						}
 					} else {
-						newActiveBoxLeft = this.state.boxes[this.state.active].left + proximity.value;
-					}
-				} else {
-					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-						newActiveBoxTop = this.state.boxes[this.state.active].top - proximity.value;
-					} else {
-						newActiveBoxTop = this.state.boxes[this.state.active].top + proximity.value;
+						if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+							newActiveBoxTop = this.state.boxes[this.state.active].top - proximity.value;
+						} else {
+							newActiveBoxTop = this.state.boxes[this.state.active].top + proximity.value;
+						}
 					}
 				}
+				const boxes = Object.assign({}, this.state.boxes, {
+					[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
+						left: newActiveBoxLeft,
+						top: newActiveBoxTop
+					})
+				});
+				const guides = Object.assign({}, this.state.guides, {
+					[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
+						x: calculateGuidePositions(boxes[this.state.active], 'x'),
+						y: calculateGuidePositions(boxes[this.state.active], 'y')
+					})
+				})
+				this.setState({
+					boxes,
+					guides,
+					match
+				});
 			}
-			const boxes = Object.assign({}, this.state.boxes, {
-				[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
-					left: newActiveBoxLeft,
-					top: newActiveBoxTop
-				})
-			});
-			const guides = Object.assign({}, this.state.guides, {
-				[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
-					x: calculateGuidePositions(boxes[this.state.active], 'x'),
-					y: calculateGuidePositions(boxes[this.state.active], 'y')
-				})
-			})
-			this.setState({
-				boxes,
-				guides,
-				match
-			});
 		});
 	}
 
@@ -496,6 +498,7 @@ AlignmentGuides.propTypes = {
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
+	snap: PropTypes.bool,
 	style: PropTypes.object
 };
 
@@ -504,7 +507,8 @@ AlignmentGuides.defaultProps = {
 	boxes: [],
 	drag: true,
 	resize: true,
-	rotate: true
+	rotate: true,
+	snap: true
 };
 
 export default AlignmentGuides;

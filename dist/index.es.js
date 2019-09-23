@@ -1258,47 +1258,50 @@ function (_Component) {
         boxes: boxes,
         guides: guides
       }, function () {
-        var match = proximityListener(_this2.state.active, _this2.state.guides);
-        var newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left;
-        var newActiveBoxTop = _this2.state.boxes[_this2.state.active].top;
+        if (_this2.props.snap) {
+          var match = proximityListener(_this2.state.active, _this2.state.guides);
+          var newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left;
+          var newActiveBoxTop = _this2.state.boxes[_this2.state.active].top;
 
-        for (var axis in match) {
-          var _match$axis = match[axis],
-              activeBoxGuides = _match$axis.activeBoxGuides,
-              matchedArray = _match$axis.matchedArray,
-              proximity = _match$axis.proximity;
-          var activeBoxProximityIndex = proximity.activeBoxIndex;
-          var matchedBoxProximityIndex = proximity.matchedBoxIndex;
+          for (var axis in match) {
+            var _match$axis = match[axis],
+                activeBoxGuides = _match$axis.activeBoxGuides,
+                matchedArray = _match$axis.matchedArray,
+                proximity = _match$axis.proximity;
+            var activeBoxProximityIndex = proximity.activeBoxIndex;
+            var matchedBoxProximityIndex = proximity.matchedBoxIndex;
 
-          if (axis === 'x') {
-            if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-              newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left - proximity.value;
+            if (axis === 'x') {
+              if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+                newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left - proximity.value;
+              } else {
+                newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left + proximity.value;
+              }
             } else {
-              newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left + proximity.value;
-            }
-          } else {
-            if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-              newActiveBoxTop = _this2.state.boxes[_this2.state.active].top - proximity.value;
-            } else {
-              newActiveBoxTop = _this2.state.boxes[_this2.state.active].top + proximity.value;
+              if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+                newActiveBoxTop = _this2.state.boxes[_this2.state.active].top - proximity.value;
+              } else {
+                newActiveBoxTop = _this2.state.boxes[_this2.state.active].top + proximity.value;
+              }
             }
           }
+
+          var _boxes2 = Object.assign({}, _this2.state.boxes, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
+            left: newActiveBoxLeft,
+            top: newActiveBoxTop
+          })));
+
+          var _guides2 = Object.assign({}, _this2.state.guides, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
+            x: calculateGuidePositions(_boxes2[_this2.state.active], 'x'),
+            y: calculateGuidePositions(_boxes2[_this2.state.active], 'y')
+          })));
+
+          _this2.setState({
+            boxes: _boxes2,
+            guides: _guides2,
+            match: match
+          });
         }
-
-        var boxes = Object.assign({}, _this2.state.boxes, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
-          left: newActiveBoxLeft,
-          top: newActiveBoxTop
-        })));
-        var guides = Object.assign({}, _this2.state.guides, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
-          x: calculateGuidePositions(boxes[_this2.state.active], 'x'),
-          y: calculateGuidePositions(boxes[_this2.state.active], 'y')
-        })));
-
-        _this2.setState({
-          boxes: boxes,
-          guides: guides,
-          match: match
-        });
       });
     }
   }, {
@@ -1528,6 +1531,7 @@ AlignmentGuides.propTypes = {
   resize: PropTypes.bool,
   rotate: PropTypes.bool,
   resolution: PropTypes.object,
+  snap: PropTypes.bool,
   style: PropTypes.object
 }; // Default values for props
 
@@ -1535,7 +1539,8 @@ AlignmentGuides.defaultProps = {
   boxes: [],
   drag: true,
   resize: true,
-  rotate: true
+  rotate: true,
+  snap: true
 };
 
 // 	<AlignmentGuides />,
