@@ -78,7 +78,17 @@ class Box extends PureComponent {
 					const left = e.clientX - deltaX;
 					const top = e.clientY - deltaY;
 
-					const currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+					let currentPosition = this.props.boundToParent ?
+						calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions) :
+						{
+							left,
+							top,
+							width: this.props.position.width,
+							height: this.props.position.height,
+							x: left,
+							y: top,
+							node: this.box.current
+						};
 					data = {
 						x: currentPosition.left,
 						y: currentPosition.top,
@@ -268,37 +278,40 @@ class Box extends PureComponent {
 					const type = target.id.replace('resize-', '');
 
 					const { position: { cx, cy }, size: { width, height } } = getNewStyle(type, rect, deltaW, deltaH, 10, 10); // Use a better way to set minWidth and minHeight
-					const currentPosition = centerToTopLeft({ cx, cy, width, height, rotateAngle });
+					const tempPosition = centerToTopLeft({ cx, cy, width, height, rotateAngle });
 
 					data = {
-						width: currentPosition.width,
-						height: currentPosition.height,
-						x: currentPosition.left,
-						y: currentPosition.top,
-						left: currentPosition.left,
-						top: currentPosition.top,
+						width: tempPosition.width,
+						height: tempPosition.height,
+						x: tempPosition.left,
+						y: tempPosition.top,
+						left: tempPosition.left,
+						top: tempPosition.top,
 						rotateAngle,
 						node: this.box.current
 					};
 
 					// if (rotateAngle !== 0) {
 					// 	data = {
-					// 		width: currentPosition.width,
-					// 		height: currentPosition.height,
-					// 		x: currentPosition.left,
-					// 		y: currentPosition.top,
-					// 		left: currentPosition.left,
-					// 		top: currentPosition.top,
+					// 		width: tempPosition.width,
+					// 		height: tempPosition.height,
+					// 		x: tempPosition.left,
+					// 		y: tempPosition.top,
+					// 		left: tempPosition.left,
+					// 		top: tempPosition.top,
 					// 		rotateAngle,
 					// 		node: this.box.current
 					// 	};
 					// }
 
 					// Calculate the restrictions if resize goes out of bounds
-					const restrictResizeWithinBoundaries = calculateBoundariesForResize(data.left, data.top, currentPosition.width, currentPosition.height, boundingBoxPosition);
-					data = Object.assign({}, data, restrictResizeWithinBoundaries, {
-						x: restrictResizeWithinBoundaries.left,
-						y: restrictResizeWithinBoundaries.top
+					const currentPosition = this.props.boundToParent ?
+						calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) :
+						Object.assign({}, data);
+
+					data = Object.assign({}, data, currentPosition, {
+						x: currentPosition.left,
+						y: currentPosition.top
 					});
 
 					this.props.onResize && this.props.onResize(e, data);
@@ -499,6 +512,7 @@ class Box extends PureComponent {
 }
 
 Box.propTypes = {
+	boundToParent: PropTypes.bool,
 	drag: PropTypes.bool,
 	getBoundingBoxElement: PropTypes.func,
 	id: PropTypes.string,

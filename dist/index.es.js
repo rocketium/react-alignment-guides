@@ -538,7 +538,15 @@ function (_PureComponent) {
             var boxHeight = _this2.props.position.height;
             var left = e.clientX - deltaX;
             var top = e.clientY - deltaY;
-            var currentPosition = calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions);
+            var currentPosition = _this2.props.boundToParent ? calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions) : {
+              left: left,
+              top: top,
+              width: _this2.props.position.width,
+              height: _this2.props.position.height,
+              x: left,
+              y: top,
+              node: _this2.box.current
+            };
             data = {
               x: currentPosition.left,
               y: currentPosition.top,
@@ -775,7 +783,7 @@ function (_PureComponent) {
                 _height = _getNewStyle$size.height; // Use a better way to set minWidth and minHeight
 
 
-            var currentPosition = centerToTopLeft({
+            var tempPosition = centerToTopLeft({
               cx: _cx,
               cy: _cy,
               width: _width,
@@ -783,32 +791,32 @@ function (_PureComponent) {
               rotateAngle: rotateAngle
             });
             data = {
-              width: currentPosition.width,
-              height: currentPosition.height,
-              x: currentPosition.left,
-              y: currentPosition.top,
-              left: currentPosition.left,
-              top: currentPosition.top,
+              width: tempPosition.width,
+              height: tempPosition.height,
+              x: tempPosition.left,
+              y: tempPosition.top,
+              left: tempPosition.left,
+              top: tempPosition.top,
               rotateAngle: rotateAngle,
               node: _this3.box.current
             }; // if (rotateAngle !== 0) {
             // 	data = {
-            // 		width: currentPosition.width,
-            // 		height: currentPosition.height,
-            // 		x: currentPosition.left,
-            // 		y: currentPosition.top,
-            // 		left: currentPosition.left,
-            // 		top: currentPosition.top,
+            // 		width: tempPosition.width,
+            // 		height: tempPosition.height,
+            // 		x: tempPosition.left,
+            // 		y: tempPosition.top,
+            // 		left: tempPosition.left,
+            // 		top: tempPosition.top,
             // 		rotateAngle,
             // 		node: this.box.current
             // 	};
             // }
             // Calculate the restrictions if resize goes out of bounds
 
-            var restrictResizeWithinBoundaries = calculateBoundariesForResize(data.left, data.top, currentPosition.width, currentPosition.height, boundingBoxPosition);
-            data = Object.assign({}, data, restrictResizeWithinBoundaries, {
-              x: restrictResizeWithinBoundaries.left,
-              y: restrictResizeWithinBoundaries.top
+            var currentPosition = _this3.props.boundToParent ? calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) : Object.assign({}, data);
+            data = Object.assign({}, data, currentPosition, {
+              x: currentPosition.left,
+              y: currentPosition.top
             });
             _this3.props.onResize && _this3.props.onResize(e, data);
           }
@@ -1008,6 +1016,7 @@ function (_PureComponent) {
 }(PureComponent);
 
 Box.propTypes = {
+  boundToParent: PropTypes.bool,
   drag: PropTypes.bool,
   getBoundingBoxElement: PropTypes.func,
   id: PropTypes.string,
@@ -1538,6 +1547,7 @@ function (_Component) {
 
 
 AlignmentGuides.propTypes = {
+  boundToParent: PropTypes.bool,
   boxes: PropTypes.array.isRequired,
   boxStyle: PropTypes.object,
   className: PropTypes.string,
@@ -1563,6 +1573,7 @@ AlignmentGuides.propTypes = {
 }; // Default values for props
 
 AlignmentGuides.defaultProps = {
+  boundToParent: true,
   boxes: [],
   drag: true,
   resize: true,
