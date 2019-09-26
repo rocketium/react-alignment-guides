@@ -483,9 +483,7 @@ function (_PureComponent) {
   _createClass(Box, [{
     key: "selectBox",
     value: function selectBox(e) {
-      if (!this.props.isSelected) {
-        this.props.selectBox(e);
-      }
+      this.props.selectBox(e);
     }
   }, {
     key: "onDragStart",

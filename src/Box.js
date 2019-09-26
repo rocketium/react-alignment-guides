@@ -29,9 +29,7 @@ class Box extends PureComponent {
 	}
 
 	selectBox(e) {
-		if (!this.props.isSelected) {
-			this.props.selectBox(e);
-		}
+		this.props.selectBox(e);
 	}
 
 	onDragStart(e) {
