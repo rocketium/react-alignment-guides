@@ -525,45 +525,40 @@ function (_PureComponent) {
         var deltaY = Math.abs(target.offsetTop - e.clientY);
 
         var onDrag = function onDrag(e) {
-          if (_this2.props.dragging) {
-            e.stopPropagation();
+          e.stopPropagation();
 
-            var _boundingBox = _this2.props.getBoundingBoxElement();
+          var boundingBox = _this2.props.getBoundingBoxElement();
 
-            var boundingBoxDimensions = _boundingBox.current.getBoundingClientRect().toJSON();
-
-            var boxWidth = _this2.props.position.width;
-            var boxHeight = _this2.props.position.height;
-            var left = e.clientX - deltaX;
-            var top = e.clientY - deltaY;
-            var currentPosition = _this2.props.boundToParent ? calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions) : {
-              left: left,
-              top: top,
-              width: _this2.props.position.width,
-              height: _this2.props.position.height,
-              x: left,
-              y: top,
-              node: _this2.box.current
-            };
-            data = {
-              x: currentPosition.left,
-              y: currentPosition.top,
-              top: currentPosition.top,
-              left: currentPosition.left,
-              width: _this2.props.position.width,
-              height: _this2.props.position.height,
-              node: _this2.box.current
-            };
-            _this2.props.onDrag && _this2.props.onDrag(e, data);
-          }
+          var boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
+          var boxWidth = _this2.props.position.width;
+          var boxHeight = _this2.props.position.height;
+          var left = e.clientX - deltaX;
+          var top = e.clientY - deltaY;
+          var currentPosition = _this2.props.boundToParent ? calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions) : {
+            left: left,
+            top: top,
+            width: _this2.props.position.width,
+            height: _this2.props.position.height,
+            x: left,
+            y: top,
+            node: _this2.box.current
+          };
+          data = {
+            x: currentPosition.left,
+            y: currentPosition.top,
+            top: currentPosition.top,
+            left: currentPosition.left,
+            width: _this2.props.position.width,
+            height: _this2.props.position.height,
+            node: _this2.box.current
+          };
+          _this2.props.onDrag && _this2.props.onDrag(e, data);
         };
 
         var onDragEnd = function onDragEnd(e) {
-          if (_this2.props.dragging) {
-            _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
-            document.removeEventListener('mousemove', onDrag);
-            document.removeEventListener('mouseup', onDragEnd);
-          }
+          _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
+          document.removeEventListener('mousemove', onDrag);
+          document.removeEventListener('mouseup', onDragEnd);
         };
 
         document.addEventListener('mousemove', onDrag);
@@ -755,81 +750,84 @@ function (_PureComponent) {
         // }
 
         this.props.onResizeStart && this.props.onResizeStart(e, data);
+        var didResizeHappen = false;
 
         var onResize = function onResize(e) {
-          if (_this3.props.resizing) {
-            var clientX = e.clientX,
-                clientY = e.clientY;
-            var deltaX = clientX - startX;
-            var deltaY = clientY - startY;
-            var alpha = Math.atan2(deltaY, deltaX);
-            var deltaL = getLength(deltaX, deltaY); // const { minWidth, minHeight } = this.props;
+          var clientX = e.clientX,
+              clientY = e.clientY;
+          var deltaX = clientX - startX;
+          var deltaY = clientY - startY;
+          var alpha = Math.atan2(deltaY, deltaX);
+          var deltaL = getLength(deltaX, deltaY); // const { minWidth, minHeight } = this.props;
 
-            var beta = alpha - degToRadian(rotateAngle);
-            var deltaW = deltaL * Math.cos(beta);
-            var deltaH = deltaL * Math.sin(beta); // TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
-            // const ratio = rect.width / rect.height;
+          var beta = alpha - degToRadian(rotateAngle);
+          var deltaW = deltaL * Math.cos(beta);
+          var deltaH = deltaL * Math.sin(beta); // TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
+          // const ratio = rect.width / rect.height;
 
-            var type = target.id.replace('resize-', '');
+          var type = target.id.replace('resize-', '');
 
-            var _getNewStyle = getNewStyle(type, rect, deltaW, deltaH, 10, 10),
-                _getNewStyle$position = _getNewStyle.position,
-                _cx = _getNewStyle$position.cx,
-                _cy = _getNewStyle$position.cy,
-                _getNewStyle$size = _getNewStyle.size,
-                _width = _getNewStyle$size.width,
-                _height = _getNewStyle$size.height; // Use a better way to set minWidth and minHeight
+          var _getNewStyle = getNewStyle(type, rect, deltaW, deltaH, 10, 10),
+              _getNewStyle$position = _getNewStyle.position,
+              cx = _getNewStyle$position.cx,
+              cy = _getNewStyle$position.cy,
+              _getNewStyle$size = _getNewStyle.size,
+              width = _getNewStyle$size.width,
+              height = _getNewStyle$size.height; // Use a better way to set minWidth and minHeight
 
 
-            var tempPosition = centerToTopLeft({
-              cx: _cx,
-              cy: _cy,
-              width: _width,
-              height: _height,
-              rotateAngle: rotateAngle
-            });
-            data = {
-              width: tempPosition.width,
-              height: tempPosition.height,
-              x: tempPosition.left,
-              y: tempPosition.top,
-              left: tempPosition.left,
-              top: tempPosition.top,
-              rotateAngle: rotateAngle,
-              node: _this3.box.current
-            }; // if (rotateAngle !== 0) {
-            // 	data = {
-            // 		width: tempPosition.width,
-            // 		height: tempPosition.height,
-            // 		x: tempPosition.left,
-            // 		y: tempPosition.top,
-            // 		left: tempPosition.left,
-            // 		top: tempPosition.top,
-            // 		rotateAngle,
-            // 		node: this.box.current
-            // 	};
-            // }
-            // Calculate the restrictions if resize goes out of bounds
+          var tempPosition = centerToTopLeft({
+            cx: cx,
+            cy: cy,
+            width: width,
+            height: height,
+            rotateAngle: rotateAngle
+          });
+          data = {
+            width: tempPosition.width,
+            height: tempPosition.height,
+            x: tempPosition.left,
+            y: tempPosition.top,
+            left: tempPosition.left,
+            top: tempPosition.top,
+            rotateAngle: rotateAngle,
+            node: _this3.box.current
+          }; // if (rotateAngle !== 0) {
+          // 	data = {
+          // 		width: tempPosition.width,
+          // 		height: tempPosition.height,
+          // 		x: tempPosition.left,
+          // 		y: tempPosition.top,
+          // 		left: tempPosition.left,
+          // 		top: tempPosition.top,
+          // 		rotateAngle,
+          // 		node: this.box.current
+          // 	};
+          // }
 
-            var currentPosition = _this3.props.boundToParent ? calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) : Object.assign({}, data);
-            data = Object.assign({}, data, currentPosition, {
-              x: currentPosition.left,
-              y: currentPosition.top
-            });
-            _this3.props.onResize && _this3.props.onResize(e, data);
-          }
+          didResizeHappen = true; // Calculate the restrictions if resize goes out of bounds
+
+          var currentPosition = _this3.props.boundToParent ? calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) : Object.assign({}, data);
+          data = Object.assign({}, data, currentPosition, {
+            x: currentPosition.left,
+            y: currentPosition.top
+          });
+          _this3.props.onResize && _this3.props.onResize(e, data);
         };
 
         var onResizeEnd = function onResizeEnd(e) {
-          if (_this3.props.resizing) {
-            document.removeEventListener('mousemove', onResize);
-            document.removeEventListener('mouseup', onResizeEnd);
+          onResize && document.removeEventListener('mousemove', onResize);
+          onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
+
+          if (didResizeHappen) {
             _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
+          } else {
+            didResizeHappen = false;
           }
         };
 
-        document.addEventListener('mousemove', onResize);
-        document.addEventListener('mouseup', onResizeEnd);
+        onResize && document.addEventListener('mousemove', onResize);
+        onResizeEnd && document.addEventListener('mouseup', onResizeEnd);
       }
     }
   }, {
@@ -870,54 +868,48 @@ function (_PureComponent) {
         this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
 
         var onRotate = function onRotate(e) {
-          if (_this4.props.rotating) {
-            e.stopPropagation();
-            var _clientX = e.clientX,
-                _clientY = e.clientY;
-            var rotateVector = {
-              x: _clientX - center.x,
-              y: _clientY - center.y
-            };
-            angle = getAngle(startVector, rotateVector); // Snap box during rotation at certain angles - 0, 90, 180, 270, 360
+          e.stopPropagation();
+          var clientX = e.clientX,
+              clientY = e.clientY;
+          var rotateVector = {
+            x: clientX - center.x,
+            y: clientY - center.y
+          };
+          angle = getAngle(startVector, rotateVector); // Snap box during rotation at certain angles - 0, 90, 180, 270, 360
 
-            var _rotateAngle = Math.round(startAngle + angle);
+          var rotateAngle = Math.round(startAngle + angle);
 
-            if (_rotateAngle >= 360) {
-              _rotateAngle -= 360;
-            } else if (_rotateAngle < 0) {
-              _rotateAngle += 360;
-            }
-
-            if (_rotateAngle > 356 || _rotateAngle < 4) {
-              _rotateAngle = 0;
-            } else if (_rotateAngle > 86 && _rotateAngle < 94) {
-              _rotateAngle = 90;
-            } else if (_rotateAngle > 176 && _rotateAngle < 184) {
-              _rotateAngle = 180;
-            } else if (_rotateAngle > 266 && _rotateAngle < 274) {
-              _rotateAngle = 270;
-            }
-
-            data = Object.assign({}, data, {
-              rotateAngle: _rotateAngle
-            });
-
-            var _newCoordinates = getNewCoordinates(data);
-
-            _this4.props.onRotate && _this4.props.onRotate(e, _newCoordinates);
+          if (rotateAngle >= 360) {
+            rotateAngle -= 360;
+          } else if (rotateAngle < 0) {
+            rotateAngle += 360;
           }
+
+          if (rotateAngle > 356 || rotateAngle < 4) {
+            rotateAngle = 0;
+          } else if (rotateAngle > 86 && rotateAngle < 94) {
+            rotateAngle = 90;
+          } else if (rotateAngle > 176 && rotateAngle < 184) {
+            rotateAngle = 180;
+          } else if (rotateAngle > 266 && rotateAngle < 274) {
+            rotateAngle = 270;
+          }
+
+          data = Object.assign({}, data, {
+            rotateAngle: rotateAngle
+          });
+          var newCoordinates = getNewCoordinates(data);
+          _this4.props.onRotate && _this4.props.onRotate(e, newCoordinates);
         };
 
         var onRotateEnd = function onRotateEnd(e) {
-          if (_this4.props.rotating) {
-            document.removeEventListener('mousemove', onRotate);
-            document.removeEventListener('mouseup', onRotateEnd);
-            _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, data);
-          }
+          onRotate && document.removeEventListener('mousemove', onRotate);
+          onRotateEnd && document.removeEventListener('mouseup', onRotateEnd);
+          _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, data);
         };
 
-        document.addEventListener('mousemove', onRotate);
-        document.addEventListener('mouseup', onRotateEnd);
+        onRotate && document.addEventListener('mousemove', onRotate);
+        onRotateEnd && document.addEventListener('mouseup', onRotateEnd);
       }
     }
   }, {
@@ -962,7 +954,7 @@ function (_PureComponent) {
           transform: "rotate(".concat(rotateAngle, "deg)")
         });
 
-        if (isSelected && (this.props.dragging || this.props.resizing)) {
+        if (isSelected) {
           boxStyles.zIndex = 99;
         }
 
