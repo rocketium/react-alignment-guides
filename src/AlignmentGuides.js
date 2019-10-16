@@ -170,7 +170,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
 			this.setState({
 				active: ''
 			});
