@@ -69,6 +69,9 @@ class Box extends PureComponent {
 			const onDrag = (e) => {
 					e.stopPropagation();
 					const boundingBox = this.props.getBoundingBoxElement();
+					if (!boundingBox.current) {
+						return;
+					}
 					const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
 					const boxWidth = this.props.position.width;
 					const boxHeight = this.props.position.height;
