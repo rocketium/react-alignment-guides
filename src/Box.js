@@ -30,6 +30,8 @@ class Box extends PureComponent {
 
 	selectBox(e) {
 		this.props.selectBox(e);
+		if (this.box && this.box.current)
+			this.box.current.focus();
 	}
 
 	onDragStart(e) {
@@ -40,6 +42,7 @@ class Box extends PureComponent {
 			const { position } = this.props;
 			const startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
 			const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+			let didDragHappen = false;
 
 			let data = {
 				x: startingPosition.x - boundingBoxPosition.x,
@@ -94,11 +97,16 @@ class Box extends PureComponent {
 						height: this.props.position.height,
 						node: this.box.current
 					};
+					didDragHappen = true;
 					this.props.onDrag && this.props.onDrag(e, data);
 			};
 
 			const onDragEnd = (e) => {
-				this.props.onDragEnd && this.props.onDragEnd(e, data);
+				if (didDragHappen) {
+					this.props.onDragEnd && this.props.onDragEnd(e, data);
+				} else {
+					didDragHappen = false;
+				}
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
 			};
