@@ -97,7 +97,7 @@ class AlignmentGuides extends Component {
 				guides
 			});
 		}
-
+		
 		if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
 			const boxes = Object.assign({}, this.state.boxes, {
 				[active]: Object.assign({}, this.state.boxes[active], {
@@ -170,7 +170,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
 			this.setState({
 				active: ''
 			});
@@ -396,7 +396,7 @@ class AlignmentGuides extends Component {
 		// Create the draggable boxes from the position data
 		const draggableBoxes = Object.keys(boxes).map((box, index) => {
 			const position = boxes[box];
-			const id = `box${index}`;
+			const id = box.id || `box${index}`;
 
 			return <Box
 				{...this.props}
