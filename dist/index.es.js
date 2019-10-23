@@ -484,6 +484,7 @@ function (_PureComponent) {
     key: "selectBox",
     value: function selectBox(e) {
       this.props.selectBox(e);
+      if (this.box && this.box.current) this.box.current.focus();
     }
   }, {
     key: "onDragStart",
@@ -498,6 +499,7 @@ function (_PureComponent) {
         var position = this.props.position;
         var startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
         var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+        var didDragHappen = false;
         var data = {
           x: startingPosition.x - boundingBoxPosition.x,
           y: startingPosition.y - boundingBoxPosition.y,
@@ -529,6 +531,10 @@ function (_PureComponent) {
 
           var boundingBox = _this2.props.getBoundingBoxElement();
 
+          if (!boundingBox.current) {
+            return;
+          }
+
           var boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
           var boxWidth = _this2.props.position.width;
           var boxHeight = _this2.props.position.height;
@@ -552,11 +558,17 @@ function (_PureComponent) {
             height: _this2.props.position.height,
             node: _this2.box.current
           };
+          didDragHappen = true;
           _this2.props.onDrag && _this2.props.onDrag(e, data);
         };
 
         var onDragEnd = function onDragEnd(e) {
-          _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
+          if (didDragHappen) {
+            _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
+          } else {
+            didDragHappen = false;
+          }
+
           document.removeEventListener('mousemove', onDrag);
           document.removeEventListener('mouseup', onDragEnd);
         };
@@ -1125,63 +1137,63 @@ function (_Component) {
           guides: guides
         });
       }
-    }
-  }, {
-    key: "componentWillUpdate",
-    value: function componentWillUpdate(nextProps, nextState, nextContext) {
-      var active = this.state.active; // Set the dimensions of the bounding box and the draggable boxes
-      // when the component receives new boxes and/or style props.
-      // This is to allow dynamically updating the component by changing the number of boxes,
-      // updating existing boxes by external methods or updating the size of the bounding box
+    } // componentWillUpdate(nextProps, nextState, nextContext) {
+    // 	const { active } = this.state;
+    // 	// Set the dimensions of the bounding box and the draggable boxes
+    // 	// when the component receives new boxes and/or style props.
+    // 	// This is to allow dynamically updating the component by changing the number of boxes,
+    // 	// updating existing boxes by external methods or updating the size of the bounding box
+    // 	if (nextProps.boxes !== this.props.boxes || nextProps.style !== this.props.style) {
+    // 		const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
+    // 		const boxes = {};
+    // 		const guides = {};
+    //
+    // 		// Adding the guides for the bounding box to the guides object
+    // 		guides.boundingBox = {
+    // 			x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
+    // 			y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
+    // 		};
+    //
+    // 		nextProps.boxes.forEach((dimensions, index) => {
+    // 			boxes[`box${index}`] = dimensions;
+    // 			guides[`box${index}`] = {
+    // 				x: calculateGuidePositions(dimensions, 'x'),
+    // 				y: calculateGuidePositions(dimensions, 'y')
+    // 			};
+    // 		});
+    //
+    // 		this.setState({
+    // 			boundingBox,
+    // 			boxes,
+    // 			guides
+    // 		});
+    // 	}
+    //
+    // 	if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
+    // 		const boxes = Object.assign({}, this.state.boxes, {
+    // 			[active]: Object.assign({}, this.state.boxes[active], {
+    // 				x: nextProps.boxes[active].x,
+    // 				y: nextProps.boxes[active].y,
+    // 				left: nextProps.boxes[active].left,
+    // 				top: nextProps.boxes[active].top,
+    // 				width: nextProps.boxes[active].width,
+    // 				height: nextProps.boxes[active].height
+    // 			})
+    // 		});
+    // 		const guides = Object.assign({}, this.state.guides, {
+    // 			[active]: Object.assign({}, this.state.guides[active], {
+    // 				x: calculateGuidePositions(boxes[active], 'x'),
+    // 				y: calculateGuidePositions(boxes[active], 'y')
+    // 			})
+    // 		});
+    //
+    // 		this.setState({
+    // 			boxes,
+    // 			guides
+    // 		});
+    // 	}
+    // }
 
-      if (nextProps.boxes !== this.props.boxes || nextProps.style !== this.props.style) {
-        var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
-        var boxes = {};
-        var guides = {}; // Adding the guides for the bounding box to the guides object
-
-        guides.boundingBox = {
-          x: calculateGuidePositions(boundingBox, 'x').map(function (value) {
-            return value - boundingBox.left;
-          }),
-          y: calculateGuidePositions(boundingBox, 'y').map(function (value) {
-            return value - boundingBox.top;
-          })
-        };
-        nextProps.boxes.forEach(function (dimensions, index) {
-          boxes["box".concat(index)] = dimensions;
-          guides["box".concat(index)] = {
-            x: calculateGuidePositions(dimensions, 'x'),
-            y: calculateGuidePositions(dimensions, 'y')
-          };
-        });
-        this.setState({
-          boundingBox: boundingBox,
-          boxes: boxes,
-          guides: guides
-        });
-      }
-
-      if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
-        var _boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, active, Object.assign({}, this.state.boxes[active], {
-          x: nextProps.boxes[active].x,
-          y: nextProps.boxes[active].y,
-          left: nextProps.boxes[active].left,
-          top: nextProps.boxes[active].top,
-          width: nextProps.boxes[active].width,
-          height: nextProps.boxes[active].height
-        })));
-
-        var _guides = Object.assign({}, this.state.guides, _defineProperty$2({}, active, Object.assign({}, this.state.guides[active], {
-          x: calculateGuidePositions(_boxes[active], 'x'),
-          y: calculateGuidePositions(_boxes[active], 'y')
-        })));
-
-        this.setState({
-          boxes: _boxes,
-          guides: _guides
-        });
-      }
-    }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
@@ -1236,7 +1248,7 @@ function (_Component) {
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      if (e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+      if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
         this.setState({
           active: ''
         });
@@ -1312,19 +1324,19 @@ function (_Component) {
             }
           }
 
-          var _boxes2 = Object.assign({}, _this2.state.boxes, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
+          var _boxes = Object.assign({}, _this2.state.boxes, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
             left: newActiveBoxLeft,
             top: newActiveBoxTop
           })));
 
-          var _guides2 = Object.assign({}, _this2.state.guides, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
-            x: calculateGuidePositions(_boxes2[_this2.state.active], 'x'),
-            y: calculateGuidePositions(_boxes2[_this2.state.active], 'y')
+          var _guides = Object.assign({}, _this2.state.guides, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
+            x: calculateGuidePositions(_boxes[_this2.state.active], 'x'),
+            y: calculateGuidePositions(_boxes[_this2.state.active], 'y')
           })));
 
           _this2.setState({
-            boxes: _boxes2,
-            guides: _guides2,
+            boxes: _boxes,
+            guides: _guides,
             match: match
           });
         }
@@ -1461,7 +1473,7 @@ function (_Component) {
 
       var draggableBoxes = Object.keys(boxes).map(function (box, index) {
         var position = boxes[box];
-        var id = "box".concat(index);
+        var id = box.id || "box".concat(index);
         return React.createElement(Box, _extends({}, _this3.props, {
           boundingBox: _this3.state.boundingBox,
           dragging: _this3.state.dragging,

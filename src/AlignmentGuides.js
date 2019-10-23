@@ -66,62 +66,62 @@ class AlignmentGuides extends Component {
 		}
 	}
 
-	componentWillUpdate(nextProps, nextState, nextContext) {
-		const { active } = this.state;
-		// Set the dimensions of the bounding box and the draggable boxes
-		// when the component receives new boxes and/or style props.
-		// This is to allow dynamically updating the component by changing the number of boxes,
-		// updating existing boxes by external methods or updating the size of the bounding box
-		if (nextProps.boxes !== this.props.boxes || nextProps.style !== this.props.style) {
-			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
-			const boxes = {};
-			const guides = {};
-
-			// Adding the guides for the bounding box to the guides object
-			guides.boundingBox = {
-				x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
-				y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
-			};
-
-			nextProps.boxes.forEach((dimensions, index) => {
-				boxes[`box${index}`] = dimensions;
-				guides[`box${index}`] = {
-					x: calculateGuidePositions(dimensions, 'x'),
-					y: calculateGuidePositions(dimensions, 'y')
-				};
-			});
-
-			this.setState({
-				boundingBox,
-				boxes,
-				guides
-			});
-		}
-		
-		if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
-			const boxes = Object.assign({}, this.state.boxes, {
-				[active]: Object.assign({}, this.state.boxes[active], {
-					x: nextProps.boxes[active].x,
-					y: nextProps.boxes[active].y,
-					left: nextProps.boxes[active].left,
-					top: nextProps.boxes[active].top,
-					width: nextProps.boxes[active].width,
-					height: nextProps.boxes[active].height
-				})
-			});
-			const guides = Object.assign({}, this.state.guides, {
-				[active]: Object.assign({}, this.state.guides[active], {
-					x: calculateGuidePositions(boxes[active], 'x'),
-					y: calculateGuidePositions(boxes[active], 'y')
-				})
-			});
-
-			this.setState({
-				boxes,
-				guides
-			});
-		}
-	}
+	// componentWillUpdate(nextProps, nextState, nextContext) {
+	// 	const { active } = this.state;
+	// 	// Set the dimensions of the bounding box and the draggable boxes
+	// 	// when the component receives new boxes and/or style props.
+	// 	// This is to allow dynamically updating the component by changing the number of boxes,
+	// 	// updating existing boxes by external methods or updating the size of the bounding box
+	// 	if (nextProps.boxes !== this.props.boxes || nextProps.style !== this.props.style) {
+	// 		const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
+	// 		const boxes = {};
+	// 		const guides = {};
+	//
+	// 		// Adding the guides for the bounding box to the guides object
+	// 		guides.boundingBox = {
+	// 			x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
+	// 			y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
+	// 		};
+	//
+	// 		nextProps.boxes.forEach((dimensions, index) => {
+	// 			boxes[`box${index}`] = dimensions;
+	// 			guides[`box${index}`] = {
+	// 				x: calculateGuidePositions(dimensions, 'x'),
+	// 				y: calculateGuidePositions(dimensions, 'y')
+	// 			};
+	// 		});
+	//
+	// 		this.setState({
+	// 			boundingBox,
+	// 			boxes,
+	// 			guides
+	// 		});
+	// 	}
+	//
+	// 	if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
+	// 		const boxes = Object.assign({}, this.state.boxes, {
+	// 			[active]: Object.assign({}, this.state.boxes[active], {
+	// 				x: nextProps.boxes[active].x,
+	// 				y: nextProps.boxes[active].y,
+	// 				left: nextProps.boxes[active].left,
+	// 				top: nextProps.boxes[active].top,
+	// 				width: nextProps.boxes[active].width,
+	// 				height: nextProps.boxes[active].height
+	// 			})
+	// 		});
+	// 		const guides = Object.assign({}, this.state.guides, {
+	// 			[active]: Object.assign({}, this.state.guides[active], {
+	// 				x: calculateGuidePositions(boxes[active], 'x'),
+	// 				y: calculateGuidePositions(boxes[active], 'y')
+	// 			})
+	// 		});
+	//
+	// 		this.setState({
+	// 			boxes,
+	// 			guides
+	// 		});
+	// 	}
+	// }
 
 	componentWillUnmount() {
 		document.removeEventListener('click', this.unSelectBox);
