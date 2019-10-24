@@ -1,6 +1,60 @@
 import React, { PureComponent, Component } from 'react';
 import PropTypes from 'prop-types';
 
+var isArray = Array.isArray;
+var keyList = Object.keys;
+var hasProp = Object.prototype.hasOwnProperty;
+
+var fastDeepEqual = function equal(a, b) {
+  if (a === b) return true;
+
+  if (a && b && typeof a == 'object' && typeof b == 'object') {
+    var arrA = isArray(a)
+      , arrB = isArray(b)
+      , i
+      , length
+      , key;
+
+    if (arrA && arrB) {
+      length = a.length;
+      if (length != b.length) return false;
+      for (i = length; i-- !== 0;)
+        if (!equal(a[i], b[i])) return false;
+      return true;
+    }
+
+    if (arrA != arrB) return false;
+
+    var dateA = a instanceof Date
+      , dateB = b instanceof Date;
+    if (dateA != dateB) return false;
+    if (dateA && dateB) return a.getTime() == b.getTime();
+
+    var regexpA = a instanceof RegExp
+      , regexpB = b instanceof RegExp;
+    if (regexpA != regexpB) return false;
+    if (regexpA && regexpB) return a.toString() == b.toString();
+
+    var keys = keyList(a);
+    length = keys.length;
+
+    if (length !== keyList(b).length)
+      return false;
+
+    for (i = length; i-- !== 0;)
+      if (!hasProp.call(b, keys[i])) return false;
+
+    for (i = length; i-- !== 0;) {
+      key = keys[i];
+      if (!equal(a[key], b[key])) return false;
+    }
+
+    return true;
+  }
+
+  return a!==a && b!==b;
+};
+
 function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(source, true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(source).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
@@ -1137,63 +1191,41 @@ function (_Component) {
           guides: guides
         });
       }
-    } // componentWillUpdate(nextProps, nextState, nextContext) {
-    // 	const { active } = this.state;
-    // 	// Set the dimensions of the bounding box and the draggable boxes
-    // 	// when the component receives new boxes and/or style props.
-    // 	// This is to allow dynamically updating the component by changing the number of boxes,
-    // 	// updating existing boxes by external methods or updating the size of the bounding box
-    // 	if (nextProps.boxes !== this.props.boxes || nextProps.style !== this.props.style) {
-    // 		const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
-    // 		const boxes = {};
-    // 		const guides = {};
-    //
-    // 		// Adding the guides for the bounding box to the guides object
-    // 		guides.boundingBox = {
-    // 			x: calculateGuidePositions(boundingBox, 'x').map(value => value - boundingBox.left),
-    // 			y: calculateGuidePositions(boundingBox, 'y').map(value => value - boundingBox.top)
-    // 		};
-    //
-    // 		nextProps.boxes.forEach((dimensions, index) => {
-    // 			boxes[`box${index}`] = dimensions;
-    // 			guides[`box${index}`] = {
-    // 				x: calculateGuidePositions(dimensions, 'x'),
-    // 				y: calculateGuidePositions(dimensions, 'y')
-    // 			};
-    // 		});
-    //
-    // 		this.setState({
-    // 			boundingBox,
-    // 			boxes,
-    // 			guides
-    // 		});
-    // 	}
-    //
-    // 	if (active && nextProps.boxes[active] !== this.props.boxes[active]) {
-    // 		const boxes = Object.assign({}, this.state.boxes, {
-    // 			[active]: Object.assign({}, this.state.boxes[active], {
-    // 				x: nextProps.boxes[active].x,
-    // 				y: nextProps.boxes[active].y,
-    // 				left: nextProps.boxes[active].left,
-    // 				top: nextProps.boxes[active].top,
-    // 				width: nextProps.boxes[active].width,
-    // 				height: nextProps.boxes[active].height
-    // 			})
-    // 		});
-    // 		const guides = Object.assign({}, this.state.guides, {
-    // 			[active]: Object.assign({}, this.state.guides[active], {
-    // 				x: calculateGuidePositions(boxes[active], 'x'),
-    // 				y: calculateGuidePositions(boxes[active], 'y')
-    // 			})
-    // 		});
-    //
-    // 		this.setState({
-    // 			boxes,
-    // 			guides
-    // 		});
-    // 	}
-    // }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      // Set the dimensions of the bounding box and the draggable boxes
+      // when the component receives new boxes and/or style props.
+      // This is to allow dynamically updating the component by changing the number of boxes,
+      // updating existing boxes by external methods or updating the size of the bounding box
+      if (!fastDeepEqual(prevProps.boxes, this.props.boxes)) {
+        var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
+        var boxes = {};
+        var guides = {}; // Adding the guides for the bounding box to the guides object
 
+        guides.boundingBox = {
+          x: calculateGuidePositions(boundingBox, 'x').map(function (value) {
+            return value - boundingBox.left;
+          }),
+          y: calculateGuidePositions(boundingBox, 'y').map(function (value) {
+            return value - boundingBox.top;
+          })
+        };
+        this.props.boxes.forEach(function (dimensions, index) {
+          boxes["box".concat(index)] = dimensions;
+          guides["box".concat(index)] = {
+            x: calculateGuidePositions(dimensions, 'x'),
+            y: calculateGuidePositions(dimensions, 'y')
+          };
+        });
+        this.setState({
+          boundingBox: boundingBox,
+          boxes: boxes,
+          guides: guides
+        });
+      }
+    }
   }, {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
