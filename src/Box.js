@@ -26,7 +26,7 @@ class Box extends PureComponent {
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.keyDownHandler = throttle(e => {
 			this.shortcutHandler(e);
-		}, 200);
+		}, 300);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
