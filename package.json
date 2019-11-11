@@ -75,6 +75,6 @@
 		"dist"
 	],
 	"dependencies": {
-		"fast-deep-equal": "^2.0.1"
+		"lodash.throttle": "^4.1.1"
 	}
 }

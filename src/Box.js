@@ -1,5 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
+import throttle from 'lodash.throttle';
 import {
 	calculateBoundariesForDrag,
 	calculateBoundariesForResize,
@@ -23,6 +24,9 @@ class Box extends PureComponent {
 		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
+		this.keyDownHandler = throttle(e => {
+			this.shortcutHandler(e);
+		}, 200);
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
@@ -451,7 +455,8 @@ class Box extends PureComponent {
 				id={id}
 				onMouseUp={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
-				onKeyDown={this.shortcutHandler}
+				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
+				onKeyUp={this.shortcutHandler}
 				ref={this.box}
 				style={boxStyles}
 				tabIndex="0"
