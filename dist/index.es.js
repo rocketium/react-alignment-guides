@@ -918,7 +918,7 @@ function (_PureComponent) {
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.keyDownHandler = lodash_throttle(function (e) {
       _this.shortcutHandler(e);
-    }, 200);
+    }, 300);
     _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
     _this.onRotateStart = _this.onRotateStart.bind(_assertThisInitialized(_this));
     _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized(_this));
