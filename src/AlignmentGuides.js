@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Box from './Box';
-import { calculateGuidePositions, proximityListener } from './utils/helpers';
+import { calculateGuidePositions, getGroupCoordinates, proximityListener } from './utils/helpers'
+import { RESIZE_EDGES } from './utils/constants';
 import styles from './styles.scss';
+import { active } from 'rollup-plugin-node-builtins/src/es6/timers'
 
 class AlignmentGuides extends Component {
 	constructor(props) {
@@ -10,9 +12,11 @@ class AlignmentGuides extends Component {
 		this.boundingBox = React.createRef();
 		this.state = {
 			active: '',
+			activeBoxes: [],
 			boundingBox: null,
 			boxes: {},
 			dragging: false,
+			groupCoordinates: [],
 			guides: {},
 			guidesActive: false,
 			match: {},
@@ -89,9 +93,31 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			this.setState({
-				active: e.target.id
-			});
+			if (e.shiftKey) {
+				let { activeBoxes, boxes } = this.state;
+				if (activeBoxes.includes(e.target.id)) {
+					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
+				} else {
+					activeBoxes = [
+						...activeBoxes,
+						e.target.id
+					];
+				}
+				const groupCoordinates = getGroupCoordinates(boxes, activeBoxes);
+				this.setState({
+					active: '',
+					activeBoxes,
+					groupCoordinates
+				});
+			} else {
+				this.setState({
+					active: e.target.id,
+					activeBoxes: [
+						...this.state.activeBoxes,
+						e.target.id
+					]
+				});
+			}
 			this.props.onSelect && this.props.onSelect(e, data);
 		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
@@ -115,7 +141,8 @@ class AlignmentGuides extends Component {
 	unSelectBox(e) {
 		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
 			this.setState({
-				active: ''
+				active: '',
+				activeBoxes: []
 			});
 			this.props.onUnselect && this.props.onUnselect(e);
 		}
@@ -334,20 +361,23 @@ class AlignmentGuides extends Component {
 	}
 
 	render() {
-		const { active, boxes, guides } = this.state;
+		const { active, boxes, activeBoxes, guides } = this.state;
+		const areMultipleBoxesSelected = activeBoxes.length > 1;
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = Object.keys(boxes).map((box, index) => {
 			const position = boxes[box];
 			const id = box.id || `box${index}`;
+			const isSelected = (active === id || activeBoxes.includes(id));
 
 			return <Box
 				{...this.props}
+				areMultipleBoxesSelected={areMultipleBoxesSelected}
 				boundingBox={this.state.boundingBox}
 				dragging={this.state.dragging}
 				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
-				isSelected={active === id}
+				isSelected={isSelected}
 				key={id}
 				onDragStart={this.dragStartHandler}
 				onDrag={this.dragHandler}
@@ -415,6 +445,38 @@ class AlignmentGuides extends Component {
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
+			{
+				areMultipleBoxesSelected ?
+					RESIZE_EDGES.map(handle => {
+						const className = `${styles.resizeEdges} ${styles[`resize-${handle}`]}`;
+						const style = {};
+						if (handle === 'top') {
+							style.top = `${this.state.groupCoordinates.y - 2}px`;
+							style.left = `${this.state.groupCoordinates.x - 2}px`;
+							style.width = `${this.state.groupCoordinates.width + 4}px`;
+						} else if (handle === 'right') {
+							style.top = `${this.state.groupCoordinates.y}px`;
+							style.left = `${this.state.groupCoordinates.x + this.state.groupCoordinates.width}px`;
+							style.height = `${this.state.groupCoordinates.height + 2}px`;
+						} else if (handle === 'bottom') {
+							style.top = `${this.state.groupCoordinates.y + this.state.groupCoordinates.height}px`;
+							style.left = `${this.state.groupCoordinates.x - 2}px`;
+							style.width = `${this.state.groupCoordinates.width + 2}px`;
+						} else if (handle === 'left') {
+							style.top = `${this.state.groupCoordinates.y}px`;
+							style.left = `${this.state.groupCoordinates.x - 2}px`;
+							style.height = `${this.state.groupCoordinates.height + 2}px`;
+						}
+						return <div
+							key={handle}
+							className={className}
+							style={style}
+							onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
+							id={`resize-${handle}`}
+						/>;
+					}) :
+					null
+			}
 		</div>;
 	}
 }

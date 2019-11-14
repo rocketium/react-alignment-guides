@@ -11,8 +11,8 @@ import {
 	getNewCoordinates,
 	getNewStyle,
 	getOffsetCoordinates, centerToTopLeft,
-} from './utils/helpers'
-import { RESIZE_HANDLES, ROTATE_HANDLES } from './utils/constants';
+} from './utils/helpers';
+import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
 class Box extends PureComponent {
@@ -34,8 +34,9 @@ class Box extends PureComponent {
 
 	selectBox(e) {
 		this.props.selectBox(e);
-		if (this.box && this.box.current)
+		if (this.box && this.box.current) {
 			this.box.current.focus();
+		}
 	}
 
 	onDragStart(e) {
@@ -422,7 +423,7 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { boxStyle, id, isSelected, position, resolution } = this.props;
+		const { areMultipleBoxesSelected, boxStyle, id, isSelected, position, resolution } = this.props;
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
 			const boundingBox = this.props.getBoundingBoxElement();
 			const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
@@ -453,7 +454,7 @@ class Box extends PureComponent {
 			return <div
 				className={boxClassNames}
 				id={id}
-				onMouseUp={this.selectBox}
+				onClick={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
 				onKeyUp={this.shortcutHandler}
@@ -462,7 +463,7 @@ class Box extends PureComponent {
 				tabIndex="0"
 			>
 				{
-					isSelected ?
+					isSelected && !areMultipleBoxesSelected ?
 						<span
 							ref={this.coordinates}
 							className={styles.coordinates}
@@ -472,7 +473,7 @@ class Box extends PureComponent {
 						null
 				}
 				{
-					isSelected ?
+					isSelected && !areMultipleBoxesSelected ?
 						<span
 							className={`${styles.dimensions} ${styles.width}`}
 							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
@@ -482,15 +483,15 @@ class Box extends PureComponent {
 						null
 				}
 				{
-					isSelected ?
-						RESIZE_HANDLES.map(handle => {
-							const className = `${styles.resizeHandle} ${styles[`resize-${handle}`]}`;
+					isSelected && !areMultipleBoxesSelected ?
+						RESIZE_CORNERS.map(handle => {
+							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]}`;
 							return <div
 								key={handle}
 								className={className}
 								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
 								id={`resize-${handle}`}
-							/>
+							/>;
 						}) :
 						null
 				}
@@ -503,7 +504,7 @@ class Box extends PureComponent {
 								className={className}
 								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
 								id={`rotate-${handle}`}
-							/>
+							/>;
 						}) :
 						null
 				}
@@ -515,6 +516,7 @@ class Box extends PureComponent {
 }
 
 Box.propTypes = {
+	areMultipleBoxesSelected: PropTypes.bool,
 	boundToParent: PropTypes.bool,
 	drag: PropTypes.bool,
 	getBoundingBoxElement: PropTypes.func,

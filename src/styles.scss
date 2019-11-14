@@ -16,13 +16,13 @@
 	transform-origin: center center;
 
 	&:hover {
-		border: 2px solid #EB4B48;
+		outline: 2px solid #EB4B48;
 	}
 }
 
 .selected {
 	background-color: transparent;
-	border: 2px solid #EB4B48;
+	outline: 2px solid #EB4B48;
 }
 
 .guide {
@@ -78,7 +78,7 @@
 }
 
 // Resize Handles
-.resizeHandle,
+.resizeCorners,
 .rotateHandle {
 	width: 10px;
 	height: 10px;
@@ -87,8 +87,23 @@
 	position: absolute;
 }
 
-.resizeHandle {
+.resizeCorners {
 	z-index: 99;
+}
+
+.resizeEdges {
+	background-color: #EB4B48;
+	position: absolute;
+}
+
+.resize-top,
+.resize-bottom {
+	height: 2px;
+}
+
+.resize-right,
+.resize-left {
+	width: 2px;
 }
 
 .resize-tr {

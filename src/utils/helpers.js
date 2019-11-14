@@ -314,3 +314,22 @@ export const getNewCoordinates = (rect) => {
 export const degToRadian = (deg) => deg * Math.PI / 180;
 const cos = (deg) => Math.cos(degToRadian(deg));
 const sin = (deg) => Math.sin(degToRadian(deg));
+
+// Multiple selection helpers
+export const getGroupCoordinates = (allBoxes, activeBoxes) => {
+	let selectedBoxes = [];
+	for (let box in allBoxes) {
+		if (allBoxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+			selectedBoxes.push(allBoxes[box]);
+		}
+	}
+
+	const x = selectedBoxes.reduce((min, b) => b.x < min ? b.x : min, selectedBoxes[0].x);
+	const y = selectedBoxes.reduce((min, b) => b.y < min ? b.y : min, selectedBoxes[0].y);
+	const width = selectedBoxes.reduce((max, b) => b.x + b.width > max ? b.x + b.width : max, (selectedBoxes[0].x + selectedBoxes[0].width)) - x;
+	const height = selectedBoxes.reduce((max, b) => b.y + b.height > max ? b.y + b.height : max, (selectedBoxes[0].y + selectedBoxes[0].height)) - y;
+
+	return { x, y, width, height };
+};
+
+export const getBoxMetadata = () => {};
