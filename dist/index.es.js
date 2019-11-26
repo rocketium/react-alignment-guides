@@ -1896,7 +1896,7 @@ function (_Component) {
       }
 
       if (data.type && data.type === 'group') {
-        newData.selections = this.state.activeBoxes(function (box) {
+        newData.selections = this.state.activeBoxes.map(function (box) {
           return Object.assign({}, _this4.state.boxes[box]);
         });
       }
