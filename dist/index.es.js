@@ -1883,6 +1883,8 @@ function (_Component) {
   }, {
     key: "dragEndHandler",
     value: function dragEndHandler(e, data) {
+      var _this4 = this;
+
       this.setState({
         dragging: false,
         guidesActive: false
@@ -1891,6 +1893,13 @@ function (_Component) {
 
       if (this.state.boxes[this.state.active].metadata) {
         newData.metadata = this.state.boxes[this.state.active].metadata;
+      }
+
+      if (data.type && data.type === 'group') {
+        newData.selections = {};
+        this.state.activeBoxes.forEach(function (box) {
+          newData.selections[box] = Object.assign({}, _this4.state.boxes[box]);
+        });
       }
 
       this.props.onDragEnd && this.props.onDragEnd(e, newData);
@@ -2017,7 +2026,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this5 = this;
 
       var _this$state2 = this.state,
           active = _this$state2.active,
@@ -2030,28 +2039,28 @@ function (_Component) {
         var position = boxes[box];
         var id = boxes[box].id || box;
         var isSelected = active === id || activeBoxes.includes(id);
-        return React.createElement(Box, _extends({}, _this4.props, {
+        return React.createElement(Box, _extends({}, _this5.props, {
           areMultipleBoxesSelected: areMultipleBoxesSelected,
-          boundingBox: _this4.state.boundingBox,
-          dragging: _this4.state.dragging,
-          getBoundingBoxElement: _this4.getBoundingBoxElement,
+          boundingBox: _this5.state.boundingBox,
+          dragging: _this5.state.dragging,
+          getBoundingBoxElement: _this5.getBoundingBoxElement,
           id: id,
           isSelected: isSelected,
           key: id,
-          onDragStart: _this4.dragStartHandler,
-          onDrag: _this4.dragHandler,
-          onDragEnd: _this4.dragEndHandler,
-          onKeyUp: _this4.keyUpHandler,
-          onResizeStart: _this4.resizeStartHandler,
-          onResize: _this4.resizeHandler,
-          onResizeEnd: _this4.resizeEndHandler,
-          onRotateStart: _this4.rotateStartHandler,
-          onRotate: _this4.rotateHandler,
-          onRotateEnd: _this4.rotateEndHandler,
+          onDragStart: _this5.dragStartHandler,
+          onDrag: _this5.dragHandler,
+          onDragEnd: _this5.dragEndHandler,
+          onKeyUp: _this5.keyUpHandler,
+          onResizeStart: _this5.resizeStartHandler,
+          onResize: _this5.resizeHandler,
+          onResizeEnd: _this5.resizeEndHandler,
+          onRotateStart: _this5.rotateStartHandler,
+          onRotate: _this5.rotateHandler,
+          onRotateEnd: _this5.rotateEndHandler,
           position: position,
-          resizing: _this4.state.resizing,
-          rotating: _this4.state.rotating,
-          selectBox: _this4.selectBox
+          resizing: _this5.state.resizing,
+          rotating: _this5.state.rotating,
+          selectBox: _this5.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -2060,9 +2069,9 @@ function (_Component) {
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.x && _this4.state.match.x.intersection && _this4.state.match.x.intersection === position) {
+          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.x && _this5.state.match.x.intersection && _this5.state.match.x.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -2077,9 +2086,9 @@ function (_Component) {
         return result.concat(xAxisGuidesForCurrentBox);
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.y && _this4.state.match.y.intersection && _this4.state.match.y.intersection === position) {
+          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.y && _this5.state.match.y.intersection && _this5.state.match.y.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
