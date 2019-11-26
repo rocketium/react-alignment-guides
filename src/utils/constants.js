@@ -13,7 +13,6 @@ export const KEY_MAP = {
 
 // Positions for resize handles
 export const RESIZE_CORNERS = ['tr', 'tl', 'br', 'bl'];
-export const RESIZE_EDGES = ['top', 'right', 'bottom', 'left'];
 
 // Positions for rotate handles
 export const ROTATE_HANDLES = ['tr', 'tl', 'br', 'bl'];

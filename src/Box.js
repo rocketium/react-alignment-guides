@@ -45,7 +45,7 @@ class Box extends PureComponent {
 			const target = this.box.current;
 			const boundingBox = this.props.getBoundingBoxElement();
 			const { position } = this.props;
-			const startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
+			let startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
 			const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 			let didDragHappen = false;
 
@@ -69,44 +69,56 @@ class Box extends PureComponent {
 					node: target
 				};
 			}
+			// if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
+			if (this.props.position.type) {
+				data.type = this.props.position.type;
+			}
 			this.props.onDragStart && this.props.onDragStart(e, data);
+
+			// Update the starting position
+			startingPosition = Object.assign({}, data);
 
 			const deltaX = Math.abs(target.offsetLeft - e.clientX);
 			const deltaY = Math.abs(target.offsetTop - e.clientY);
 
 			const onDrag = (e) => {
-					e.stopPropagation();
-					const boundingBox = this.props.getBoundingBoxElement();
-					if (!boundingBox.current) {
-						return;
-					}
-					const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
-					const boxWidth = this.props.position.width;
-					const boxHeight = this.props.position.height;
-					const left = e.clientX - deltaX;
-					const top = e.clientY - deltaY;
-					let currentPosition = this.props.boundToParent ?
-						calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions) :
-						{
-							left,
-							top,
-							width: this.props.position.width,
-							height: this.props.position.height,
-							x: left,
-							y: top,
-							node: this.box.current
-						};
-					data = {
-						x: currentPosition.left,
-						y: currentPosition.top,
-						top: currentPosition.top,
-						left: currentPosition.left,
+				e.stopPropagation();
+				const boundingBox = this.props.getBoundingBoxElement();
+				if (!boundingBox.current) {
+					return;
+				}
+				const boundingBoxDimensions = boundingBox.current.getBoundingClientRect().toJSON();
+				const boxWidth = this.props.position.width;
+				const boxHeight = this.props.position.height;
+				const left = e.clientX - deltaX;
+				const top = e.clientY - deltaY;
+				let currentPosition = this.props.boundToParent ?
+					calculateBoundariesForDrag(left, top, boxWidth, boxHeight, boundingBoxDimensions) :
+					{
+						left,
+						top,
 						width: this.props.position.width,
 						height: this.props.position.height,
+						x: left,
+						y: top,
 						node: this.box.current
 					};
-					didDragHappen = true;
-					this.props.onDrag && this.props.onDrag(e, data);
+				data = {
+					x: currentPosition.left,
+					y: currentPosition.top,
+					top: currentPosition.top,
+					left: currentPosition.left,
+					width: this.props.position.width,
+					height: this.props.position.height,
+					node: this.box.current,
+					deltaX: currentPosition.left - startingPosition.left,
+					deltaY: currentPosition.top - startingPosition.top
+				};
+				didDragHappen = true;
+				if (this.props.position.type) {
+					data.type = this.props.position.type;
+				}
+				this.props.onDrag && this.props.onDrag(e, data);
 			};
 
 			const onDragEnd = (e) => {
@@ -435,7 +447,8 @@ class Box extends PureComponent {
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
-			const boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+			let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+			boxClassNames = position.type === 'group' ? `${boxClassNames} ${styles.boxGroup}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
 				...boxStyle,
@@ -455,7 +468,7 @@ class Box extends PureComponent {
 				className={boxClassNames}
 				id={id}
 				onClick={this.selectBox}
-				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
+				onMouseDown={(this.props.drag && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
 				onKeyUp={this.shortcutHandler}
 				ref={this.box}
@@ -473,7 +486,7 @@ class Box extends PureComponent {
 						null
 				}
 				{
-					isSelected && !areMultipleBoxesSelected ?
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 						<span
 							className={`${styles.dimensions} ${styles.width}`}
 							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
@@ -483,7 +496,7 @@ class Box extends PureComponent {
 						null
 				}
 				{
-					isSelected && !areMultipleBoxesSelected ?
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 						RESIZE_CORNERS.map(handle => {
 							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]}`;
 							return <div
@@ -496,7 +509,7 @@ class Box extends PureComponent {
 						null
 				}
 				{
-					isSelected ?
+					isSelected && !areMultipleBoxesSelected ?
 						ROTATE_HANDLES.map(handle => {
 							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
 							return <div

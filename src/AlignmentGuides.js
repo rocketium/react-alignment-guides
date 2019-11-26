@@ -1,10 +1,8 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Box from './Box';
-import { calculateGuidePositions, getGroupCoordinates, proximityListener } from './utils/helpers'
-import { RESIZE_EDGES } from './utils/constants';
+import { calculateGuidePositions, getMultipleSelectionCoordinates, proximityListener } from './utils/helpers'
 import styles from './styles.scss';
-import { active } from 'rollup-plugin-node-builtins/src/es6/timers'
 
 class AlignmentGuides extends Component {
 	constructor(props) {
@@ -16,7 +14,6 @@ class AlignmentGuides extends Component {
 			boundingBox: null,
 			boxes: {},
 			dragging: false,
-			groupCoordinates: [],
 			guides: {},
 			guidesActive: false,
 			match: {},
@@ -36,9 +33,9 @@ class AlignmentGuides extends Component {
 		this.rotateHandler = this.rotateHandler.bind(this);
 		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
+		this.startingPositions = null;
 	}
 
-	// TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
 	componentDidMount() {
 		// Set the dimensions of the bounding box and the draggable boxes when the component mounts.
 		if (this.boundingBox.current) {
@@ -103,17 +100,18 @@ class AlignmentGuides extends Component {
 						e.target.id
 					];
 				}
-				const groupCoordinates = getGroupCoordinates(boxes, activeBoxes);
+				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+				boxes['box-ms'].type = 'group';
+				boxes['box-ms'].zIndex = 11;
 				this.setState({
-					active: '',
+					active: 'box-ms',
 					activeBoxes,
-					groupCoordinates
+					boxes
 				});
 			} else {
 				this.setState({
 					active: e.target.id,
 					activeBoxes: [
-						...this.state.activeBoxes,
 						e.target.id
 					]
 				});
@@ -140,9 +138,12 @@ class AlignmentGuides extends Component {
 
 	unSelectBox(e) {
 		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+			const { boxes } = this.state;
+			delete boxes['box-ms'];
 			this.setState({
 				active: '',
-				activeBoxes: []
+				activeBoxes: [],
+				boxes
 			});
 			this.props.onUnselect && this.props.onUnselect(e);
 		}
@@ -153,43 +154,90 @@ class AlignmentGuides extends Component {
 			active: data.node.id,
 			dragging: true
 		});
-		const newData = Object.assign({}, data, {
-			metadata: this.state.boxes[data.node.id].metadata
-		});
+		let newData = Object.assign({}, data);
+		if (this.state.boxes[data.node.id].metadata) {
+			newData.metadata = this.state.boxes[data.node.id].metadata;
+		}
+
 		this.props.onDragStart && this.props.onDragStart(e, newData);
+
+		if (data.type && data.type === 'group') {
+			this.startingPositions = {};
+			this.state.activeBoxes.forEach(box => {
+				this.startingPositions[box] = this.state.boxes[box];
+			});
+		}
 	}
 
 	dragHandler(e, data) {
 		if (this.state.dragging) {
-			const newData = Object.assign({}, data, {
-				metadata: this.state.boxes[this.state.active].metadata
-			});
+			let newData = Object.assign({}, data);
+			if (this.state.boxes[this.state.active].metadata) {
+				newData.metadata = this.state.boxes[this.state.active].metadata;
+			}
+
 			this.props.onDrag && this.props.onDrag(e, newData);
 		}
 
-		const boxes = Object.assign({}, this.state.boxes, {
-			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-				x: data.x,
-				y: data.y,
-				left: data.left,
-				top: data.top,
-				width: data.width,
-				height: data.height
-			})
-		});
-		const guides = Object.assign({}, this.state.guides, {
-			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-				x: calculateGuidePositions(boxes[data.node.id], 'x'),
-				y: calculateGuidePositions(boxes[data.node.id], 'y')
-			})
-		});
+		let boxes = null;
+		let guides = null;
+		if (data.type && data.type === 'group') {
+			boxes = {};
+			for (let box in this.state.boxes) {
+				if (this.state.boxes.hasOwnProperty(box)) {
+					if (this.state.activeBoxes.includes(box)) {
+						boxes[box] = Object.assign({}, this.state.boxes[box], {
+							x: this.startingPositions[box].x + data.deltaX,
+							y: this.startingPositions[box].y + data.deltaY,
+							left: this.startingPositions[box].left + data.deltaX,
+							top: this.startingPositions[box].top + data.deltaY
+						});
+					} else if (box === 'box-ms') {
+						boxes[box] = Object.assign({}, data);
+						delete boxes[box].deltaX;
+						delete boxes[box].deltaY;
+					} else {
+						boxes[box] = this.state.boxes[box];
+					}
+				}
+			}
+
+			guides = Object.keys(this.state.guides).map(guide => {
+				if (this.state.activeBoxes.includes(guide)) {
+					return Object.assign({}, this.state.guides[guide], {
+						x: calculateGuidePositions(boxes[guide], 'x'),
+						y: calculateGuidePositions(boxes[guide], 'y')
+					})
+				}
+
+				return this.state.guides[guide];
+			});
+		} else {
+			boxes = Object.assign({}, this.state.boxes, {
+				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+					x: data.x,
+					y: data.y,
+					left: data.left,
+					top: data.top,
+					width: data.width,
+					height: data.height
+				})
+			});
+
+			guides = Object.assign({}, this.state.guides, {
+				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+					x: calculateGuidePositions(boxes[data.node.id], 'x'),
+					y: calculateGuidePositions(boxes[data.node.id], 'y')
+				})
+			});
+		}
 
 		this.setState({
 			guidesActive: true,
 			boxes,
 			guides
 		}, () => {
-			if (this.props.snap) {
+			if (this.props.snap && data.type !== 'group') {
 				const match = proximityListener(this.state.active, this.state.guides);
 				let newActiveBoxLeft = this.state.boxes[this.state.active].left;
 				let newActiveBoxTop = this.state.boxes[this.state.active].top;
@@ -238,9 +286,12 @@ class AlignmentGuides extends Component {
 			dragging: false,
 			guidesActive: false
 		});
-		const newData = Object.assign({}, data, {
-			metadata: this.state.boxes[this.state.active].metadata
-		});
+
+		let newData = Object.assign({}, data);
+		if (this.state.boxes[this.state.active].metadata) {
+			newData.metadata = this.state.boxes[this.state.active].metadata
+		}
+
 		this.props.onDragEnd && this.props.onDragEnd(e, newData);
 	}
 
@@ -249,17 +300,21 @@ class AlignmentGuides extends Component {
 			active: data.node.id,
 			resizing: true
 		});
-		const newData = Object.assign({}, data, {
-			metadata: this.state.boxes[data.node.id].metadata
-		});
+		let newData = Object.assign({}, data);
+		if (this.state.boxes[data.node.id].metadata) {
+			newData.metadata = this.state.boxes[data.node.id].metadata;
+		}
+
 		this.props.onResizeStart && this.props.onResizeStart(e, newData);
 	}
 
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
-			const newData = Object.assign({}, data, {
-				metadata: this.state.boxes[this.state.active].metadata
-			});
+			let newData = Object.assign({}, data);
+			if (this.state.boxes[this.state.active].metadata) {
+				newData.metadata = this.state.boxes[this.state.active].metadata;
+			}
+
 			this.props.onResize && this.props.onResize(e, newData);
 		}
 
@@ -288,9 +343,11 @@ class AlignmentGuides extends Component {
 
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
-			const newData = Object.assign({}, data, {
-				metadata: this.state.boxes[this.state.active].metadata
-			});
+			let newData = Object.assign({}, data);
+			if (this.state.boxes[this.state.active].metadata) {
+				newData.metadata = this.state.boxes[this.state.active].metadata;
+			}
+
 			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
 		}
 
@@ -330,9 +387,11 @@ class AlignmentGuides extends Component {
 	}
 
 	keyUpHandler(e, data) {
-		const newData = Object.assign({}, data, {
-			metadata: this.state.boxes[data.node.id].metadata
-		});
+		let newData = Object.assign({}, data);
+		if (this.state.boxes[data.node.id].metadata) {
+			newData.metadata = this.state.boxes[data.node.id].metadata;
+		}
+
 		this.props.onKeyUp && this.props.onKeyUp(e, newData);
 
 		const boxes = Object.assign({}, this.state.boxes, {
@@ -365,9 +424,9 @@ class AlignmentGuides extends Component {
 		const areMultipleBoxesSelected = activeBoxes.length > 1;
 
 		// Create the draggable boxes from the position data
-		const draggableBoxes = Object.keys(boxes).map((box, index) => {
+		const draggableBoxes = Object.keys(boxes).map(box => {
 			const position = boxes[box];
-			const id = box.id || `box${index}`;
+			const id = boxes[box].id || box;
 			const isSelected = (active === id || activeBoxes.includes(id));
 
 			return <Box
@@ -445,38 +504,6 @@ class AlignmentGuides extends Component {
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
-			{
-				areMultipleBoxesSelected ?
-					RESIZE_EDGES.map(handle => {
-						const className = `${styles.resizeEdges} ${styles[`resize-${handle}`]}`;
-						const style = {};
-						if (handle === 'top') {
-							style.top = `${this.state.groupCoordinates.y - 2}px`;
-							style.left = `${this.state.groupCoordinates.x - 2}px`;
-							style.width = `${this.state.groupCoordinates.width + 4}px`;
-						} else if (handle === 'right') {
-							style.top = `${this.state.groupCoordinates.y}px`;
-							style.left = `${this.state.groupCoordinates.x + this.state.groupCoordinates.width}px`;
-							style.height = `${this.state.groupCoordinates.height + 2}px`;
-						} else if (handle === 'bottom') {
-							style.top = `${this.state.groupCoordinates.y + this.state.groupCoordinates.height}px`;
-							style.left = `${this.state.groupCoordinates.x - 2}px`;
-							style.width = `${this.state.groupCoordinates.width + 2}px`;
-						} else if (handle === 'left') {
-							style.top = `${this.state.groupCoordinates.y}px`;
-							style.left = `${this.state.groupCoordinates.x - 2}px`;
-							style.height = `${this.state.groupCoordinates.height + 2}px`;
-						}
-						return <div
-							key={handle}
-							className={className}
-							style={style}
-							onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
-							id={`resize-${handle}`}
-						/>;
-					}) :
-					null
-			}
 		</div>;
 	}
 }

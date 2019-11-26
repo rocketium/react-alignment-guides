@@ -316,7 +316,7 @@ const cos = (deg) => Math.cos(degToRadian(deg));
 const sin = (deg) => Math.sin(degToRadian(deg));
 
 // Multiple selection helpers
-export const getGroupCoordinates = (allBoxes, activeBoxes) => {
+export const getMultipleSelectionCoordinates = (allBoxes, activeBoxes) => {
 	let selectedBoxes = [];
 	for (let box in allBoxes) {
 		if (allBoxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
@@ -329,7 +329,7 @@ export const getGroupCoordinates = (allBoxes, activeBoxes) => {
 	const width = selectedBoxes.reduce((max, b) => b.x + b.width > max ? b.x + b.width : max, (selectedBoxes[0].x + selectedBoxes[0].width)) - x;
 	const height = selectedBoxes.reduce((max, b) => b.y + b.height > max ? b.y + b.height : max, (selectedBoxes[0].y + selectedBoxes[0].height)) - y;
 
-	return { x, y, width, height };
+	return { x, y, top: y, left: x, width, height };
 };
 
 export const getBoxMetadata = () => {};

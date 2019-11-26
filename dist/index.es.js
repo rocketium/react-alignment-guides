@@ -839,7 +839,7 @@ var sin = function sin(deg) {
 }; // Multiple selection helpers
 
 
-var getGroupCoordinates = function getGroupCoordinates(allBoxes, activeBoxes) {
+var getMultipleSelectionCoordinates = function getMultipleSelectionCoordinates(allBoxes, activeBoxes) {
   var selectedBoxes = [];
 
   for (var box in allBoxes) {
@@ -863,6 +863,8 @@ var getGroupCoordinates = function getGroupCoordinates(allBoxes, activeBoxes) {
   return {
     x: x,
     y: y,
+    top: y,
+    left: x,
     width: width,
     height: height
   };
@@ -870,8 +872,7 @@ var getGroupCoordinates = function getGroupCoordinates(allBoxes, activeBoxes) {
 
 // Key map for changing the position and size of draggable boxes
 
-var RESIZE_CORNERS = ['tr', 'tl', 'br', 'bl'];
-var RESIZE_EDGES = ['top', 'right', 'bottom', 'left']; // Positions for rotate handles
+var RESIZE_CORNERS = ['tr', 'tl', 'br', 'bl']; // Positions for rotate handles
 
 var ROTATE_HANDLES = ['tr', 'tl', 'br', 'bl'];
 
@@ -902,8 +903,8 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    outline: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG {\n  background-color: transparent;\n  outline: 2px solid #EB4B48; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeCorners__3nhDk,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resizeCorners__3nhDk {\n  z-index: 99; }\n\n.styles_resizeEdges__1A7d8 {\n  background-color: #EB4B48;\n  position: absolute; }\n\n.styles_resize-top__2HO_N,\n.styles_resize-bottom__1RMw6 {\n  height: 2px; }\n\n.styles_resize-right__PLxi_,\n.styles_resize-left__-dBiw {\n  width: 2px; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
-var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeCorners":"styles_resizeCorners__3nhDk","rotateHandle":"styles_rotateHandle__26rVp","resizeEdges":"styles_resizeEdges__1A7d8","resize-top":"styles_resize-top__2HO_N","resize-bottom":"styles_resize-bottom__1RMw6","resize-right":"styles_resize-right__PLxi_","resize-left":"styles_resize-left__-dBiw","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    outline: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG,\n.styles_boxGroup__10v7H {\n  background-color: transparent;\n  outline: 2px solid #EB4B48; }\n\n.styles_boxGroup__10v7H {\n  position: absolute;\n  background-color: transparent !important; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeCorners__3nhDk,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resizeCorners__3nhDk {\n  z-index: 99; }\n\n.styles_resizeEdges__1A7d8 {\n  background-color: #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
+var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","boxGroup":"styles_boxGroup__10v7H","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeCorners":"styles_resizeCorners__3nhDk","rotateHandle":"styles_rotateHandle__26rVp","resizeEdges":"styles_resizeEdges__1A7d8","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
 styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -999,9 +1000,16 @@ function (_PureComponent) {
             height: startingPosition.height,
             node: target
           };
+        } // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
+
+
+        if (this.props.position.type) {
+          data.type = this.props.position.type;
         }
 
-        this.props.onDragStart && this.props.onDragStart(e, data);
+        this.props.onDragStart && this.props.onDragStart(e, data); // Update the starting position
+
+        startingPosition = Object.assign({}, data);
         var deltaX = Math.abs(target.offsetLeft - e.clientX);
         var deltaY = Math.abs(target.offsetTop - e.clientY);
 
@@ -1035,9 +1043,16 @@ function (_PureComponent) {
             left: currentPosition.left,
             width: _this2.props.position.width,
             height: _this2.props.position.height,
-            node: _this2.box.current
+            node: _this2.box.current,
+            deltaX: currentPosition.left - startingPosition.left,
+            deltaY: currentPosition.top - startingPosition.top
           };
           didDragHappen = true;
+
+          if (_this2.props.position.type) {
+            data.type = _this2.props.position.type;
+          }
+
           _this2.props.onDrag && _this2.props.onDrag(e, data);
         };
 
@@ -1435,6 +1450,7 @@ function (_PureComponent) {
         }
 
         var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
+        boxClassNames = position.type === 'group' ? "".concat(boxClassNames, " ").concat(styles.boxGroup) : boxClassNames;
         var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 
         var boxStyles = _objectSpread$1({}, boxStyle, {
@@ -1454,7 +1470,7 @@ function (_PureComponent) {
           className: boxClassNames,
           id: id,
           onClick: this.selectBox,
-          onMouseDown: this.props.drag ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
+          onMouseDown: this.props.drag && !areMultipleBoxesSelected || position.type && position.type === 'group' ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
           ,
           onKeyDown: function onKeyDown(e) {
             e.persist();
@@ -1468,13 +1484,13 @@ function (_PureComponent) {
         }, isSelected && !areMultipleBoxesSelected ? React.createElement("span", {
           ref: this.coordinates,
           className: styles.coordinates
-        }, "(".concat(Math.round(position.x * xFactor), ", ").concat(Math.round(position.y * yFactor), ")")) : null, isSelected && !areMultipleBoxesSelected ? React.createElement("span", {
+        }, "(".concat(Math.round(position.x * xFactor), ", ").concat(Math.round(position.y * yFactor), ")")) : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? React.createElement("span", {
           className: "".concat(styles.dimensions, " ").concat(styles.width),
           style: {
             width: "".concat(position.width, "px"),
             top: "".concat(position.height + 10, "px")
           }
-        }, "".concat(Math.round(position.width * xFactor), " x ").concat(Math.round(position.height * yFactor))) : null, isSelected && !areMultipleBoxesSelected ? RESIZE_CORNERS.map(function (handle) {
+        }, "".concat(Math.round(position.width * xFactor), " x ").concat(Math.round(position.height * yFactor))) : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? RESIZE_CORNERS.map(function (handle) {
           var className = "".concat(styles.resizeCorners, " ").concat(styles["resize-".concat(handle)]);
           return React.createElement("div", {
             key: handle,
@@ -1483,7 +1499,7 @@ function (_PureComponent) {
             ,
             id: "resize-".concat(handle)
           });
-        }) : null, isSelected ? ROTATE_HANDLES.map(function (handle) {
+        }) : null, isSelected && !areMultipleBoxesSelected ? ROTATE_HANDLES.map(function (handle) {
           var className = "".concat(styles.rotateHandle, " ").concat(styles["rotate-".concat(handle)]);
           return React.createElement("div", {
             key: handle,
@@ -1525,133 +1541,6 @@ Box.propTypes = {
   resolution: PropTypes.object,
   rotate: PropTypes.bool
 };
-
-/*
-MIT Licence
-Copyright (c) 2012 Barnesandnoble.com, llc, Donavon West, and Domenic Denicola
-https://github.com/YuzuJS/setImmediate/blob/f1ccbfdf09cb93aadf77c4aa749ea554503b9234/LICENSE.txt
-*/
-var tasksByHandle = {};
-var currentlyRunningATask = false;
-var doc = global.document;
-
-function clearImmediate(handle) {
-    delete tasksByHandle[handle];
-}
-
-function run(task) {
-    var callback = task.callback;
-    var args = task.args;
-    switch (args.length) {
-    case 0:
-        callback();
-        break;
-    case 1:
-        callback(args[0]);
-        break;
-    case 2:
-        callback(args[0], args[1]);
-        break;
-    case 3:
-        callback(args[0], args[1], args[2]);
-        break;
-    default:
-        callback.apply(undefined, args);
-        break;
-    }
-}
-
-function runIfPresent(handle) {
-    // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
-    // So if we're currently running a task, we'll need to delay this invocation.
-    if (currentlyRunningATask) {
-        // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
-        // "too much recursion" error.
-        setTimeout(runIfPresent, 0, handle);
-    } else {
-        var task = tasksByHandle[handle];
-        if (task) {
-            currentlyRunningATask = true;
-            try {
-                run(task);
-            } finally {
-                clearImmediate(handle);
-                currentlyRunningATask = false;
-            }
-        }
-    }
-}
-
-function canUsePostMessage() {
-    // The test against `importScripts` prevents this implementation from being installed inside a web worker,
-    // where `global.postMessage` means something completely different and can't be used for this purpose.
-    if (global.postMessage && !global.importScripts) {
-        var postMessageIsAsynchronous = true;
-        var oldOnMessage = global.onmessage;
-        global.onmessage = function() {
-            postMessageIsAsynchronous = false;
-        };
-        global.postMessage("", "*");
-        global.onmessage = oldOnMessage;
-        return postMessageIsAsynchronous;
-    }
-}
-
-function installPostMessageImplementation() {
-    // Installs an event handler on `global` for the `message` event: see
-    // * https://developer.mozilla.org/en/DOM/window.postMessage
-    // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
-
-    var messagePrefix = "setImmediate$" + Math.random() + "$";
-    var onGlobalMessage = function(event) {
-        if (event.source === global &&
-            typeof event.data === "string" &&
-            event.data.indexOf(messagePrefix) === 0) {
-            runIfPresent(+event.data.slice(messagePrefix.length));
-        }
-    };
-
-    if (global.addEventListener) {
-        global.addEventListener("message", onGlobalMessage, false);
-    } else {
-        global.attachEvent("onmessage", onGlobalMessage);
-    }
-}
-
-function installMessageChannelImplementation() {
-    var channel = new MessageChannel();
-    channel.port1.onmessage = function(event) {
-        var handle = event.data;
-        runIfPresent(handle);
-    };
-}
-
-function installReadyStateChangeImplementation() {
-    var html = doc.documentElement;
-}
-
-// If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
-var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
-attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
-
-// Don't get fooled by e.g. browserify environments.
-if ({}.toString.call(global.process) === "[object process]") ; else if (canUsePostMessage()) {
-    // For non-IE10 modern browsers
-    installPostMessageImplementation();
-
-} else if (global.MessageChannel) {
-    // For web workers, where supported
-    installMessageChannelImplementation();
-
-} else if (doc && "onreadystatechange" in doc.createElement("script")) {
-    // For IE 6–8
-    installReadyStateChangeImplementation();
-
-}
-
-// License https://jryans.mit-license.org/
-// DOM APIs, for completeness
-var apply = Function.prototype.apply;
 
 function _typeof$1(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
 
@@ -1705,7 +1594,6 @@ function (_Component) {
       boundingBox: null,
       boxes: {},
       dragging: false,
-      groupCoordinates: [],
       guides: {},
       guidesActive: false,
       match: {},
@@ -1725,9 +1613,9 @@ function (_Component) {
     _this.rotateHandler = _this.rotateHandler.bind(_assertThisInitialized$1(_this));
     _this.rotateEndHandler = _this.rotateEndHandler.bind(_assertThisInitialized$1(_this));
     _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized$1(_this));
+    _this.startingPositions = null;
     return _this;
-  } // TODO: Remove duplicated code in componentDidMount() and componentDidUpdate() methods
-
+  }
 
   _createClass$1(AlignmentGuides, [{
     key: "componentDidMount",
@@ -1803,16 +1691,18 @@ function (_Component) {
             activeBoxes = [].concat(_toConsumableArray(activeBoxes), [e.target.id]);
           }
 
-          var groupCoordinates = getGroupCoordinates(boxes, activeBoxes);
+          boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+          boxes['box-ms'].type = 'group';
+          boxes['box-ms'].zIndex = 11;
           this.setState({
-            active: '',
+            active: 'box-ms',
             activeBoxes: activeBoxes,
-            groupCoordinates: groupCoordinates
+            boxes: boxes
           });
         } else {
           this.setState({
             active: e.target.id,
-            activeBoxes: [].concat(_toConsumableArray(this.state.activeBoxes), [e.target.id])
+            activeBoxes: [e.target.id]
           });
         }
 
@@ -1840,9 +1730,12 @@ function (_Component) {
     key: "unSelectBox",
     value: function unSelectBox(e) {
       if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+        var boxes = this.state.boxes;
+        delete boxes['box-ms'];
         this.setState({
           active: '',
-          activeBoxes: []
+          activeBoxes: [],
+          boxes: boxes
         });
         this.props.onUnselect && this.props.onUnselect(e);
       }
@@ -1850,48 +1743,101 @@ function (_Component) {
   }, {
     key: "dragStartHandler",
     value: function dragStartHandler(e, data) {
+      var _this2 = this;
+
       this.setState({
         active: data.node.id,
         dragging: true
       });
-      var newData = Object.assign({}, data, {
-        metadata: this.state.boxes[data.node.id].metadata
-      });
+      var newData = Object.assign({}, data);
+
+      if (this.state.boxes[data.node.id].metadata) {
+        newData.metadata = this.state.boxes[data.node.id].metadata;
+      }
+
       this.props.onDragStart && this.props.onDragStart(e, newData);
+
+      if (data.type && data.type === 'group') {
+        this.startingPositions = {};
+        this.state.activeBoxes.forEach(function (box) {
+          _this2.startingPositions[box] = _this2.state.boxes[box];
+        });
+      }
     }
   }, {
     key: "dragHandler",
     value: function dragHandler(e, data) {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.state.dragging) {
-        var newData = Object.assign({}, data, {
-          metadata: this.state.boxes[this.state.active].metadata
-        });
+        var newData = Object.assign({}, data);
+
+        if (this.state.boxes[this.state.active].metadata) {
+          newData.metadata = this.state.boxes[this.state.active].metadata;
+        }
+
         this.props.onDrag && this.props.onDrag(e, newData);
       }
 
-      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
-        x: data.x,
-        y: data.y,
-        left: data.left,
-        top: data.top,
-        width: data.width,
-        height: data.height
-      })));
-      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
-        x: calculateGuidePositions(boxes[data.node.id], 'x'),
-        y: calculateGuidePositions(boxes[data.node.id], 'y')
-      })));
+      var boxes = null;
+      var guides = null;
+
+      if (data.type && data.type === 'group') {
+        boxes = {};
+
+        for (var box in this.state.boxes) {
+          if (this.state.boxes.hasOwnProperty(box)) {
+            if (this.state.activeBoxes.includes(box)) {
+              boxes[box] = Object.assign({}, this.state.boxes[box], {
+                x: this.startingPositions[box].x + data.deltaX,
+                y: this.startingPositions[box].y + data.deltaY,
+                left: this.startingPositions[box].left + data.deltaX,
+                top: this.startingPositions[box].top + data.deltaY
+              });
+            } else if (box === 'box-ms') {
+              boxes[box] = Object.assign({}, data);
+              delete boxes[box].deltaX;
+              delete boxes[box].deltaY;
+            } else {
+              boxes[box] = this.state.boxes[box];
+            }
+          }
+        }
+
+        guides = Object.keys(this.state.guides).map(function (guide) {
+          if (_this3.state.activeBoxes.includes(guide)) {
+            return Object.assign({}, _this3.state.guides[guide], {
+              x: calculateGuidePositions(boxes[guide], 'x'),
+              y: calculateGuidePositions(boxes[guide], 'y')
+            });
+          }
+
+          return _this3.state.guides[guide];
+        });
+      } else {
+        boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+          x: data.x,
+          y: data.y,
+          left: data.left,
+          top: data.top,
+          width: data.width,
+          height: data.height
+        })));
+        guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+          x: calculateGuidePositions(boxes[data.node.id], 'x'),
+          y: calculateGuidePositions(boxes[data.node.id], 'y')
+        })));
+      }
+
       this.setState({
         guidesActive: true,
         boxes: boxes,
         guides: guides
       }, function () {
-        if (_this2.props.snap) {
-          var match = proximityListener(_this2.state.active, _this2.state.guides);
-          var newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left;
-          var newActiveBoxTop = _this2.state.boxes[_this2.state.active].top;
+        if (_this3.props.snap && data.type !== 'group') {
+          var match = proximityListener(_this3.state.active, _this3.state.guides);
+          var newActiveBoxLeft = _this3.state.boxes[_this3.state.active].left;
+          var newActiveBoxTop = _this3.state.boxes[_this3.state.active].top;
 
           for (var axis in match) {
             var _match$axis = match[axis],
@@ -1903,30 +1849,30 @@ function (_Component) {
 
             if (axis === 'x') {
               if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-                newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left - proximity.value;
+                newActiveBoxLeft = _this3.state.boxes[_this3.state.active].left - proximity.value;
               } else {
-                newActiveBoxLeft = _this2.state.boxes[_this2.state.active].left + proximity.value;
+                newActiveBoxLeft = _this3.state.boxes[_this3.state.active].left + proximity.value;
               }
             } else {
               if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-                newActiveBoxTop = _this2.state.boxes[_this2.state.active].top - proximity.value;
+                newActiveBoxTop = _this3.state.boxes[_this3.state.active].top - proximity.value;
               } else {
-                newActiveBoxTop = _this2.state.boxes[_this2.state.active].top + proximity.value;
+                newActiveBoxTop = _this3.state.boxes[_this3.state.active].top + proximity.value;
               }
             }
           }
 
-          var _boxes = Object.assign({}, _this2.state.boxes, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.boxes[_this2.state.active], {
+          var _boxes = Object.assign({}, _this3.state.boxes, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
             left: newActiveBoxLeft,
             top: newActiveBoxTop
           })));
 
-          var _guides = Object.assign({}, _this2.state.guides, _defineProperty$2({}, _this2.state.active, Object.assign({}, _this2.state.guides[_this2.state.active], {
-            x: calculateGuidePositions(_boxes[_this2.state.active], 'x'),
-            y: calculateGuidePositions(_boxes[_this2.state.active], 'y')
+          var _guides = Object.assign({}, _this3.state.guides, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
+            x: calculateGuidePositions(_boxes[_this3.state.active], 'x'),
+            y: calculateGuidePositions(_boxes[_this3.state.active], 'y')
           })));
 
-          _this2.setState({
+          _this3.setState({
             boxes: _boxes,
             guides: _guides,
             match: match
@@ -1941,9 +1887,12 @@ function (_Component) {
         dragging: false,
         guidesActive: false
       });
-      var newData = Object.assign({}, data, {
-        metadata: this.state.boxes[this.state.active].metadata
-      });
+      var newData = Object.assign({}, data);
+
+      if (this.state.boxes[this.state.active].metadata) {
+        newData.metadata = this.state.boxes[this.state.active].metadata;
+      }
+
       this.props.onDragEnd && this.props.onDragEnd(e, newData);
     }
   }, {
@@ -1953,18 +1902,24 @@ function (_Component) {
         active: data.node.id,
         resizing: true
       });
-      var newData = Object.assign({}, data, {
-        metadata: this.state.boxes[data.node.id].metadata
-      });
+      var newData = Object.assign({}, data);
+
+      if (this.state.boxes[data.node.id].metadata) {
+        newData.metadata = this.state.boxes[data.node.id].metadata;
+      }
+
       this.props.onResizeStart && this.props.onResizeStart(e, newData);
     }
   }, {
     key: "resizeHandler",
     value: function resizeHandler(e, data) {
       if (this.state.resizing) {
-        var newData = Object.assign({}, data, {
-          metadata: this.state.boxes[this.state.active].metadata
-        });
+        var newData = Object.assign({}, data);
+
+        if (this.state.boxes[this.state.active].metadata) {
+          newData.metadata = this.state.boxes[this.state.active].metadata;
+        }
+
         this.props.onResize && this.props.onResize(e, newData);
       }
 
@@ -1989,9 +1944,12 @@ function (_Component) {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
       if (this.state.resizing) {
-        var newData = Object.assign({}, data, {
-          metadata: this.state.boxes[this.state.active].metadata
-        });
+        var newData = Object.assign({}, data);
+
+        if (this.state.boxes[this.state.active].metadata) {
+          newData.metadata = this.state.boxes[this.state.active].metadata;
+        }
+
         this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
       }
 
@@ -2030,9 +1988,12 @@ function (_Component) {
   }, {
     key: "keyUpHandler",
     value: function keyUpHandler(e, data) {
-      var newData = Object.assign({}, data, {
-        metadata: this.state.boxes[data.node.id].metadata
-      });
+      var newData = Object.assign({}, data);
+
+      if (this.state.boxes[data.node.id].metadata) {
+        newData.metadata = this.state.boxes[data.node.id].metadata;
+      }
+
       this.props.onKeyUp && this.props.onKeyUp(e, newData);
       var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
         x: data.x,
@@ -2056,7 +2017,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       var _this$state2 = this.state,
           active = _this$state2.active,
@@ -2065,32 +2026,32 @@ function (_Component) {
           guides = _this$state2.guides;
       var areMultipleBoxesSelected = activeBoxes.length > 1; // Create the draggable boxes from the position data
 
-      var draggableBoxes = Object.keys(boxes).map(function (box, index) {
+      var draggableBoxes = Object.keys(boxes).map(function (box) {
         var position = boxes[box];
-        var id = box.id || "box".concat(index);
+        var id = boxes[box].id || box;
         var isSelected = active === id || activeBoxes.includes(id);
-        return React.createElement(Box, _extends({}, _this3.props, {
+        return React.createElement(Box, _extends({}, _this4.props, {
           areMultipleBoxesSelected: areMultipleBoxesSelected,
-          boundingBox: _this3.state.boundingBox,
-          dragging: _this3.state.dragging,
-          getBoundingBoxElement: _this3.getBoundingBoxElement,
+          boundingBox: _this4.state.boundingBox,
+          dragging: _this4.state.dragging,
+          getBoundingBoxElement: _this4.getBoundingBoxElement,
           id: id,
           isSelected: isSelected,
           key: id,
-          onDragStart: _this3.dragStartHandler,
-          onDrag: _this3.dragHandler,
-          onDragEnd: _this3.dragEndHandler,
-          onKeyUp: _this3.keyUpHandler,
-          onResizeStart: _this3.resizeStartHandler,
-          onResize: _this3.resizeHandler,
-          onResizeEnd: _this3.resizeEndHandler,
-          onRotateStart: _this3.rotateStartHandler,
-          onRotate: _this3.rotateHandler,
-          onRotateEnd: _this3.rotateEndHandler,
+          onDragStart: _this4.dragStartHandler,
+          onDrag: _this4.dragHandler,
+          onDragEnd: _this4.dragEndHandler,
+          onKeyUp: _this4.keyUpHandler,
+          onResizeStart: _this4.resizeStartHandler,
+          onResize: _this4.resizeHandler,
+          onResizeEnd: _this4.resizeEndHandler,
+          onRotateStart: _this4.rotateStartHandler,
+          onRotate: _this4.rotateHandler,
+          onRotateEnd: _this4.rotateEndHandler,
           position: position,
-          resizing: _this3.state.resizing,
-          rotating: _this3.state.rotating,
-          selectBox: _this3.selectBox
+          resizing: _this4.state.resizing,
+          rotating: _this4.state.rotating,
+          selectBox: _this4.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -2099,9 +2060,9 @@ function (_Component) {
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
       var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
         var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.x && _this3.state.match.x.intersection && _this3.state.match.x.intersection === position) {
+          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.x && _this4.state.match.x.intersection && _this4.state.match.x.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -2116,9 +2077,9 @@ function (_Component) {
         return result.concat(xAxisGuidesForCurrentBox);
       }, []);
       var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this3.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+        var guideClassNames = _this4.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
         var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this3.state.active && _this3.state.active === box && _this3.state.match && _this3.state.match.y && _this3.state.match.y.intersection && _this3.state.match.y.intersection === position) {
+          if (_this4.state.active && _this4.state.active === box && _this4.state.match && _this4.state.match.y && _this4.state.match.y.intersection && _this4.state.match.y.intersection === position) {
             return React.createElement("div", {
               key: "".concat(position, "-").concat(index),
               className: guideClassNames,
@@ -2136,37 +2097,7 @@ function (_Component) {
         ref: this.boundingBox,
         className: "".concat(styles.boundingBox, " ").concat(this.props.className),
         style: this.props.style
-      }, draggableBoxes, xAxisGuides, yAxisGuides, areMultipleBoxesSelected ? RESIZE_EDGES.map(function (handle) {
-        var className = "".concat(styles.resizeEdges, " ").concat(styles["resize-".concat(handle)]);
-        var style = {};
-
-        if (handle === 'top') {
-          style.top = "".concat(_this3.state.groupCoordinates.y - 2, "px");
-          style.left = "".concat(_this3.state.groupCoordinates.x - 2, "px");
-          style.width = "".concat(_this3.state.groupCoordinates.width + 4, "px");
-        } else if (handle === 'right') {
-          style.top = "".concat(_this3.state.groupCoordinates.y, "px");
-          style.left = "".concat(_this3.state.groupCoordinates.x + _this3.state.groupCoordinates.width, "px");
-          style.height = "".concat(_this3.state.groupCoordinates.height + 2, "px");
-        } else if (handle === 'bottom') {
-          style.top = "".concat(_this3.state.groupCoordinates.y + _this3.state.groupCoordinates.height, "px");
-          style.left = "".concat(_this3.state.groupCoordinates.x - 2, "px");
-          style.width = "".concat(_this3.state.groupCoordinates.width + 2, "px");
-        } else if (handle === 'left') {
-          style.top = "".concat(_this3.state.groupCoordinates.y, "px");
-          style.left = "".concat(_this3.state.groupCoordinates.x - 2, "px");
-          style.height = "".concat(_this3.state.groupCoordinates.height + 2, "px");
-        }
-
-        return React.createElement("div", {
-          key: handle,
-          className: className,
-          style: style,
-          onMouseDown: _this3.props.resize ? _this3.onResizeStart : null // If this.props.resize is false then remove the mouseDown event handler for resize
-          ,
-          id: "resize-".concat(handle)
-        });
-      }) : null);
+      }, draggableBoxes, xAxisGuides, yAxisGuides);
     }
   }]);
 

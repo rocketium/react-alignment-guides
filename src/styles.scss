@@ -20,9 +20,15 @@
 	}
 }
 
-.selected {
+.selected,
+.boxGroup {
 	background-color: transparent;
 	outline: 2px solid #EB4B48;
+}
+
+.boxGroup {
+	position: absolute;
+	background-color: transparent !important;
 }
 
 .guide {
@@ -94,16 +100,6 @@
 .resizeEdges {
 	background-color: #EB4B48;
 	position: absolute;
-}
-
-.resize-top,
-.resize-bottom {
-	height: 2px;
-}
-
-.resize-right,
-.resize-left {
-	width: 2px;
 }
 
 .resize-tr {
