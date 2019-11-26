@@ -1896,9 +1896,8 @@ function (_Component) {
       }
 
       if (data.type && data.type === 'group') {
-        newData.selections = {};
-        this.state.activeBoxes.forEach(function (box) {
-          newData.selections[box] = Object.assign({}, _this4.state.boxes[box]);
+        newData.selections = this.state.activeBoxes(function (box) {
+          return Object.assign({}, _this4.state.boxes[box]);
         });
       }
 

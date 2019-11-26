@@ -293,9 +293,8 @@ class AlignmentGuides extends Component {
 		}
 
 		if (data.type && data.type === 'group') {
-			newData.selections = {};
-			this.state.activeBoxes.forEach(box => {
-				newData.selections[box] = Object.assign({}, this.state.boxes[box]);
+			newData.selections = this.state.activeBoxes(box => {
+				return Object.assign({}, this.state.boxes[box]);
 			});
 		}
 
