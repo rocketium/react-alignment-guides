@@ -1678,7 +1678,7 @@ function (_Component) {
           metadata: this.state.boxes[e.target.id].metadata
         };
 
-        if (e.shiftKey) {
+        if (e.shiftKey || this.state.active === 'box-ms') {
           var _this$state = this.state,
               activeBoxes = _this$state.activeBoxes,
               boxes = _this$state.boxes;

@@ -90,7 +90,7 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			if (e.shiftKey) {
+			if (e.shiftKey || this.state.active === 'box-ms') {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
 					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
