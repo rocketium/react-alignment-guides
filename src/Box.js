@@ -476,7 +476,7 @@ class Box extends PureComponent {
 				tabIndex="0"
 			>
 				{
-					isSelected && !areMultipleBoxesSelected ?
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 						<span
 							ref={this.coordinates}
 							className={styles.coordinates}

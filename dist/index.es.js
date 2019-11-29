@@ -1481,7 +1481,7 @@ function (_PureComponent) {
           ref: this.box,
           style: boxStyles,
           tabIndex: "0"
-        }, isSelected && !areMultipleBoxesSelected ? React.createElement("span", {
+        }, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? React.createElement("span", {
           ref: this.coordinates,
           className: styles.coordinates
         }, "(".concat(Math.round(position.x * xFactor), ", ").concat(Math.round(position.y * yFactor), ")")) : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? React.createElement("span", {
@@ -1694,6 +1694,11 @@ function (_Component) {
           boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
           boxes['box-ms'].type = 'group';
           boxes['box-ms'].zIndex = 11;
+          data = Object.assign({}, boxes['box-ms'], {
+            metadata: {
+              type: 'group'
+            }
+          });
           this.setState({
             active: 'box-ms',
             activeBoxes: activeBoxes,

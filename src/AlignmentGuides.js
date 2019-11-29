@@ -80,7 +80,7 @@ class AlignmentGuides extends Component {
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
-			const data = {
+			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
 				y: boxDimensions.y - boundingBoxPosition.y,
 				left: boxDimensions.left - boundingBoxPosition.x,
@@ -103,6 +103,9 @@ class AlignmentGuides extends Component {
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
 				boxes['box-ms'].zIndex = 11;
+				data = Object.assign({}, boxes['box-ms'], {
+					metadata: { type: 'group' }
+				});
 				this.setState({
 					active: 'box-ms',
 					activeBoxes,
