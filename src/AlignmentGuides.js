@@ -103,8 +103,15 @@ class AlignmentGuides extends Component {
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
 				boxes['box-ms'].zIndex = 11;
+				const selections = [];
+				for (let box in boxes) {
+					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+						selections.push(boxes[box]);
+					}
+				}
 				data = Object.assign({}, boxes['box-ms'], {
-					metadata: { type: 'group' }
+					metadata: { type: 'group' },
+					selections
 				});
 				this.setState({
 					active: 'box-ms',

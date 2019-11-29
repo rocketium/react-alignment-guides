@@ -1694,10 +1694,19 @@ function (_Component) {
           boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
           boxes['box-ms'].type = 'group';
           boxes['box-ms'].zIndex = 11;
+          var selections = [];
+
+          for (var box in boxes) {
+            if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+              selections.push(boxes[box]);
+            }
+          }
+
           data = Object.assign({}, boxes['box-ms'], {
             metadata: {
               type: 'group'
-            }
+            },
+            selections: selections
           });
           this.setState({
             active: 'box-ms',
