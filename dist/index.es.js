@@ -1624,7 +1624,9 @@ function (_Component) {
       if (this.boundingBox.current) {
         var boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
         var boxes = {};
-        var guides = {}; // Adding the guides for the bounding box to the guides object
+        var guides = {};
+        var activeBoxes = [];
+        var active = ''; // Adding the guides for the bounding box to the guides object
 
         guides.boundingBox = {
           x: calculateGuidePositions(boundingBox, 'x').map(function (value) {
@@ -1640,12 +1642,37 @@ function (_Component) {
             x: calculateGuidePositions(dimensions, 'x'),
             y: calculateGuidePositions(dimensions, 'y')
           };
+
+          if (dimensions.active) {
+            activeBoxes.push("box".concat(index));
+          }
         });
+
+        if (activeBoxes.length > 1) {
+          boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+          boxes['box-ms'].type = 'group';
+          boxes['box-ms'].zIndex = 11;
+          var selections = [];
+
+          for (var box in boxes) {
+            if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+              selections.push(boxes[box]);
+            }
+          }
+
+          boxes['box-ms'].selections = selections;
+          active = 'box-ms';
+        } else if (activeBoxes.length === 1) {
+          active = activeBoxes[0];
+        }
+
         document.addEventListener('click', this.unSelectBox);
         this.setState({
           boundingBox: boundingBox,
           boxes: boxes,
-          guides: guides
+          guides: guides,
+          activeBoxes: activeBoxes,
+          active: active
         });
       }
     }

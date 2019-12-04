@@ -42,6 +42,8 @@ class AlignmentGuides extends Component {
 			const boundingBox = this.boundingBox.current.getBoundingClientRect().toJSON();
 			const boxes = {};
 			const guides = {};
+			const activeBoxes = [];
+			let active = '';
 
 			// Adding the guides for the bounding box to the guides object
 			guides.boundingBox = {
@@ -55,14 +57,36 @@ class AlignmentGuides extends Component {
 					x: calculateGuidePositions(dimensions, 'x'),
 					y: calculateGuidePositions(dimensions, 'y')
 				};
+				if (dimensions.active) {
+					activeBoxes.push(`box${index}`);
+				}
 			});
+
+			if (activeBoxes.length > 1) {
+				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+				boxes['box-ms'].type = 'group';
+				boxes['box-ms'].zIndex = 11;
+				const selections = [];
+				for (let box in boxes) {
+					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+						selections.push(boxes[box]);
+					}
+				}
+
+				boxes['box-ms'].selections = selections;
+				active = 'box-ms';
+			} else if (activeBoxes.length === 1) {
+				active = activeBoxes[0];
+			}
 
 			document.addEventListener('click', this.unSelectBox);
 
 			this.setState({
 				boundingBox,
 				boxes,
-				guides
+				guides,
+				activeBoxes,
+				active
 			});
 		}
 	}
