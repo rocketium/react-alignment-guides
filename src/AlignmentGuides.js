@@ -52,14 +52,13 @@ class AlignmentGuides extends Component {
 			};
 
 			this.props.boxes.forEach((dimensions, index) => {
-				const id = dimensions.id || `box${index}`;
-				boxes[id] = dimensions;
-				guides[id] = {
+				boxes[`box${index}`] = dimensions;
+				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
 					y: calculateGuidePositions(dimensions, 'y')
 				};
 				if (dimensions.active) {
-					activeBoxes.push(id);
+					activeBoxes.push(`box${index}`);
 				}
 			});
 
@@ -103,7 +102,7 @@ class AlignmentGuides extends Component {
 	selectBox(e) {
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-		if (e.target.id.indexOf('box') >= 0 || e.target.id.indexOf('Box') >= 0) {
+		if (e.target.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -113,7 +112,6 @@ class AlignmentGuides extends Component {
 				width: boxDimensions.width,
 				height: boxDimensions.height,
 				node: e.target,
-				id: e.target.id,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
 			if (e.shiftKey || this.state.active === 'box-ms') {
@@ -153,7 +151,7 @@ class AlignmentGuides extends Component {
 				});
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
-		} else if (e.target.parentNode.id.indexOf('box') >= 0 || e.target.parentNode.id.indexOf('Box') >= 0) {
+		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 			const data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -163,7 +161,6 @@ class AlignmentGuides extends Component {
 				width: boxDimensions.width,
 				height: boxDimensions.height,
 				node: e.target.parentNode,
-				id: e.target.parentNode.id,
 				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
 			this.setState({
@@ -174,10 +171,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		if (
-			(e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) ||
-			(e.target && e.target.id.indexOf('Box') === -1 && e.target.parentNode.id.indexOf('Box') === -1)
-		) {
+		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
 			const { boxes } = this.state;
 			delete boxes['box-ms'];
 			this.setState({

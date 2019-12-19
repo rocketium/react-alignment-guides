@@ -971,7 +971,7 @@ function (_PureComponent) {
     value: function onDragStart(e) {
       var _this2 = this;
 
-      if ((this.props.position.drag || this.props.position.drag === undefined) && (e.target.id.indexOf('box') !== -1 || e.target.id.indexOf('Box') !== -1)) {
+      if ((this.props.position.drag || this.props.position.drag === undefined) && e.target.id.indexOf('box') !== -1) {
         // Allow drag only if drag property for the box is true or undefined
         e.stopPropagation();
         var target = this.box.current;
@@ -987,8 +987,7 @@ function (_PureComponent) {
           left: startingPosition.x - boundingBoxPosition.x,
           width: startingPosition.width,
           height: startingPosition.height,
-          node: target,
-          id: target.id
+          node: target
         };
 
         if (position.rotateAngle !== 0) {
@@ -999,8 +998,7 @@ function (_PureComponent) {
             left: startingPosition.x,
             width: startingPosition.width,
             height: startingPosition.height,
-            node: target,
-            id: target.id
+            node: target
           };
         } // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 
@@ -1036,8 +1034,7 @@ function (_PureComponent) {
             height: _this2.props.position.height,
             x: left,
             y: top,
-            node: _this2.box.current,
-            id: _this2.box.current.id
+            node: _this2.box.current
           };
           data = {
             x: currentPosition.left,
@@ -1047,7 +1044,6 @@ function (_PureComponent) {
             width: _this2.props.position.width,
             height: _this2.props.position.height,
             node: _this2.box.current,
-            id: _this2.box.current.id,
             deltaX: currentPosition.left - startingPosition.left,
             deltaY: currentPosition.top - startingPosition.top
           };
@@ -1083,7 +1079,6 @@ function (_PureComponent) {
       if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
         var data = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           left: position.left + 1,
           x: position.x + 1
         });
@@ -1091,7 +1086,6 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
         var _data = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           left: position.left + 10,
           x: position.x + 10
         });
@@ -1100,7 +1094,6 @@ function (_PureComponent) {
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
         var _data2 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           left: position.left - 1,
           x: position.x - 1
         });
@@ -1109,7 +1102,6 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
         var _data3 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           left: position.left - 10,
           x: position.x - 10
         });
@@ -1118,7 +1110,6 @@ function (_PureComponent) {
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
         var _data4 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           top: position.top - 1,
           y: position.y - 1
         });
@@ -1127,7 +1118,6 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
         var _data5 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           top: position.top - 10,
           y: position.y - 10
         });
@@ -1136,7 +1126,6 @@ function (_PureComponent) {
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
         var _data6 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           top: position.top + 1,
           y: position.y + 1
         });
@@ -1145,7 +1134,6 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
         var _data7 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           top: position.top + 10,
           y: position.y + 10
         });
@@ -1154,7 +1142,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
         var _data8 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           width: position.width + 1
         });
 
@@ -1162,7 +1149,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
         var _data9 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           width: position.width + 10
         });
 
@@ -1170,7 +1156,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
         var _data10 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           width: position.width - 1
         });
 
@@ -1178,7 +1163,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
         var _data11 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           width: position.width - 10
         });
 
@@ -1186,7 +1170,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
         var _data12 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           height: position.height + 1
         });
 
@@ -1194,7 +1177,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
         var _data13 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           height: position.height + 10
         });
 
@@ -1202,7 +1184,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
         var _data14 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           height: position.height - 1
         });
 
@@ -1210,7 +1191,6 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
         var _data15 = Object.assign({}, position, {
           node: this.box.current,
-          id: this.box.current.id,
           height: position.height - 10
         });
 
@@ -1262,8 +1242,7 @@ function (_PureComponent) {
           y: startingDimensions.top + boundingBoxPosition.y,
           left: startingDimensions.left + boundingBoxPosition.x,
           top: startingDimensions.top + boundingBoxPosition.y,
-          node: this.box.current,
-          id: this.box.current.id
+          node: this.box.current
         }; // if (rotateAngle !== 0) {
         // 	data = {
         // 		width: startingDimensions.width,
@@ -1318,8 +1297,7 @@ function (_PureComponent) {
             left: tempPosition.left,
             top: tempPosition.top,
             rotateAngle: rotateAngle,
-            node: _this3.box.current,
-            id: _this3.box.current.id
+            node: _this3.box.current
           }; // if (rotateAngle !== 0) {
           // 	data = {
           // 		width: tempPosition.width,
@@ -1390,8 +1368,7 @@ function (_PureComponent) {
           width: start.width,
           height: start.height,
           rotateAngle: angle,
-          node: target,
-          id: target.id
+          node: target
         };
         var newCoordinates = getNewCoordinates(data);
         this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
@@ -1660,15 +1637,14 @@ function (_Component) {
           })
         };
         this.props.boxes.forEach(function (dimensions, index) {
-          var id = dimensions.id || "box".concat(index);
-          boxes[id] = dimensions;
-          guides[id] = {
+          boxes["box".concat(index)] = dimensions;
+          guides["box".concat(index)] = {
             x: calculateGuidePositions(dimensions, 'x'),
             y: calculateGuidePositions(dimensions, 'y')
           };
 
           if (dimensions.active) {
-            activeBoxes.push(id);
+            activeBoxes.push("box".concat(index));
           }
         });
 
@@ -1716,7 +1692,7 @@ function (_Component) {
       var boundingBox = this.getBoundingBoxElement();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 
-      if (e.target.id.indexOf('box') >= 0 || e.target.id.indexOf('Box') >= 0) {
+      if (e.target.id.indexOf('box') >= 0) {
         var boxDimensions = e.target.getBoundingClientRect().toJSON();
         var data = {
           x: boxDimensions.x - boundingBoxPosition.x,
@@ -1726,7 +1702,6 @@ function (_Component) {
           width: boxDimensions.width,
           height: boxDimensions.height,
           node: e.target,
-          id: e.target.id,
           metadata: this.state.boxes[e.target.id].metadata
         };
 
@@ -1773,7 +1748,7 @@ function (_Component) {
         }
 
         this.props.onSelect && this.props.onSelect(e, data);
-      } else if (e.target.parentNode.id.indexOf('box') >= 0 || e.target.parentNode.id.indexOf('Box') >= 0) {
+      } else if (e.target.parentNode.id.indexOf('box') >= 0) {
         var _boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 
         var _data = {
@@ -1784,7 +1759,6 @@ function (_Component) {
           width: _boxDimensions.width,
           height: _boxDimensions.height,
           node: e.target.parentNode,
-          id: e.target.parentNode.id,
           metadata: this.state.boxes[e.target.parentNode.id].metadata
         };
         this.setState({
@@ -1796,7 +1770,7 @@ function (_Component) {
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1 || e.target && e.target.id.indexOf('Box') === -1 && e.target.parentNode.id.indexOf('Box') === -1) {
+      if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
         var boxes = this.state.boxes;
         delete boxes['box-ms'];
         this.setState({
