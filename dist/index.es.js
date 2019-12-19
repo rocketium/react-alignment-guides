@@ -971,7 +971,7 @@ function (_PureComponent) {
     value: function onDragStart(e) {
       var _this2 = this;
 
-      if ((this.props.position.drag || this.props.position.drag === undefined) && e.target.id.indexOf('box') !== -1) {
+      if ((this.props.position.drag || this.props.position.drag === undefined) && (e.target.id.indexOf('box') !== -1 || e.target.id.indexOf('Box') !== -1)) {
         // Allow drag only if drag property for the box is true or undefined
         e.stopPropagation();
         var target = this.box.current;
@@ -1660,14 +1660,15 @@ function (_Component) {
           })
         };
         this.props.boxes.forEach(function (dimensions, index) {
-          boxes["box".concat(index)] = dimensions;
-          guides["box".concat(index)] = {
+          var id = dimensions.id || "box".concat(index);
+          boxes[id] = dimensions;
+          guides[id] = {
             x: calculateGuidePositions(dimensions, 'x'),
             y: calculateGuidePositions(dimensions, 'y')
           };
 
           if (dimensions.active) {
-            activeBoxes.push("box".concat(index));
+            activeBoxes.push(id);
           }
         });
 
@@ -1715,7 +1716,7 @@ function (_Component) {
       var boundingBox = this.getBoundingBoxElement();
       var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 
-      if (e.target.id.indexOf('box') >= 0) {
+      if (e.target.id.indexOf('box') >= 0 || e.target.id.indexOf('Box') >= 0) {
         var boxDimensions = e.target.getBoundingClientRect().toJSON();
         var data = {
           x: boxDimensions.x - boundingBoxPosition.x,
@@ -1772,7 +1773,7 @@ function (_Component) {
         }
 
         this.props.onSelect && this.props.onSelect(e, data);
-      } else if (e.target.parentNode.id.indexOf('box') >= 0) {
+      } else if (e.target.parentNode.id.indexOf('box') >= 0 || e.target.parentNode.id.indexOf('Box') >= 0) {
         var _boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 
         var _data = {
@@ -1795,7 +1796,7 @@ function (_Component) {
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+      if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1 || e.target && e.target.id.indexOf('Box') === -1 && e.target.parentNode.id.indexOf('Box') === -1) {
         var boxes = this.state.boxes;
         delete boxes['box-ms'];
         this.setState({

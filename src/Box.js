@@ -40,7 +40,7 @@ class Box extends PureComponent {
 	}
 
 	onDragStart(e) {
-		if ((this.props.position.drag || this.props.position.drag === undefined) && e.target.id.indexOf('box') !== -1) { // Allow drag only if drag property for the box is true or undefined
+		if ((this.props.position.drag || this.props.position.drag === undefined) && (e.target.id.indexOf('box') !== -1 || e.target.id.indexOf('Box') !== -1)) { // Allow drag only if drag property for the box is true or undefined
 			e.stopPropagation();
 			const target = this.box.current;
 			const boundingBox = this.props.getBoundingBoxElement();
