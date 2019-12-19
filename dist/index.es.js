@@ -1254,9 +1254,15 @@ function (_PureComponent) {
         // 		node: this.box.current
         // 	};
         // }
+        // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
+
+        if (this.props.position.type) {
+          data.type = this.props.position.type;
+        }
 
         this.props.onResizeStart && this.props.onResizeStart(e, data);
         var didResizeHappen = false;
+        var startingPosition = Object.assign({}, data);
 
         var onResize = function onResize(e) {
           var clientX = e.clientX,
@@ -1316,8 +1322,17 @@ function (_PureComponent) {
           var currentPosition = _this3.props.boundToParent ? calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) : Object.assign({}, data);
           data = Object.assign({}, data, currentPosition, {
             x: currentPosition.left,
-            y: currentPosition.top
+            y: currentPosition.top,
+            deltaX: currentPosition.left - startingPosition.left,
+            deltaY: currentPosition.top - startingPosition.top,
+            deltaW: currentPosition.width - startingPosition.width,
+            deltaH: currentPosition.height - startingPosition.height
           });
+
+          if (_this3.props.position.type) {
+            data.type = _this3.props.position.type;
+          }
+
           _this3.props.onResize && _this3.props.onResize(e, data);
         };
 
@@ -1796,7 +1811,7 @@ function (_Component) {
         newData.metadata = this.state.boxes[data.node.id].metadata;
       }
 
-      this.props.onDragStart && this.props.onDragStart(e, newData);
+      this.props.onDragStart && this.props.onDragStart(e, newData); // Update starting positions so we can use it to update when group resize happens
 
       if (data.type && data.type === 'group') {
         this.startingPositions = {};
@@ -1947,6 +1962,8 @@ function (_Component) {
   }, {
     key: "resizeStartHandler",
     value: function resizeStartHandler(e, data) {
+      var _this5 = this;
+
       this.setState({
         active: data.node.id,
         resizing: true
@@ -1957,11 +1974,20 @@ function (_Component) {
         newData.metadata = this.state.boxes[data.node.id].metadata;
       }
 
-      this.props.onResizeStart && this.props.onResizeStart(e, newData);
+      this.props.onResizeStart && this.props.onResizeStart(e, newData); // Update starting positions so we can use it to update when group resize happens
+
+      if (data.type && data.type === 'group') {
+        this.startingPositions = {};
+        this.state.activeBoxes.forEach(function (box) {
+          _this5.startingPositions[box] = _this5.state.boxes[box];
+        });
+      }
     }
   }, {
     key: "resizeHandler",
     value: function resizeHandler(e, data) {
+      var _this6 = this;
+
       if (this.state.resizing) {
         var newData = Object.assign({}, data);
 
@@ -1972,18 +1998,62 @@ function (_Component) {
         this.props.onResize && this.props.onResize(e, newData);
       }
 
-      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
-        x: data.x,
-        y: data.y,
-        left: data.left,
-        top: data.top,
-        width: data.width,
-        height: data.height
-      })));
-      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
-        x: calculateGuidePositions(boxes[data.node.id], 'x'),
-        y: calculateGuidePositions(boxes[data.node.id], 'y')
-      })));
+      var boxes = null;
+      var guides = null;
+
+      if (data.type && data.type === 'group') {
+        boxes = {};
+        var boundingBox = this.getBoundingBoxElement();
+        var boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
+
+        for (var box in this.state.boxes) {
+          if (this.state.boxes.hasOwnProperty(box)) {
+            if (this.state.activeBoxes.includes(box)) {
+              // Adding bounding box's starting position
+              // This is because it's added only to the group's box and not the individual members of the group
+              boxes[box] = Object.assign({}, this.state.boxes[box], {
+                x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+                y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+                left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+                top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+                width: this.startingPositions[box].width + data.deltaW,
+                height: this.startingPositions[box].height + data.deltaH
+              });
+            } else if (box === 'box-ms') {
+              boxes[box] = Object.assign({}, data);
+              delete boxes[box].deltaX;
+              delete boxes[box].deltaY;
+              delete boxes[box].deltaW;
+              delete boxes[box].deltaH;
+            } else {
+              boxes[box] = this.state.boxes[box];
+            }
+          }
+        }
+
+        guides = Object.keys(this.state.guides).map(function (guide) {
+          if (_this6.state.activeBoxes.includes(guide)) {
+            return Object.assign({}, _this6.state.guides[guide], {
+              x: calculateGuidePositions(boxes[guide], 'x'),
+              y: calculateGuidePositions(boxes[guide], 'y')
+            });
+          }
+        });
+      } else {
+        boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+          x: data.x,
+          y: data.y,
+          left: data.left,
+          top: data.top,
+          width: data.width,
+          height: data.height
+        })));
+        guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+          x: calculateGuidePositions(boxes[data.node.id], 'x'),
+          y: calculateGuidePositions(boxes[data.node.id], 'y')
+        })));
+      }
+
       this.setState({
         boxes: boxes,
         guides: guides
@@ -1992,11 +2062,19 @@ function (_Component) {
   }, {
     key: "resizeEndHandler",
     value: function resizeEndHandler(e, data) {
+      var _this7 = this;
+
       if (this.state.resizing) {
         var newData = Object.assign({}, data);
 
         if (this.state.boxes[this.state.active].metadata) {
           newData.metadata = this.state.boxes[this.state.active].metadata;
+        }
+
+        if (data.type && data.type === 'group') {
+          newData.selections = this.state.activeBoxes.map(function (box) {
+            return Object.assign({}, _this7.state.boxes[box]);
+          });
         }
 
         this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
@@ -2066,7 +2144,7 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this5 = this;
+      var _this8 = this;
 
       var _this$state2 = this.state,
           active = _this$state2.active,
@@ -2079,28 +2157,28 @@ function (_Component) {
         var position = boxes[box];
         var id = boxes[box].id || box;
         var isSelected = active === id || activeBoxes.includes(id);
-        return React.createElement(Box, _extends({}, _this5.props, {
+        return React.createElement(Box, _extends({}, _this8.props, {
           areMultipleBoxesSelected: areMultipleBoxesSelected,
-          boundingBox: _this5.state.boundingBox,
-          dragging: _this5.state.dragging,
-          getBoundingBoxElement: _this5.getBoundingBoxElement,
+          boundingBox: _this8.state.boundingBox,
+          dragging: _this8.state.dragging,
+          getBoundingBoxElement: _this8.getBoundingBoxElement,
           id: id,
           isSelected: isSelected,
           key: id,
-          onDragStart: _this5.dragStartHandler,
-          onDrag: _this5.dragHandler,
-          onDragEnd: _this5.dragEndHandler,
-          onKeyUp: _this5.keyUpHandler,
-          onResizeStart: _this5.resizeStartHandler,
-          onResize: _this5.resizeHandler,
-          onResizeEnd: _this5.resizeEndHandler,
-          onRotateStart: _this5.rotateStartHandler,
-          onRotate: _this5.rotateHandler,
-          onRotateEnd: _this5.rotateEndHandler,
+          onDragStart: _this8.dragStartHandler,
+          onDrag: _this8.dragHandler,
+          onDragEnd: _this8.dragEndHandler,
+          onKeyUp: _this8.keyUpHandler,
+          onResizeStart: _this8.resizeStartHandler,
+          onResize: _this8.resizeHandler,
+          onResizeEnd: _this8.resizeEndHandler,
+          onRotateStart: _this8.rotateStartHandler,
+          onRotate: _this8.rotateHandler,
+          onRotateEnd: _this8.rotateEndHandler,
           position: position,
-          resizing: _this5.state.resizing,
-          rotating: _this5.state.rotating,
-          selectBox: _this5.selectBox
+          resizing: _this8.state.resizing,
+          rotating: _this8.state.rotating,
+          selectBox: _this8.selectBox
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -2108,40 +2186,56 @@ function (_Component) {
       // 3. A box aligns vertically or horizontally with the bounding box
       // TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
 
-      var xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
-        var xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.x && _this5.state.match.x.intersection && _this5.state.match.x.intersection === position) {
-            return React.createElement("div", {
-              key: "".concat(position, "-").concat(index),
-              className: guideClassNames,
-              style: {
-                left: position
+      var xAxisGuides = null;
+      var yAxisGuides = null;
+
+      if (guides) {
+        xAxisGuides = Object.keys(guides).reduce(function (result, box) {
+          var guideClassNames = _this8.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+          var xAxisGuidesForCurrentBox = null;
+
+          if (guides[box] && guides[box].x) {
+            xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
+              if (_this8.state.active && _this8.state.active === box && _this8.state.match && _this8.state.match.x && _this8.state.match.x.intersection && _this8.state.match.x.intersection === position) {
+                return React.createElement("div", {
+                  key: "".concat(position, "-").concat(index),
+                  className: guideClassNames,
+                  style: {
+                    left: position
+                  }
+                });
+              } else {
+                return null;
               }
             });
-          } else {
-            return null;
           }
-        });
-        return result.concat(xAxisGuidesForCurrentBox);
-      }, []);
-      var yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-        var guideClassNames = _this5.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
-        var yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-          if (_this5.state.active && _this5.state.active === box && _this5.state.match && _this5.state.match.y && _this5.state.match.y.intersection && _this5.state.match.y.intersection === position) {
-            return React.createElement("div", {
-              key: "".concat(position, "-").concat(index),
-              className: guideClassNames,
-              style: {
-                top: position
+
+          return result.concat(xAxisGuidesForCurrentBox);
+        }, []);
+        yAxisGuides = Object.keys(guides).reduce(function (result, box) {
+          var guideClassNames = _this8.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+          var yAxisGuidesForCurrentBox = null;
+
+          if (guides[box] && guides[box].y) {
+            yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
+              if (_this8.state.active && _this8.state.active === box && _this8.state.match && _this8.state.match.y && _this8.state.match.y.intersection && _this8.state.match.y.intersection === position) {
+                return React.createElement("div", {
+                  key: "".concat(position, "-").concat(index),
+                  className: guideClassNames,
+                  style: {
+                    top: position
+                  }
+                });
+              } else {
+                return null;
               }
             });
-          } else {
-            return null;
           }
-        });
-        return result.concat(yAxisGuidesForCurrentBox);
-      }, []);
+
+          return result.concat(yAxisGuidesForCurrentBox);
+        }, []);
+      }
+
       return React.createElement("div", {
         ref: this.boundingBox,
         className: "".concat(styles.boundingBox, " ").concat(this.props.className),

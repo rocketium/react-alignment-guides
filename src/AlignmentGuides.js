@@ -1,7 +1,12 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Box from './Box';
-import { calculateGuidePositions, getMultipleSelectionCoordinates, proximityListener } from './utils/helpers'
+import {
+	calculateGuidePositions,
+	getMultipleSelectionCoordinates,
+	getOffsetCoordinates,
+	proximityListener,
+} from './utils/helpers'
 import styles from './styles.scss';
 
 class AlignmentGuides extends Component {
@@ -195,6 +200,7 @@ class AlignmentGuides extends Component {
 
 		this.props.onDragStart && this.props.onDragStart(e, newData);
 
+		// Update starting positions so we can use it to update when group resize happens
 		if (data.type && data.type === 'group') {
 			this.startingPositions = {};
 			this.state.activeBoxes.forEach(box => {
@@ -346,6 +352,14 @@ class AlignmentGuides extends Component {
 		}
 
 		this.props.onResizeStart && this.props.onResizeStart(e, newData);
+
+		// Update starting positions so we can use it to update when group resize happens
+		if (data.type && data.type === 'group') {
+			this.startingPositions = {};
+			this.state.activeBoxes.forEach(box => {
+				this.startingPositions[box] = this.state.boxes[box];
+			});
+		}
 	}
 
 	resizeHandler(e, data) {
@@ -358,22 +372,63 @@ class AlignmentGuides extends Component {
 			this.props.onResize && this.props.onResize(e, newData);
 		}
 
-		const boxes = Object.assign({}, this.state.boxes, {
-			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-				x: data.x,
-				y: data.y,
-				left: data.left,
-				top: data.top,
-				width: data.width,
-				height: data.height
-			})
-		});
-		const guides = Object.assign({}, this.state.guides, {
-			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-				x: calculateGuidePositions(boxes[data.node.id], 'x'),
-				y: calculateGuidePositions(boxes[data.node.id], 'y')
-			})
-		});
+		let boxes = null;
+		let guides = null;
+		if (data.type && data.type === 'group') {
+			boxes = {};
+			const boundingBox = this.getBoundingBoxElement();
+			const boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
+			for (let box in this.state.boxes) {
+				if (this.state.boxes.hasOwnProperty(box)) {
+					if (this.state.activeBoxes.includes(box)) {
+						// Adding bounding box's starting position
+						// This is because it's added only to the group's box and not the individual members of the group
+						boxes[box] = Object.assign({}, this.state.boxes[box], {
+							x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+							y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+							left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+							top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+							width: this.startingPositions[box].width + data.deltaW,
+							height: this.startingPositions[box].height + data.deltaH
+						});
+					} else if (box === 'box-ms') {
+						boxes[box] = Object.assign({}, data);
+						delete boxes[box].deltaX;
+						delete boxes[box].deltaY;
+						delete boxes[box].deltaW;
+						delete boxes[box].deltaH;
+					} else {
+						boxes[box] = this.state.boxes[box];
+					}
+				}
+			}
+
+			guides = Object.keys(this.state.guides).map(guide => {
+				if (this.state.activeBoxes.includes(guide)) {
+					return Object.assign({}, this.state.guides[guide], {
+						x: calculateGuidePositions(boxes[guide], 'x'),
+						y: calculateGuidePositions(boxes[guide], 'y')
+					});
+				}
+			});
+		} else {
+			boxes = Object.assign({}, this.state.boxes, {
+				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+					x: data.x,
+					y: data.y,
+					left: data.left,
+					top: data.top,
+					width: data.width,
+					height: data.height
+				})
+			});
+			guides = Object.assign({}, this.state.guides, {
+				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+					x: calculateGuidePositions(boxes[data.node.id], 'x'),
+					y: calculateGuidePositions(boxes[data.node.id], 'y')
+				})
+			});
+		}
 
 		this.setState({
 			boxes,
@@ -386,6 +441,12 @@ class AlignmentGuides extends Component {
 			let newData = Object.assign({}, data);
 			if (this.state.boxes[this.state.active].metadata) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
+			}
+
+			if (data.type && data.type === 'group') {
+				newData.selections = this.state.activeBoxes.map(box => {
+					return Object.assign({}, this.state.boxes[box]);
+				});
 			}
 
 			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
@@ -500,45 +561,55 @@ class AlignmentGuides extends Component {
 		// 2. An edge of a box touches any of the edges of another box
 		// 3. A box aligns vertically or horizontally with the bounding box
 		// TODO: Use a functional component to generate the guides for both axis instead of duplicating code.
-		const xAxisGuides = Object.keys(guides).reduce((result, box) => {
-			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.xAxis} ${styles.active}` : `${styles.guide} ${styles.xAxis}`;
-			const xAxisGuidesForCurrentBox = guides[box].x.map((position, index) => {
-				if (
-					this.state.active &&
-					this.state.active === box &&
-					this.state.match &&
-					this.state.match.x &&
-					this.state.match.x.intersection &&
-					this.state.match.x.intersection === position
-				) {
-					return <div key={`${position}-${index}`} className={guideClassNames} style={{ left: position }} />;
-				} else {
-					return null;
+		let xAxisGuides = null;
+		let yAxisGuides = null;
+		if (guides) {
+			xAxisGuides = Object.keys(guides).reduce((result, box) => {
+				const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.xAxis} ${styles.active}` : `${styles.guide} ${styles.xAxis}`;
+				let xAxisGuidesForCurrentBox = null;
+				if (guides[box] && guides[box].x) {
+					xAxisGuidesForCurrentBox = guides[box].x.map((position, index) => {
+						if (
+							this.state.active &&
+							this.state.active === box &&
+							this.state.match &&
+							this.state.match.x &&
+							this.state.match.x.intersection &&
+							this.state.match.x.intersection === position
+						) {
+							return <div key={`${position}-${index}`} className={guideClassNames} style={{ left: position }} />;
+						} else {
+							return null;
+						}
+					});
 				}
-			});
 
-			return result.concat(xAxisGuidesForCurrentBox);
-		}, []);
+				return result.concat(xAxisGuidesForCurrentBox);
+			}, []);
 
-		const yAxisGuides = Object.keys(guides).reduce((result, box) => {
-			const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.yAxis} ${styles.active}` : `${styles.guide} ${styles.yAxis}`;
-			const yAxisGuidesForCurrentBox = guides[box].y.map((position, index) => {
-				if (
-					this.state.active &&
-					this.state.active === box &&
-					this.state.match &&
-					this.state.match.y &&
-					this.state.match.y.intersection &&
-					this.state.match.y.intersection === position
-				) {
-					return <div key={`${position}-${index}`} className={guideClassNames} style={{ top: position }} />
-				} else {
-					return null;
+			yAxisGuides = Object.keys(guides).reduce((result, box) => {
+				const guideClassNames = this.state.guidesActive ? `${styles.guide} ${styles.yAxis} ${styles.active}` : `${styles.guide} ${styles.yAxis}`;
+				let yAxisGuidesForCurrentBox = null;
+				if (guides[box] && guides[box].y) {
+					yAxisGuidesForCurrentBox = guides[box].y.map((position, index) => {
+						if (
+							this.state.active &&
+							this.state.active === box &&
+							this.state.match &&
+							this.state.match.y &&
+							this.state.match.y.intersection &&
+							this.state.match.y.intersection === position
+						) {
+							return <div key={`${position}-${index}`} className={guideClassNames} style={{ top: position }} />
+						} else {
+							return null;
+						}
+					});
 				}
-			});
 
-			return result.concat(yAxisGuidesForCurrentBox);
-		}, []);
+				return result.concat(yAxisGuidesForCurrentBox);
+			}, []);
+		}
 
 		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className}`} style={this.props.style}>
 			{draggableBoxes}

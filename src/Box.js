@@ -279,8 +279,14 @@ class Box extends PureComponent {
 			// 	};
 			// }
 
+			// if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
+			if (this.props.position.type) {
+				data.type = this.props.position.type;
+			}
+
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			let didResizeHappen = false;
+			const startingPosition = Object.assign({}, data);
 			const onResize = (e) => {
 				const { clientX, clientY } = e;
 				const deltaX = clientX - startX;
@@ -330,9 +336,16 @@ class Box extends PureComponent {
 
 				data = Object.assign({}, data, currentPosition, {
 					x: currentPosition.left,
-					y: currentPosition.top
+					y: currentPosition.top,
+					deltaX: currentPosition.left - startingPosition.left,
+					deltaY: currentPosition.top - startingPosition.top,
+					deltaW: currentPosition.width - startingPosition.width,
+					deltaH: currentPosition.height - startingPosition.height
 				});
 
+				if (this.props.position.type) {
+					data.type = this.props.position.type;
+				}
 				this.props.onResize && this.props.onResize(e, data);
 			};
 
