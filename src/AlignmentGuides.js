@@ -112,6 +112,7 @@ class AlignmentGuides extends Component {
 				width: boxDimensions.width,
 				height: boxDimensions.height,
 				node: e.target,
+				id: e.target.id,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
 			if (e.shiftKey || this.state.active === 'box-ms') {
@@ -161,6 +162,7 @@ class AlignmentGuides extends Component {
 				width: boxDimensions.width,
 				height: boxDimensions.height,
 				node: e.target.parentNode,
+				id: e.target.parentNode.id,
 				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
 			this.setState({

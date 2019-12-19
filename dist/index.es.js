@@ -987,7 +987,8 @@ function (_PureComponent) {
           left: startingPosition.x - boundingBoxPosition.x,
           width: startingPosition.width,
           height: startingPosition.height,
-          node: target
+          node: target,
+          id: target.id
         };
 
         if (position.rotateAngle !== 0) {
@@ -998,7 +999,8 @@ function (_PureComponent) {
             left: startingPosition.x,
             width: startingPosition.width,
             height: startingPosition.height,
-            node: target
+            node: target,
+            id: target.id
           };
         } // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 
@@ -1034,7 +1036,8 @@ function (_PureComponent) {
             height: _this2.props.position.height,
             x: left,
             y: top,
-            node: _this2.box.current
+            node: _this2.box.current,
+            id: _this2.box.current.id
           };
           data = {
             x: currentPosition.left,
@@ -1044,6 +1047,7 @@ function (_PureComponent) {
             width: _this2.props.position.width,
             height: _this2.props.position.height,
             node: _this2.box.current,
+            id: _this2.box.current.id,
             deltaX: currentPosition.left - startingPosition.left,
             deltaY: currentPosition.top - startingPosition.top
           };
@@ -1079,6 +1083,7 @@ function (_PureComponent) {
       if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
         var data = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           left: position.left + 1,
           x: position.x + 1
         });
@@ -1086,6 +1091,7 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
         var _data = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           left: position.left + 10,
           x: position.x + 10
         });
@@ -1094,6 +1100,7 @@ function (_PureComponent) {
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
         var _data2 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           left: position.left - 1,
           x: position.x - 1
         });
@@ -1102,6 +1109,7 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
         var _data3 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           left: position.left - 10,
           x: position.x - 10
         });
@@ -1110,6 +1118,7 @@ function (_PureComponent) {
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
         var _data4 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           top: position.top - 1,
           y: position.y - 1
         });
@@ -1118,6 +1127,7 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
         var _data5 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           top: position.top - 10,
           y: position.y - 10
         });
@@ -1126,6 +1136,7 @@ function (_PureComponent) {
       } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
         var _data6 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           top: position.top + 1,
           y: position.y + 1
         });
@@ -1134,6 +1145,7 @@ function (_PureComponent) {
       } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
         var _data7 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           top: position.top + 10,
           y: position.y + 10
         });
@@ -1142,6 +1154,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
         var _data8 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           width: position.width + 1
         });
 
@@ -1149,6 +1162,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
         var _data9 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           width: position.width + 10
         });
 
@@ -1156,6 +1170,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
         var _data10 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           width: position.width - 1
         });
 
@@ -1163,6 +1178,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
         var _data11 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           width: position.width - 10
         });
 
@@ -1170,6 +1186,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
         var _data12 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           height: position.height + 1
         });
 
@@ -1177,6 +1194,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
         var _data13 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           height: position.height + 10
         });
 
@@ -1184,6 +1202,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
         var _data14 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           height: position.height - 1
         });
 
@@ -1191,6 +1210,7 @@ function (_PureComponent) {
       } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
         var _data15 = Object.assign({}, position, {
           node: this.box.current,
+          id: this.box.current.id,
           height: position.height - 10
         });
 
@@ -1242,7 +1262,8 @@ function (_PureComponent) {
           y: startingDimensions.top + boundingBoxPosition.y,
           left: startingDimensions.left + boundingBoxPosition.x,
           top: startingDimensions.top + boundingBoxPosition.y,
-          node: this.box.current
+          node: this.box.current,
+          id: this.box.current.id
         }; // if (rotateAngle !== 0) {
         // 	data = {
         // 		width: startingDimensions.width,
@@ -1297,7 +1318,8 @@ function (_PureComponent) {
             left: tempPosition.left,
             top: tempPosition.top,
             rotateAngle: rotateAngle,
-            node: _this3.box.current
+            node: _this3.box.current,
+            id: _this3.box.current.id
           }; // if (rotateAngle !== 0) {
           // 	data = {
           // 		width: tempPosition.width,
@@ -1368,7 +1390,8 @@ function (_PureComponent) {
           width: start.width,
           height: start.height,
           rotateAngle: angle,
-          node: target
+          node: target,
+          id: target.id
         };
         var newCoordinates = getNewCoordinates(data);
         this.props.onRotateStart && this.props.onRotateStart(e, newCoordinates);
@@ -1702,6 +1725,7 @@ function (_Component) {
           width: boxDimensions.width,
           height: boxDimensions.height,
           node: e.target,
+          id: e.target.id,
           metadata: this.state.boxes[e.target.id].metadata
         };
 
@@ -1759,6 +1783,7 @@ function (_Component) {
           width: _boxDimensions.width,
           height: _boxDimensions.height,
           node: e.target.parentNode,
+          id: e.target.parentNode.id,
           metadata: this.state.boxes[e.target.parentNode.id].metadata
         };
         this.setState({

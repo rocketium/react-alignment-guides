@@ -56,7 +56,8 @@ class Box extends PureComponent {
 				left: startingPosition.x - boundingBoxPosition.x,
 				width: startingPosition.width,
 				height: startingPosition.height,
-				node: target
+				node: target,
+				id: target.id
 			};
 			if (position.rotateAngle !== 0) {
 				data = {
@@ -66,7 +67,8 @@ class Box extends PureComponent {
 					left: startingPosition.x,
 					width: startingPosition.width,
 					height: startingPosition.height,
-					node: target
+					node: target,
+					id: target.id
 				};
 			}
 			// if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
@@ -101,7 +103,8 @@ class Box extends PureComponent {
 						height: this.props.position.height,
 						x: left,
 						y: top,
-						node: this.box.current
+						node: this.box.current,
+						id: this.box.current.id
 					};
 				data = {
 					x: currentPosition.left,
@@ -111,6 +114,7 @@ class Box extends PureComponent {
 					width: this.props.position.width,
 					height: this.props.position.height,
 					node: this.box.current,
+					id: this.box.current.id,
 					deltaX: currentPosition.left - startingPosition.left,
 					deltaY: currentPosition.top - startingPosition.top
 				};
@@ -142,6 +146,7 @@ class Box extends PureComponent {
 		if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				left: position.left + 1,
 				x: position.x + 1
 			});
@@ -149,6 +154,7 @@ class Box extends PureComponent {
 		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				left: position.left + 10,
 				x: position.x + 10
 			});
@@ -156,6 +162,7 @@ class Box extends PureComponent {
 		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				left: position.left - 1,
 				x: position.x - 1
 			});
@@ -163,6 +170,7 @@ class Box extends PureComponent {
 		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				left: position.left - 10,
 				x: position.x - 10
 			});
@@ -170,6 +178,7 @@ class Box extends PureComponent {
 		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				top: position.top - 1,
 				y: position.y - 1
 			});
@@ -177,6 +186,7 @@ class Box extends PureComponent {
 		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				top: position.top - 10,
 				y: position.y - 10
 			});
@@ -184,6 +194,7 @@ class Box extends PureComponent {
 		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				top: position.top + 1,
 				y: position.y + 1
 			});
@@ -191,6 +202,7 @@ class Box extends PureComponent {
 		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				top: position.top + 10,
 				y: position.y + 10
 			});
@@ -198,48 +210,56 @@ class Box extends PureComponent {
 		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				width: position.width + 1
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				width: position.width + 10
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				width: position.width - 1
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				width: position.width - 10
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				height: position.height + 1
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				height: position.height + 10
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				height: position.height - 1
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
 			const data = Object.assign({}, position, {
 				node: this.box.current,
+				id: this.box.current.id,
 				height: position.height - 10
 			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
@@ -265,7 +285,8 @@ class Box extends PureComponent {
 				y: startingDimensions.top + boundingBoxPosition.y,
 				left: startingDimensions.left + boundingBoxPosition.x,
 				top: startingDimensions.top + boundingBoxPosition.y,
-				node: this.box.current
+				node: this.box.current,
+				id: this.box.current.id
 			};
 			// if (rotateAngle !== 0) {
 			// 	data = {
@@ -307,7 +328,8 @@ class Box extends PureComponent {
 					left: tempPosition.left,
 					top: tempPosition.top,
 					rotateAngle,
-					node: this.box.current
+					node: this.box.current,
+					id: this.box.current.id
 				};
 
 				// if (rotateAngle !== 0) {
@@ -379,7 +401,8 @@ class Box extends PureComponent {
 				width: start.width,
 				height: start.height,
 				rotateAngle: angle,
-				node: target
+				node: target,
+				id: target.id
 			};
 
 			const newCoordinates = getNewCoordinates(data);
