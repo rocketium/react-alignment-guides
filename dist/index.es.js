@@ -1776,9 +1776,49 @@ function (_Component) {
           node: e.target.parentNode,
           metadata: this.state.boxes[e.target.parentNode.id].metadata
         };
-        this.setState({
-          active: e.target.parentNode.id
-        });
+
+        if (e.shiftKey || this.state.active === 'box-ms') {
+          var _this$state2 = this.state,
+              _activeBoxes = _this$state2.activeBoxes,
+              _boxes = _this$state2.boxes;
+
+          if (_activeBoxes.includes(e.target.parentNode.id)) {
+            _activeBoxes = _activeBoxes.filter(function (activeBox) {
+              return activeBox !== e.target.parentNode.id;
+            });
+          } else {
+            _activeBoxes = [].concat(_toConsumableArray(_activeBoxes), [e.target.id]);
+          }
+
+          _boxes['box-ms'] = getMultipleSelectionCoordinates(_boxes, _activeBoxes);
+          _boxes['box-ms'].type = 'group';
+          _boxes['box-ms'].zIndex = 11;
+          var _selections = [];
+
+          for (var _box in _boxes) {
+            if (_boxes.hasOwnProperty(_box) && _activeBoxes.includes(_box)) {
+              _selections.push(_boxes[_box]);
+            }
+          }
+
+          _data = Object.assign({}, _boxes['box-ms'], {
+            metadata: {
+              type: 'group'
+            },
+            selections: _selections
+          });
+          this.setState({
+            active: 'box-ms',
+            activeBoxes: _activeBoxes,
+            boxes: _boxes
+          });
+        } else {
+          this.setState({
+            active: e.target.parentNode.id,
+            activeBoxes: [e.target.parentNode.id]
+          });
+        }
+
         this.props.onSelect && this.props.onSelect(e, _data);
       }
     }
@@ -1918,18 +1958,18 @@ function (_Component) {
             }
           }
 
-          var _boxes = Object.assign({}, _this3.state.boxes, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
+          var _boxes2 = Object.assign({}, _this3.state.boxes, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
             left: newActiveBoxLeft,
             top: newActiveBoxTop
           })));
 
           var _guides = Object.assign({}, _this3.state.guides, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
-            x: calculateGuidePositions(_boxes[_this3.state.active], 'x'),
-            y: calculateGuidePositions(_boxes[_this3.state.active], 'y')
+            x: calculateGuidePositions(_boxes2[_this3.state.active], 'x'),
+            y: calculateGuidePositions(_boxes2[_this3.state.active], 'y')
           })));
 
           _this3.setState({
-            boxes: _boxes,
+            boxes: _boxes2,
             guides: _guides,
             match: match
           });
@@ -2146,11 +2186,11 @@ function (_Component) {
     value: function render() {
       var _this8 = this;
 
-      var _this$state2 = this.state,
-          active = _this$state2.active,
-          boxes = _this$state2.boxes,
-          activeBoxes = _this$state2.activeBoxes,
-          guides = _this$state2.guides;
+      var _this$state3 = this.state,
+          active = _this$state3.active,
+          boxes = _this$state3.boxes,
+          activeBoxes = _this$state3.activeBoxes,
+          guides = _this$state3.guides;
       var areMultipleBoxesSelected = activeBoxes.length > 1; // Create the draggable boxes from the position data
 
       var draggableBoxes = Object.keys(boxes).map(function (box) {

@@ -158,7 +158,7 @@ class AlignmentGuides extends Component {
 			this.props.onSelect && this.props.onSelect(e, data);
 		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
-			const data = {
+			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
 				y: boxDimensions.y - boundingBoxPosition.y,
 				left: boxDimensions.left - boundingBoxPosition.x,
@@ -168,9 +168,42 @@ class AlignmentGuides extends Component {
 				node: e.target.parentNode,
 				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
-			this.setState({
-				active: e.target.parentNode.id
-			});
+			if (e.shiftKey || this.state.active === 'box-ms') {
+				let { activeBoxes, boxes } = this.state;
+				if (activeBoxes.includes(e.target.parentNode.id)) {
+					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.parentNode.id);
+				} else {
+					activeBoxes = [
+						...activeBoxes,
+						e.target.id
+					];
+				}
+				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+				boxes['box-ms'].type = 'group';
+				boxes['box-ms'].zIndex = 11;
+				const selections = [];
+				for (let box in boxes) {
+					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+						selections.push(boxes[box]);
+					}
+				}
+				data = Object.assign({}, boxes['box-ms'], {
+					metadata: { type: 'group' },
+					selections
+				});
+				this.setState({
+					active: 'box-ms',
+					activeBoxes,
+					boxes
+				});
+			} else {
+				this.setState({
+					active: e.target.parentNode.id,
+					activeBoxes: [
+						e.target.parentNode.id
+					]
+				});
+			}
 			this.props.onSelect && this.props.onSelect(e, data);
 		}
 	}
