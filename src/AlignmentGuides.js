@@ -119,7 +119,7 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			if (e.shiftKey || this.state.active === 'box-ms') {
+			if (e.shiftKey) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
 					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
@@ -148,11 +148,14 @@ class AlignmentGuides extends Component {
 					boxes
 				});
 			} else {
+				let { activeBoxes, boxes } = this.state;
+				delete boxes['box-ms'];
 				this.setState({
 					active: e.target.id,
 					activeBoxes: [
 						e.target.id
-					]
+					],
+					boxes
 				});
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
@@ -168,7 +171,7 @@ class AlignmentGuides extends Component {
 				node: e.target.parentNode,
 				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
-			if (e.shiftKey || this.state.active === 'box-ms') {
+			if (e.shiftKey) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.parentNode.id)) {
 					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.parentNode.id);
@@ -197,11 +200,14 @@ class AlignmentGuides extends Component {
 					boxes
 				});
 			} else {
+				let { boxes } = this.state;
+				delete boxes['box-ms'];
 				this.setState({
 					active: e.target.parentNode.id,
 					activeBoxes: [
 						e.target.parentNode.id
-					]
+					],
+					boxes
 				});
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
