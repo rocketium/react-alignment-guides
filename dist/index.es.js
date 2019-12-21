@@ -1720,7 +1720,7 @@ function (_Component) {
           metadata: this.state.boxes[e.target.id].metadata
         };
 
-        if (e.shiftKey || this.state.active === 'box-ms') {
+        if (e.shiftKey) {
           var _this$state = this.state,
               activeBoxes = _this$state.activeBoxes,
               boxes = _this$state.boxes;
@@ -1756,9 +1756,14 @@ function (_Component) {
             boxes: boxes
           });
         } else {
+          var _this$state2 = this.state,
+              _activeBoxes = _this$state2.activeBoxes,
+              _boxes = _this$state2.boxes;
+          delete _boxes['box-ms'];
           this.setState({
             active: e.target.id,
-            activeBoxes: [e.target.id]
+            activeBoxes: [e.target.id],
+            boxes: _boxes
           });
         }
 
@@ -1777,31 +1782,31 @@ function (_Component) {
           metadata: this.state.boxes[e.target.parentNode.id].metadata
         };
 
-        if (e.shiftKey || this.state.active === 'box-ms') {
-          var _this$state2 = this.state,
-              _activeBoxes = _this$state2.activeBoxes,
-              _boxes = _this$state2.boxes;
+        if (e.shiftKey) {
+          var _this$state3 = this.state,
+              _activeBoxes2 = _this$state3.activeBoxes,
+              _boxes2 = _this$state3.boxes;
 
-          if (_activeBoxes.includes(e.target.parentNode.id)) {
-            _activeBoxes = _activeBoxes.filter(function (activeBox) {
+          if (_activeBoxes2.includes(e.target.parentNode.id)) {
+            _activeBoxes2 = _activeBoxes2.filter(function (activeBox) {
               return activeBox !== e.target.parentNode.id;
             });
           } else {
-            _activeBoxes = [].concat(_toConsumableArray(_activeBoxes), [e.target.id]);
+            _activeBoxes2 = [].concat(_toConsumableArray(_activeBoxes2), [e.target.id]);
           }
 
-          _boxes['box-ms'] = getMultipleSelectionCoordinates(_boxes, _activeBoxes);
-          _boxes['box-ms'].type = 'group';
-          _boxes['box-ms'].zIndex = 11;
+          _boxes2['box-ms'] = getMultipleSelectionCoordinates(_boxes2, _activeBoxes2);
+          _boxes2['box-ms'].type = 'group';
+          _boxes2['box-ms'].zIndex = 11;
           var _selections = [];
 
-          for (var _box in _boxes) {
-            if (_boxes.hasOwnProperty(_box) && _activeBoxes.includes(_box)) {
-              _selections.push(_boxes[_box]);
+          for (var _box in _boxes2) {
+            if (_boxes2.hasOwnProperty(_box) && _activeBoxes2.includes(_box)) {
+              _selections.push(_boxes2[_box]);
             }
           }
 
-          _data = Object.assign({}, _boxes['box-ms'], {
+          _data = Object.assign({}, _boxes2['box-ms'], {
             metadata: {
               type: 'group'
             },
@@ -1809,13 +1814,16 @@ function (_Component) {
           });
           this.setState({
             active: 'box-ms',
-            activeBoxes: _activeBoxes,
-            boxes: _boxes
+            activeBoxes: _activeBoxes2,
+            boxes: _boxes2
           });
         } else {
+          var _boxes3 = this.state.boxes;
+          delete _boxes3['box-ms'];
           this.setState({
             active: e.target.parentNode.id,
-            activeBoxes: [e.target.parentNode.id]
+            activeBoxes: [e.target.parentNode.id],
+            boxes: _boxes3
           });
         }
 
@@ -1958,18 +1966,18 @@ function (_Component) {
             }
           }
 
-          var _boxes2 = Object.assign({}, _this3.state.boxes, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
+          var _boxes4 = Object.assign({}, _this3.state.boxes, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
             left: newActiveBoxLeft,
             top: newActiveBoxTop
           })));
 
           var _guides = Object.assign({}, _this3.state.guides, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
-            x: calculateGuidePositions(_boxes2[_this3.state.active], 'x'),
-            y: calculateGuidePositions(_boxes2[_this3.state.active], 'y')
+            x: calculateGuidePositions(_boxes4[_this3.state.active], 'x'),
+            y: calculateGuidePositions(_boxes4[_this3.state.active], 'y')
           })));
 
           _this3.setState({
-            boxes: _boxes2,
+            boxes: _boxes4,
             guides: _guides,
             match: match
           });
@@ -2186,11 +2194,11 @@ function (_Component) {
     value: function render() {
       var _this8 = this;
 
-      var _this$state3 = this.state,
-          active = _this$state3.active,
-          boxes = _this$state3.boxes,
-          activeBoxes = _this$state3.activeBoxes,
-          guides = _this$state3.guides;
+      var _this$state4 = this.state,
+          active = _this$state4.active,
+          boxes = _this$state4.boxes,
+          activeBoxes = _this$state4.activeBoxes,
+          guides = _this$state4.guides;
       var areMultipleBoxesSelected = activeBoxes.length > 1; // Create the draggable boxes from the position data
 
       var draggableBoxes = Object.keys(boxes).map(function (box) {
