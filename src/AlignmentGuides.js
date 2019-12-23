@@ -21,10 +21,12 @@ class AlignmentGuides extends Component {
 			dragging: false,
 			guides: {},
 			guidesActive: false,
+			isShiftKeyActive: false,
 			match: {},
 			resizing: false,
 			rotating: false
 		};
+		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
 		this.selectBox = this.selectBox.bind(this);
 		this.unSelectBox = this.unSelectBox.bind(this);
@@ -85,6 +87,8 @@ class AlignmentGuides extends Component {
 			}
 
 			document.addEventListener('click', this.unSelectBox);
+			document.addEventListener('keydown', this.setShiftKeyState);
+			document.addEventListener('keyup', this.setShiftKeyState);
 
 			this.setState({
 				boundingBox,
@@ -98,6 +102,14 @@ class AlignmentGuides extends Component {
 
 	componentWillUnmount() {
 		document.removeEventListener('click', this.unSelectBox);
+		document.removeEventListener('keydown', this.setShiftKeyState);
+		document.removeEventListener('keyup', this.setShiftKeyState);
+	}
+
+	setShiftKeyState(e) {
+		this.setState({
+			isShiftKeyActive: e.shiftKey
+		});
 	}
 
 	getBoundingBoxElement() {
@@ -577,6 +589,7 @@ class AlignmentGuides extends Component {
 				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
 				isSelected={isSelected}
+				isShiftKeyActive={this.state.isShiftKeyActive}
 				key={id}
 				onDragStart={this.dragStartHandler}
 				onDrag={this.dragHandler}

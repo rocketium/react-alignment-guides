@@ -903,8 +903,8 @@ function styleInject(css, ref) {
   }
 }
 
-var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    outline: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG,\n.styles_boxGroup__10v7H {\n  background-color: transparent;\n  outline: 2px solid #EB4B48 !important; }\n\n.styles_boxGroup__10v7H {\n  position: absolute;\n  background-color: transparent !important; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeCorners__3nhDk,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute; }\n\n.styles_resizeCorners__3nhDk {\n  z-index: 99; }\n\n.styles_resizeEdges__1A7d8 {\n  background-color: #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
-var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","boxGroup":"styles_boxGroup__10v7H","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeCorners":"styles_resizeCorners__3nhDk","rotateHandle":"styles_rotateHandle__26rVp","resizeEdges":"styles_resizeEdges__1A7d8","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
+var css = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    outline: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG,\n.styles_boxGroup__10v7H {\n  background-color: transparent;\n  outline: 2px solid #EB4B48 !important; }\n\n.styles_boxGroup__10v7H {\n  position: absolute;\n  background-color: transparent !important; }\n\n.styles_groupElement__1_x2s {\n  background-color: transparent;\n  outline: 2px solid rgba(235, 75, 72, 0.8) !important; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeCorners__3nhDk,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute;\n  pointer-events: all; }\n\n.styles_resizeCorners__3nhDk {\n  z-index: 99; }\n\n.styles_resizeEdges__1A7d8 {\n  background-color: #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
+var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","boxGroup":"styles_boxGroup__10v7H","groupElement":"styles_groupElement__1_x2s","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeCorners":"styles_resizeCorners__3nhDk","rotateHandle":"styles_rotateHandle__26rVp","resizeEdges":"styles_resizeEdges__1A7d8","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
 styleInject(css);
 
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
@@ -945,6 +945,8 @@ function (_PureComponent) {
     _this.box = React.createRef();
     _this.coordinates = React.createRef();
     _this.height = React.createRef();
+    _this.didDragHappen = false;
+    _this.didResizeHappen = false;
     _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
@@ -960,7 +962,12 @@ function (_PureComponent) {
   _createClass(Box, [{
     key: "selectBox",
     value: function selectBox(e) {
-      this.props.selectBox(e);
+      // To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
+      if (!this.didDragHappen && !this.didResizeHappen) {
+        this.didDragHappen = false;
+        this.didResizeHappen = false;
+        this.props.selectBox(e);
+      }
 
       if (this.box && this.box.current) {
         this.box.current.focus();
@@ -979,7 +986,6 @@ function (_PureComponent) {
         var position = this.props.position;
         var startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
         var boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-        var didDragHappen = false;
         var data = {
           x: startingPosition.x - boundingBoxPosition.x,
           y: startingPosition.y - boundingBoxPosition.y,
@@ -1000,8 +1006,9 @@ function (_PureComponent) {
             height: startingPosition.height,
             node: target
           };
-        } // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
+        }
 
+        this.didDragHappen = false; // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 
         if (this.props.position.type) {
           data.type = this.props.position.type;
@@ -1047,7 +1054,7 @@ function (_PureComponent) {
             deltaX: currentPosition.left - startingPosition.left,
             deltaY: currentPosition.top - startingPosition.top
           };
-          didDragHappen = true;
+          _this2.didDragHappen = true;
 
           if (_this2.props.position.type) {
             data.type = _this2.props.position.type;
@@ -1057,10 +1064,8 @@ function (_PureComponent) {
         };
 
         var onDragEnd = function onDragEnd(e) {
-          if (didDragHappen) {
+          if (_this2.didDragHappen) {
             _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
-          } else {
-            didDragHappen = false;
           }
 
           document.removeEventListener('mousemove', onDrag);
@@ -1254,14 +1259,14 @@ function (_PureComponent) {
         // 		node: this.box.current
         // 	};
         // }
-        // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
+
+        this.didResizeHappen = false; // if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 
         if (this.props.position.type) {
           data.type = this.props.position.type;
         }
 
         this.props.onResizeStart && this.props.onResizeStart(e, data);
-        var didResizeHappen = false;
         var startingPosition = Object.assign({}, data);
 
         var onResize = function onResize(e) {
@@ -1317,7 +1322,7 @@ function (_PureComponent) {
           // 	};
           // }
 
-          didResizeHappen = true; // Calculate the restrictions if resize goes out of bounds
+          _this3.didResizeHappen = true; // Calculate the restrictions if resize goes out of bounds
 
           var currentPosition = _this3.props.boundToParent ? calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) : Object.assign({}, data);
           data = Object.assign({}, data, currentPosition, {
@@ -1340,10 +1345,8 @@ function (_PureComponent) {
           onResize && document.removeEventListener('mousemove', onResize);
           onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
 
-          if (didResizeHappen) {
+          if (_this3.didResizeHappen) {
             _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
-          } else {
-            didResizeHappen = false;
           }
         };
 
@@ -1450,6 +1453,7 @@ function (_PureComponent) {
           boxStyle = _this$props.boxStyle,
           id = _this$props.id,
           isSelected = _this$props.isSelected,
+          isShiftKeyActive = _this$props.isShiftKeyActive,
           position = _this$props.position,
           resolution = _this$props.resolution;
 
@@ -1466,6 +1470,7 @@ function (_PureComponent) {
 
         var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
         boxClassNames = position.type === 'group' ? "".concat(boxClassNames, " ").concat(styles.boxGroup) : boxClassNames;
+        boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? "".concat(boxClassNames, " ").concat(styles.groupElement) : boxClassNames;
         var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 
         var boxStyles = _objectSpread$1({}, boxStyle, {
@@ -1473,12 +1478,16 @@ function (_PureComponent) {
           height: "".concat(position.height, "px"),
           top: "".concat(position.top, "px"),
           left: "".concat(position.left, "px"),
-          zIndex: position.zIndex,
+          zIndex: 98,
           transform: "rotate(".concat(rotateAngle, "deg)")
         });
 
         if (isSelected) {
-          boxStyles.zIndex = 99;
+          boxStyles.zIndex = 98;
+        }
+
+        if (position.type && position.type === 'group' && isShiftKeyActive) {
+          boxStyles.pointerEvents = 'none';
         }
 
         return React.createElement("div", {
@@ -1611,10 +1620,12 @@ function (_Component) {
       dragging: false,
       guides: {},
       guidesActive: false,
+      isShiftKeyActive: false,
       match: {},
       resizing: false,
       rotating: false
     };
+    _this.setShiftKeyState = _this.setShiftKeyState.bind(_assertThisInitialized$1(_this));
     _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized$1(_this));
     _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
     _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized$1(_this));
@@ -1682,6 +1693,8 @@ function (_Component) {
         }
 
         document.addEventListener('click', this.unSelectBox);
+        document.addEventListener('keydown', this.setShiftKeyState);
+        document.addEventListener('keyup', this.setShiftKeyState);
         this.setState({
           boundingBox: boundingBox,
           boxes: boxes,
@@ -1695,6 +1708,15 @@ function (_Component) {
     key: "componentWillUnmount",
     value: function componentWillUnmount() {
       document.removeEventListener('click', this.unSelectBox);
+      document.removeEventListener('keydown', this.setShiftKeyState);
+      document.removeEventListener('keyup', this.setShiftKeyState);
+    }
+  }, {
+    key: "setShiftKeyState",
+    value: function setShiftKeyState(e) {
+      this.setState({
+        isShiftKeyActive: e.shiftKey
+      });
     }
   }, {
     key: "getBoundingBoxElement",
@@ -2212,6 +2234,7 @@ function (_Component) {
           getBoundingBoxElement: _this8.getBoundingBoxElement,
           id: id,
           isSelected: isSelected,
+          isShiftKeyActive: _this8.state.isShiftKeyActive,
           key: id,
           onDragStart: _this8.dragStartHandler,
           onDrag: _this8.dragHandler,

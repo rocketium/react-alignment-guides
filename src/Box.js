@@ -21,6 +21,8 @@ class Box extends PureComponent {
 		this.box = React.createRef();
 		this.coordinates = React.createRef();
 		this.height = React.createRef();
+		this.didDragHappen = false;
+		this.didResizeHappen = false;
 		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
@@ -33,7 +35,12 @@ class Box extends PureComponent {
 	}
 
 	selectBox(e) {
-		this.props.selectBox(e);
+		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
+		if (!this.didDragHappen && !this.didResizeHappen) {
+			this.didDragHappen = false;
+			this.didResizeHappen = false;
+			this.props.selectBox(e);
+		}
 		if (this.box && this.box.current) {
 			this.box.current.focus();
 		}
@@ -47,7 +54,6 @@ class Box extends PureComponent {
 			const { position } = this.props;
 			let startingPosition = position.rotateAngle === 0 ? target.getBoundingClientRect().toJSON() : getOffsetCoordinates(target);
 			const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-			let didDragHappen = false;
 
 			let data = {
 				x: startingPosition.x - boundingBoxPosition.x,
@@ -69,6 +75,8 @@ class Box extends PureComponent {
 					node: target
 				};
 			}
+			this.didDragHappen = false;
+
 			// if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 			if (this.props.position.type) {
 				data.type = this.props.position.type;
@@ -114,7 +122,7 @@ class Box extends PureComponent {
 					deltaX: currentPosition.left - startingPosition.left,
 					deltaY: currentPosition.top - startingPosition.top
 				};
-				didDragHappen = true;
+				this.didDragHappen = true;
 				if (this.props.position.type) {
 					data.type = this.props.position.type;
 				}
@@ -122,10 +130,8 @@ class Box extends PureComponent {
 			};
 
 			const onDragEnd = (e) => {
-				if (didDragHappen) {
+				if (this.didDragHappen) {
 					this.props.onDragEnd && this.props.onDragEnd(e, data);
-				} else {
-					didDragHappen = false;
 				}
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
@@ -278,6 +284,7 @@ class Box extends PureComponent {
 			// 		node: this.box.current
 			// 	};
 			// }
+			this.didResizeHappen = false;
 
 			// if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 			if (this.props.position.type) {
@@ -285,7 +292,6 @@ class Box extends PureComponent {
 			}
 
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
-			let didResizeHappen = false;
 			const startingPosition = Object.assign({}, data);
 			const onResize = (e) => {
 				const { clientX, clientY } = e;
@@ -328,7 +334,7 @@ class Box extends PureComponent {
 				// 		node: this.box.current
 				// 	};
 				// }
-				didResizeHappen = true;
+				this.didResizeHappen = true;
 				// Calculate the restrictions if resize goes out of bounds
 				const currentPosition = this.props.boundToParent ?
 					calculateBoundariesForResize(data.left, data.top, tempPosition.width, tempPosition.height, boundingBoxPosition) :
@@ -352,10 +358,8 @@ class Box extends PureComponent {
 			const onResizeEnd = (e) => {
 				onResize && document.removeEventListener('mousemove', onResize);
 				onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
-				if (didResizeHappen) {
+				if (this.didResizeHappen) {
 					this.props.onResizeEnd && this.props.onResizeEnd(e, data);
-				} else {
-					didResizeHappen = false;
 				}
 			};
 
@@ -448,7 +452,7 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { areMultipleBoxesSelected, boxStyle, id, isSelected, position, resolution } = this.props;
+		const { areMultipleBoxesSelected, boxStyle, id, isSelected, isShiftKeyActive, position, resolution } = this.props;
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
 			const boundingBox = this.props.getBoundingBoxElement();
 			const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
@@ -462,6 +466,7 @@ class Box extends PureComponent {
 
 			let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
 			boxClassNames = position.type === 'group' ? `${boxClassNames} ${styles.boxGroup}` : boxClassNames;
+			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
 				...boxStyle,
@@ -469,12 +474,16 @@ class Box extends PureComponent {
 				height: `${position.height}px`,
 				top: `${position.top}px`,
 				left: `${position.left}px`,
-				zIndex: position.zIndex,
+				zIndex: 98,
 				transform: `rotate(${rotateAngle}deg)`
 			};
 
 			if (isSelected) {
-				boxStyles.zIndex = 99;
+				boxStyles.zIndex = 98;
+			}
+
+			if (position.type && position.type === 'group' && isShiftKeyActive) {
+				boxStyles.pointerEvents = 'none';
 			}
 
 			return <div
@@ -494,8 +503,8 @@ class Box extends PureComponent {
 							ref={this.coordinates}
 							className={styles.coordinates}
 						>
-							{`(${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)})`}
-						</span> :
+						{`(${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)})`}
+					</span> :
 						null
 				}
 				{
@@ -504,8 +513,8 @@ class Box extends PureComponent {
 							className={`${styles.dimensions} ${styles.width}`}
 							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
 						>
-							{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
-						</span> :
+						{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
+					</span> :
 						null
 				}
 				{
