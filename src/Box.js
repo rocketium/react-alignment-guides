@@ -474,12 +474,12 @@ class Box extends PureComponent {
 				height: `${position.height}px`,
 				top: `${position.top}px`,
 				left: `${position.left}px`,
-				zIndex: 98,
+				zIndex: position.zIndex ? position.zIndex : 98,
 				transform: `rotate(${rotateAngle}deg)`
 			};
 
 			if (isSelected) {
-				boxStyles.zIndex = 98;
+				boxStyles.zIndex = 99;
 			}
 
 			if (position.type && position.type === 'group' && isShiftKeyActive) {
