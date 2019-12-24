@@ -1478,12 +1478,12 @@ function (_PureComponent) {
           height: "".concat(position.height, "px"),
           top: "".concat(position.top, "px"),
           left: "".concat(position.left, "px"),
-          zIndex: 98,
+          zIndex: position.zIndex ? position.zIndex : 98,
           transform: "rotate(".concat(rotateAngle, "deg)")
         });
 
         if (isSelected) {
-          boxStyles.zIndex = 98;
+          boxStyles.zIndex = 99;
         }
 
         if (position.type && position.type === 'group' && isShiftKeyActive) {
