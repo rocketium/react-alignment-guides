@@ -947,7 +947,6 @@ function (_PureComponent) {
     _this.height = React.createRef();
     _this.didDragHappen = false;
     _this.didResizeHappen = false;
-    _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.keyDownHandler = lodash_throttle(function (e) {
@@ -960,20 +959,6 @@ function (_PureComponent) {
   }
 
   _createClass(Box, [{
-    key: "selectBox",
-    value: function selectBox(e) {
-      // To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-      if (!this.didDragHappen && !this.didResizeHappen) {
-        this.didDragHappen = false;
-        this.didResizeHappen = false;
-        this.props.selectBox(e);
-      }
-
-      if (this.box && this.box.current) {
-        this.box.current.focus();
-      }
-    }
-  }, {
     key: "onDragStart",
     value: function onDragStart(e) {
       var _this2 = this;
@@ -1064,6 +1049,8 @@ function (_PureComponent) {
         };
 
         var onDragEnd = function onDragEnd(e) {
+          e.preventDefault();
+
           if (_this2.didDragHappen) {
             _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
           }
@@ -1342,12 +1329,14 @@ function (_PureComponent) {
         };
 
         var onResizeEnd = function onResizeEnd(e) {
-          onResize && document.removeEventListener('mousemove', onResize);
-          onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
+          e.preventDefault();
 
           if (_this3.didResizeHappen) {
             _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
           }
+
+          onResize && document.removeEventListener('mousemove', onResize);
+          onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
         };
 
         onResize && document.addEventListener('mousemove', onResize);
@@ -1493,7 +1482,6 @@ function (_PureComponent) {
         return React.createElement("div", {
           className: boxClassNames,
           id: id,
-          onClick: this.selectBox,
           onMouseDown: this.props.drag && !areMultipleBoxesSelected || position.type && position.type === 'group' ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
           ,
           onKeyDown: function onKeyDown(e) {
@@ -1874,7 +1862,9 @@ function (_Component) {
       this.setState({
         active: data.node.id,
         dragging: true
-      });
+      }); // Call select box to handle selection if it's not a drag event
+
+      this.selectBox(e);
       var newData = Object.assign({}, data);
 
       if (this.state.boxes[data.node.id].metadata) {

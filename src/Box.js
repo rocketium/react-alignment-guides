@@ -23,7 +23,6 @@ class Box extends PureComponent {
 		this.height = React.createRef();
 		this.didDragHappen = false;
 		this.didResizeHappen = false;
-		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.keyDownHandler = throttle(e => {
@@ -32,18 +31,6 @@ class Box extends PureComponent {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
-	}
-
-	selectBox(e) {
-		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (!this.didDragHappen || !this.didResizeHappen) {
-			this.didDragHappen = false;
-			this.didResizeHappen = false;
-			this.props.selectBox(e);
-		}
-		if (this.box && this.box.current) {
-			this.box.current.focus();
-		}
 	}
 
 	onDragStart(e) {
@@ -491,7 +478,6 @@ class Box extends PureComponent {
 			return <div
 				className={boxClassNames}
 				id={id}
-				onClick={this.selectBox}
 				onMouseDown={(this.props.drag && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
 				onKeyUp={this.shortcutHandler}
