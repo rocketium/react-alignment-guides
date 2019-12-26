@@ -478,7 +478,7 @@ class Box extends PureComponent {
 			return <div
 				className={boxClassNames}
 				id={id}
-				onMouseDown={(this.props.drag && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
+				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
 				onKeyUp={this.shortcutHandler}
 				ref={this.box}

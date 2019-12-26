@@ -241,12 +241,13 @@ class AlignmentGuides extends Component {
 
 	dragStartHandler(e, data) {
 		this.setState({
-			active: data.node.id,
 			dragging: true
 		});
 
 		// Call select box to handle selection if it's not a drag event
-		this.selectBox(e);
+		if (this.state.active === '' || this.state.active !== data.node.id) {
+			this.selectBox(e);
+		}
 
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[data.node.id].metadata) {

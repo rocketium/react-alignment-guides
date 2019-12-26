@@ -1482,7 +1482,7 @@ function (_PureComponent) {
         return React.createElement("div", {
           className: boxClassNames,
           id: id,
-          onMouseDown: this.props.drag && !areMultipleBoxesSelected || position.type && position.type === 'group' ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
+          onMouseDown: this.props.drag ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
           ,
           onKeyDown: function onKeyDown(e) {
             e.persist();
@@ -1860,11 +1860,13 @@ function (_Component) {
       var _this2 = this;
 
       this.setState({
-        active: data.node.id,
         dragging: true
       }); // Call select box to handle selection if it's not a drag event
 
-      this.selectBox(e);
+      if (this.state.active === '' || this.state.active !== data.node.id) {
+        this.selectBox(e);
+      }
+
       var newData = Object.assign({}, data);
 
       if (this.state.boxes[data.node.id].metadata) {
