@@ -36,7 +36,7 @@ class Box extends PureComponent {
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (!this.didDragHappen && !this.didResizeHappen) {
+		if (!this.didDragHappen || !this.didResizeHappen) {
 			this.didDragHappen = false;
 			this.didResizeHappen = false;
 			this.props.selectBox(e);
