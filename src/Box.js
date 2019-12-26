@@ -130,6 +130,7 @@ class Box extends PureComponent {
 			};
 
 			const onDragEnd = (e) => {
+				e.preventDefault();
 				if (this.didDragHappen) {
 					this.props.onDragEnd && this.props.onDragEnd(e, data);
 				}
@@ -356,11 +357,12 @@ class Box extends PureComponent {
 			};
 
 			const onResizeEnd = (e) => {
-				onResize && document.removeEventListener('mousemove', onResize);
-				onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
+				e.preventDefault();
 				if (this.didResizeHappen) {
 					this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 				}
+				onResize && document.removeEventListener('mousemove', onResize);
+				onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
 			};
 
 			onResize && document.addEventListener('mousemove', onResize);
