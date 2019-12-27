@@ -23,6 +23,7 @@ class Box extends PureComponent {
 		this.height = React.createRef();
 		this.didDragHappen = false;
 		this.didResizeHappen = false;
+		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.keyDownHandler = throttle(e => {
@@ -31,6 +32,16 @@ class Box extends PureComponent {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+	}
+
+	selectBox(e) {
+		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
+		if (this.props.didDragOrResizeHappen) {
+			this.props.selectBox(e);
+		}
+		if (this.box && this.box.current) {
+			this.box.current.focus();
+		}
 	}
 
 	onDragStart(e) {
@@ -68,6 +79,7 @@ class Box extends PureComponent {
 			if (this.props.position.type) {
 				data.type = this.props.position.type;
 			}
+			this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 			this.props.onDragStart && this.props.onDragStart(e, data);
 
 			// Update the starting position
@@ -117,8 +129,8 @@ class Box extends PureComponent {
 			};
 
 			const onDragEnd = (e) => {
-				e.preventDefault();
 				if (this.didDragHappen) {
+					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					this.props.onDragEnd && this.props.onDragEnd(e, data);
 				}
 				document.removeEventListener('mousemove', onDrag);
@@ -279,6 +291,7 @@ class Box extends PureComponent {
 				data.type = this.props.position.type;
 			}
 
+			this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
 			const onResize = (e) => {
@@ -344,8 +357,8 @@ class Box extends PureComponent {
 			};
 
 			const onResizeEnd = (e) => {
-				e.preventDefault();
 				if (this.didResizeHappen) {
+					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 				}
 				onResize && document.removeEventListener('mousemove', onResize);
@@ -478,6 +491,7 @@ class Box extends PureComponent {
 			return <div
 				className={boxClassNames}
 				id={id}
+				onClick={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
 				onKeyUp={this.shortcutHandler}

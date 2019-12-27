@@ -44,9 +44,11 @@ export const proximityListener = (active, allGuides) => {
 
 export const getAllGuidesForGivenAxisExceptActiveBox = (allGuides, guidesForActiveBoxAlongGivenAxis, axis) => {
 	const result = Object.keys(allGuides).map(box => {
-		const currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
-		if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
-			return currentBoxGuidesAlongGivenAxis;
+		if (allGuides && allGuides[box]) {
+			const currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
+			if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
+				return currentBoxGuidesAlongGivenAxis;
+			}
 		}
 	});
 

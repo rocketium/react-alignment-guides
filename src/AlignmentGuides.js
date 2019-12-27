@@ -28,6 +28,7 @@ class AlignmentGuides extends Component {
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
+		this.setDragOrResizeState = this.setDragOrResizeState.bind(this);
 		this.selectBox = this.selectBox.bind(this);
 		this.unSelectBox = this.unSelectBox.bind(this);
 		this.dragStartHandler = this.dragStartHandler.bind(this);
@@ -41,6 +42,7 @@ class AlignmentGuides extends Component {
 		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
 		this.startingPositions = null;
+		this.didDragOrResizeHappen = false;
 	}
 
 	componentDidMount() {
@@ -114,6 +116,10 @@ class AlignmentGuides extends Component {
 
 	getBoundingBoxElement() {
 		return this.boundingBox;
+	}
+
+	setDragOrResizeState(state) {
+		this.didDragOrResizeHappen = state;
 	}
 
 	selectBox(e) {
@@ -241,13 +247,9 @@ class AlignmentGuides extends Component {
 
 	dragStartHandler(e, data) {
 		this.setState({
+			active: data.node.id,
 			dragging: true
 		});
-
-		// Call select box to handle selection if it's not a drag event
-		if (this.state.active === '' || this.state.active !== data.node.id) {
-			this.selectBox(e);
-		}
 
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[data.node.id].metadata) {
@@ -590,6 +592,7 @@ class AlignmentGuides extends Component {
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
 				boundingBox={this.state.boundingBox}
+				didDragOrResizeHappen={this.didDragOrResizeHappen}
 				dragging={this.state.dragging}
 				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
@@ -610,6 +613,7 @@ class AlignmentGuides extends Component {
 				resizing={this.state.resizing}
 				rotating={this.state.rotating}
 				selectBox={this.selectBox}
+				setDragOrResizeState={this.setDragOrResizeState}
 			/>;
 		});
 

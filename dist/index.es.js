@@ -490,10 +490,12 @@ var proximityListener = function proximityListener(active, allGuides) {
 };
 var getAllGuidesForGivenAxisExceptActiveBox = function getAllGuidesForGivenAxisExceptActiveBox(allGuides, guidesForActiveBoxAlongGivenAxis, axis) {
   var result = Object.keys(allGuides).map(function (box) {
-    var currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
+    if (allGuides && allGuides[box]) {
+      var currentBoxGuidesAlongGivenAxis = allGuides[box][axis];
 
-    if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
-      return currentBoxGuidesAlongGivenAxis;
+      if (currentBoxGuidesAlongGivenAxis !== guidesForActiveBoxAlongGivenAxis) {
+        return currentBoxGuidesAlongGivenAxis;
+      }
     }
   });
   return result.filter(function (guides) {
@@ -947,6 +949,7 @@ function (_PureComponent) {
     _this.height = React.createRef();
     _this.didDragHappen = false;
     _this.didResizeHappen = false;
+    _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
     _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
     _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
     _this.keyDownHandler = lodash_throttle(function (e) {
@@ -959,6 +962,18 @@ function (_PureComponent) {
   }
 
   _createClass(Box, [{
+    key: "selectBox",
+    value: function selectBox(e) {
+      // To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
+      if (this.props.didDragOrResizeHappen) {
+        this.props.selectBox(e);
+      }
+
+      if (this.box && this.box.current) {
+        this.box.current.focus();
+      }
+    }
+  }, {
     key: "onDragStart",
     value: function onDragStart(e) {
       var _this2 = this;
@@ -999,6 +1014,7 @@ function (_PureComponent) {
           data.type = this.props.position.type;
         }
 
+        this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
         this.props.onDragStart && this.props.onDragStart(e, data); // Update the starting position
 
         startingPosition = Object.assign({}, data);
@@ -1049,9 +1065,8 @@ function (_PureComponent) {
         };
 
         var onDragEnd = function onDragEnd(e) {
-          e.preventDefault();
-
           if (_this2.didDragHappen) {
+            _this2.props.setDragOrResizeState && _this2.props.setDragOrResizeState(false);
             _this2.props.onDragEnd && _this2.props.onDragEnd(e, data);
           }
 
@@ -1253,6 +1268,7 @@ function (_PureComponent) {
           data.type = this.props.position.type;
         }
 
+        this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
         this.props.onResizeStart && this.props.onResizeStart(e, data);
         var startingPosition = Object.assign({}, data);
 
@@ -1329,9 +1345,8 @@ function (_PureComponent) {
         };
 
         var onResizeEnd = function onResizeEnd(e) {
-          e.preventDefault();
-
           if (_this3.didResizeHappen) {
+            _this3.props.setDragOrResizeState && _this3.props.setDragOrResizeState(false);
             _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
           }
 
@@ -1482,6 +1497,7 @@ function (_PureComponent) {
         return React.createElement("div", {
           className: boxClassNames,
           id: id,
+          onClick: this.selectBox,
           onMouseDown: this.props.drag ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
           ,
           onKeyDown: function onKeyDown(e) {
@@ -1615,6 +1631,7 @@ function (_Component) {
     };
     _this.setShiftKeyState = _this.setShiftKeyState.bind(_assertThisInitialized$1(_this));
     _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized$1(_this));
+    _this.setDragOrResizeState = _this.setDragOrResizeState.bind(_assertThisInitialized$1(_this));
     _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
     _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized$1(_this));
     _this.dragStartHandler = _this.dragStartHandler.bind(_assertThisInitialized$1(_this));
@@ -1628,6 +1645,7 @@ function (_Component) {
     _this.rotateEndHandler = _this.rotateEndHandler.bind(_assertThisInitialized$1(_this));
     _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized$1(_this));
     _this.startingPositions = null;
+    _this.didDragOrResizeHappen = false;
     return _this;
   }
 
@@ -1710,6 +1728,11 @@ function (_Component) {
     key: "getBoundingBoxElement",
     value: function getBoundingBoxElement() {
       return this.boundingBox;
+    }
+  }, {
+    key: "setDragOrResizeState",
+    value: function setDragOrResizeState(state) {
+      this.didDragOrResizeHappen = state;
     }
   }, {
     key: "selectBox",
@@ -1860,13 +1883,9 @@ function (_Component) {
       var _this2 = this;
 
       this.setState({
+        active: data.node.id,
         dragging: true
-      }); // Call select box to handle selection if it's not a drag event
-
-      if (this.state.active === '' || this.state.active !== data.node.id) {
-        this.selectBox(e);
-      }
-
+      });
       var newData = Object.assign({}, data);
 
       if (this.state.boxes[data.node.id].metadata) {
@@ -2222,6 +2241,7 @@ function (_Component) {
         return React.createElement(Box, _extends({}, _this8.props, {
           areMultipleBoxesSelected: areMultipleBoxesSelected,
           boundingBox: _this8.state.boundingBox,
+          didDragOrResizeHappen: _this8.didDragOrResizeHappen,
           dragging: _this8.state.dragging,
           getBoundingBoxElement: _this8.getBoundingBoxElement,
           id: id,
@@ -2241,7 +2261,8 @@ function (_Component) {
           position: position,
           resizing: _this8.state.resizing,
           rotating: _this8.state.rotating,
-          selectBox: _this8.selectBox
+          selectBox: _this8.selectBox,
+          setDragOrResizeState: _this8.setDragOrResizeState
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
