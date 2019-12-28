@@ -234,6 +234,9 @@ class AlignmentGuides extends Component {
 
 	unSelectBox(e) {
 		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+			if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
+				return;
+			}
 			const { boxes } = this.state;
 			delete boxes['box-ms'];
 			this.setState({
