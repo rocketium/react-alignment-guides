@@ -545,7 +545,11 @@ class AlignmentGuides extends Component {
 	}
 
 	rotateEndHandler(e, data) {
-		this.props.onRotateEnd && this.props.onRotateEnd(e, data);
+		let newData = Object.assign({}, data);
+		if (this.state.boxes[this.state.active].metadata) {
+			newData.metadata = this.state.boxes[this.state.active].metadata;
+		}
+		this.props.onRotateEnd && this.props.onRotateEnd(e, newData);
 	}
 
 	keyUpHandler(e, data) {
