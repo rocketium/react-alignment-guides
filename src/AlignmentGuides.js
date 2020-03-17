@@ -125,7 +125,7 @@ class AlignmentGuides extends Component {
 	selectBox(e) {
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-		if (e.target.id.indexOf('box') >= 0) {
+		if (e.target && e.target.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -177,7 +177,7 @@ class AlignmentGuides extends Component {
 				});
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
-		} else if (e.target.parentNode.id.indexOf('box') >= 0) {
+		} else if (e.target && e.target.parentNode && e.target.parentNode.id.indexOf('box') >= 0) {
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -233,7 +233,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode.id.indexOf('box') === -1) {
+		if (e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode && e.target.parentNode.id.indexOf('box') === -1) {
 			if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
 				return;
 			}
