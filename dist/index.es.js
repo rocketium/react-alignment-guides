@@ -1908,6 +1908,12 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         newData.metadata = this.state.boxes[data.node.id].metadata;
       }
 
+      if (data.type && data.type === 'group') {
+        newData.selections = this.state.activeBoxes.map(function (box) {
+          return Object.assign({}, _this2.state.boxes[box]);
+        });
+      }
+
       this.props.onDragStart && this.props.onDragStart(e, newData); // Update starting positions so we can use it to update when group resize happens
 
       if (data.type && data.type === 'group') {
@@ -1927,6 +1933,12 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
 
         if (this.state.boxes[this.state.active].metadata) {
           newData.metadata = this.state.boxes[this.state.active].metadata;
+        }
+
+        if (data.type && data.type === 'group') {
+          newData.selections = this.state.activeBoxes.map(function (box) {
+            return Object.assign({}, _this3.state.boxes[box]);
+          });
         }
 
         this.props.onDrag && this.props.onDrag(e, newData);
