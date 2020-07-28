@@ -1880,7 +1880,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      if (e.target && e.target.id && e.target.id.indexOf('box') === -1 && e.target.parentNode && e.target.parentNode.id && e.target.parentNode.id.indexOf('box') === -1) {
+      if (e.target === window || e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode && e.target.parentNode.id.indexOf('box') === -1) {
         if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
           return;
         }
