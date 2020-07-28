@@ -89,6 +89,7 @@ class AlignmentGuides extends Component {
 			}
 
 			document.addEventListener('click', this.unSelectBox);
+			window.addEventListener('blur', this.unSelectBox);
 			document.addEventListener('keydown', this.setShiftKeyState);
 			document.addEventListener('keyup', this.setShiftKeyState);
 
@@ -104,6 +105,7 @@ class AlignmentGuides extends Component {
 
 	componentWillUnmount() {
 		document.removeEventListener('click', this.unSelectBox);
+		window.removeEventListener('blur', this.unSelectBox);
 		document.removeEventListener('keydown', this.setShiftKeyState);
 		document.removeEventListener('keyup', this.setShiftKeyState);
 	}
