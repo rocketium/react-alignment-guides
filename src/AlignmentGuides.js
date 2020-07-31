@@ -358,7 +358,7 @@ class AlignmentGuides extends Component {
 			boxes,
 			guides
 		}, () => {
-			if (this.props.snap && data.type !== 'group') {
+			if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
 				const match = proximityListener(this.state.active, this.state.guides);
 				let newActiveBoxLeft = this.state.boxes[this.state.active].left;
 				let newActiveBoxTop = this.state.boxes[this.state.active].top;
@@ -409,7 +409,7 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[this.state.active].metadata) {
+		if (this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 

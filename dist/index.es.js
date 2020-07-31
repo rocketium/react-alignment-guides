@@ -2001,7 +2001,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         boxes: boxes,
         guides: guides
       }, function () {
-        if (_this3.props.snap && data.type !== 'group') {
+        if (_this3.props.snap && _this3.state.active && _this3.state.guides && data.type !== 'group') {
           var match = proximityListener(_this3.state.active, _this3.state.guides);
           var newActiveBoxLeft = _this3.state.boxes[_this3.state.active].left;
           var newActiveBoxTop = _this3.state.boxes[_this3.state.active].top;
@@ -2058,7 +2058,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       });
       var newData = Object.assign({}, data);
 
-      if (this.state.boxes[this.state.active].metadata) {
+      if (this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata) {
         newData.metadata = this.state.boxes[this.state.active].metadata;
       }
 
