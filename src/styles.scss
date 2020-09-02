@@ -15,15 +15,39 @@
 	z-index: 10;
 	transform-origin: center center;
 
+	&+.resizeEdges {
+		display: none;
+		transition: all 0.2s ease-in-out;
+	}
+
 	&:hover {
-		outline: 2px solid #EB4B48;
+		&+.resizeEdges {
+			display: block;
+		}
+	}
+}
+
+// Resize Edges
+.resizeEdges {
+	display: none;
+	position: absolute;
+	background-color: transparent !important;
+	outline: 2px solid #EB4B48 !important;
+	pointer-events: none;
+	z-index: 99 !important;
+
+	&.dragging {
+		display: none !important;
 	}
 }
 
 .selected,
 .boxGroup {
 	background-color: transparent;
-	outline: 2px solid #EB4B48 !important;
+
+	&+.resizeEdges {
+		display: block;
+	}
 }
 
 .boxGroup {
@@ -43,7 +67,7 @@
 	left: 0;
 	position: absolute;
 	top: 0;
-	z-index: 100;
+	z-index: 101;
 }
 
 .active {
@@ -100,12 +124,7 @@
 }
 
 .resizeCorners {
-	z-index: 99;
-}
-
-.resizeEdges {
-	background-color: #EB4B48;
-	position: absolute;
+	z-index: 100;
 }
 
 .resize-tr {

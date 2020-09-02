@@ -29,6 +29,10 @@ class Box extends PureComponent {
 		this.keyDownHandler = throttle(e => {
 			this.shortcutHandler(e);
 		}, 300);
+		this.state = {
+			isDragging: false,
+			isResizing: false
+		};
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
@@ -74,6 +78,7 @@ class Box extends PureComponent {
 				};
 			}
 			this.didDragHappen = false;
+			this.setState({ isDragging: false });
 
 			// if a box type is passed (ex: group) send it back to the parent so all boxes in the group can be updated.
 			if (this.props.position.type) {
@@ -122,6 +127,7 @@ class Box extends PureComponent {
 					deltaY: currentPosition.top - startingPosition.top
 				};
 				this.didDragHappen = true;
+				this.setState({ isDragging: true });
 				if (this.props.position.type) {
 					data.type = this.props.position.type;
 				}
@@ -130,6 +136,7 @@ class Box extends PureComponent {
 
 			const onDragEnd = (e) => {
 				if (this.didDragHappen) {
+					this.setState({ isDragging: false });
 					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					this.props.onDragEnd && this.props.onDragEnd(e, data);
 				}
@@ -481,71 +488,80 @@ class Box extends PureComponent {
 			};
 
 			if (isSelected) {
-				boxStyles.zIndex = 99;
+				boxStyles.zIndex = 98;
 			}
 
 			if (position.type && position.type === 'group' && isShiftKeyActive) {
 				boxStyles.pointerEvents = 'none';
 			}
 
-			return <div
-				className={boxClassNames}
-				id={id}
-				onClick={this.selectBox}
-				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
-				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
-				onKeyUp={this.shortcutHandler}
-				ref={this.box}
-				style={boxStyles}
-				tabIndex="0"
-			>
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-						<span
-							ref={this.coordinates}
-							className={styles.coordinates}
-						>
-						{`(${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)})`}
-					</span> :
-						null
-				}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-						<span
-							className={`${styles.dimensions} ${styles.width}`}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
-						>
-						{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
-					</span> :
-						null
-				}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-						RESIZE_CORNERS.map(handle => {
-							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]}`;
-							return <div
-								key={handle}
-								className={className}
-								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
-								id={`resize-${handle}`}
-							/>;
-						}) :
-						null
-				}
-				{
-					isSelected && !areMultipleBoxesSelected ?
-						ROTATE_HANDLES.map(handle => {
-							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
-							return <div
-								key={handle}
-								className={className}
-								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
-								id={`rotate-${handle}`}
-							/>;
-						}) :
-						null
-				}
-			</div>;
+			return <>
+				<div
+					className={boxClassNames}
+					id={id}
+					onClick={this.selectBox}
+					onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
+					onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
+					onKeyUp={this.shortcutHandler}
+					ref={this.box}
+					style={boxStyles}
+					tabIndex="0"
+				>
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+							<span
+								ref={this.coordinates}
+								className={styles.coordinates}
+							>
+								{`(${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)})`}
+							</span> :
+							null
+					}
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+							<span
+								className={`${styles.dimensions} ${styles.width}`}
+								style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
+							>
+								{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
+							</span> :
+							null
+					}
+					{
+						isSelected && !areMultipleBoxesSelected ?
+							ROTATE_HANDLES.map(handle => {
+								const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
+								return <div
+									key={handle}
+									className={className}
+									onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
+									id={`rotate-${handle}`}
+								/>;
+							}) :
+							null
+					}
+				</div>
+				<div
+					className={this.state.isDragging ? `${styles.resizeEdges} ${styles.dragging}` : styles.resizeEdges}
+					onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
+					id='resizeEdges'
+					style={boxStyles}
+				>
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+							RESIZE_CORNERS.map(handle => {
+								const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]}`;
+								return <div
+									key={handle}
+									className={className}
+									onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
+									id={`resize-${handle}`}
+								/>;
+							}) :
+							null
+					}
+				</div>
+			</>
 		}
 
 		return null;
