@@ -473,7 +473,7 @@ class Box extends PureComponent {
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
-			let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
+			let boxClassNames = isSelected && !this.state.isDragging ? `${styles.box} ${styles.selected}` : styles.box;
 			boxClassNames = position.type === 'group' ? `${boxClassNames} ${styles.boxGroup}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
@@ -540,13 +540,6 @@ class Box extends PureComponent {
 							}) :
 							null
 					}
-				</div>
-				<div
-					className={this.state.isDragging ? `${styles.resizeEdges} ${styles.dragging}` : styles.resizeEdges}
-					onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
-					id='resizeEdges'
-					style={boxStyles}
-				>
 					{
 						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 							RESIZE_CORNERS.map(handle => {

@@ -15,13 +15,15 @@
 	z-index: 10;
 	transform-origin: center center;
 
-	&+.resizeEdges {
+	.resizeEdges {
 		display: none;
 		transition: all 0.2s ease-in-out;
 	}
 
 	&:hover {
-		&+.resizeEdges {
+		outline: 2px solid #EB4B48;
+
+		.resizeEdges {
 			display: block;
 		}
 	}
@@ -44,10 +46,7 @@
 .selected,
 .boxGroup {
 	background-color: transparent;
-
-	&+.resizeEdges {
-		display: block;
-	}
+	outline: 2px solid #EB4B48 !important;
 }
 
 .boxGroup {
