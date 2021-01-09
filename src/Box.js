@@ -26,6 +26,7 @@ class Box extends PureComponent {
 		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
+		this.onShortcutKeyUp = this.onShortcutKeyUp.bind(this);
 		this.keyDownHandler = throttle(e => {
 			this.shortcutHandler(e);
 		}, 300);
@@ -145,110 +146,56 @@ class Box extends PureComponent {
 	shortcutHandler(e) {
 		const { position } = this.props;
 
-		if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				left: position.left + 1,
-				x: position.x + 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				left: position.left + 10,
-				x: position.x + 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				left: position.left - 1,
-				x: position.x - 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				left: position.left - 10,
-				x: position.x - 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				top: position.top - 1,
-				y: position.y - 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				top: position.top - 10,
-				y: position.y - 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				top: position.top + 1,
-				y: position.y + 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				top: position.top + 10,
-				y: position.y + 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				width: position.width + 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				width: position.width + 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				width: position.width - 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				width: position.width - 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				height: position.height + 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				height: position.height + 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				height: position.height - 1
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
-		} else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
-			const data = Object.assign({}, position, {
-				node: this.box.current,
-				height: position.height - 10
-			});
-			this.props.onKeyUp && this.props.onKeyUp(e, data);
+		const DELTA = e.shiftKey ? 10 : 1;
+		let newValues = {};
+
+		if (e.key === 'ArrowRight') {
+			newValues = e.ctrlKey ? {
+				width: position.width + DELTA
+			} : {
+				left: position.left + DELTA,
+				x: position.x + DELTA
+			}			
+		} else if (e.key === 'ArrowLeft') {
+			newValues = e.ctrlKey ? {
+				width: position.width - DELTA
+			} :  {
+				left: position.left - DELTA,
+				x: position.x - DELTA
+			};
+		} else if (e.key === 'ArrowUp') {
+			newValues = e.ctrlKey ? {
+				height: position.height - DELTA
+			} : {
+				top: position.top - DELTA,
+				y: position.y - DELTA
+			};
+		}  else if (e.key === 'ArrowDown') {
+			newValues = e.ctrlKey ? {
+				height: position.height + DELTA
+			} : {
+				top: position.top + DELTA,
+				y: position.y + DELTA
+			};
+		} 
+
+		if (this.box && this.box.current)
+			newValues.node = this.box.current
+
+
+		const data = Object.assign({}, position, newValues);
+		this.props.onKeyUp && this.props.onKeyUp(e, data);
+	}
+
+	onShortcutKeyUp(e) {
+		const { position } = this.props;
+		let newValues = {};
+		if (this.box && this.box.current)
+			newValues.node = this.box.current
+		const data = Object.assign({}, position, newValues);
+		const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']
+		if (keysAllowed.includes(e.key)) {
+			this.props.onKeyEnd && this.props.onKeyEnd(e, data);
 		}
 	}
 
@@ -493,8 +440,8 @@ class Box extends PureComponent {
 				id={id}
 				onClick={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
-				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
-				onKeyUp={this.shortcutHandler}
+				onKeyDown={this.shortcutHandler}
+				onKeyUp={this.onShortcutKeyUp}
 				ref={this.box}
 				style={boxStyles}
 				tabIndex="0"
@@ -564,6 +511,7 @@ Box.propTypes = {
 	onDrag: PropTypes.func,
 	onDragEnd: PropTypes.func,
 	onKeyUp: PropTypes.func,
+	onKeyEnd: PropTypes.func,
 	onResizeStart: PropTypes.func,
 	onResize: PropTypes.func,
 	onResizeEnd: PropTypes.func,
