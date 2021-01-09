@@ -26,6 +26,7 @@ class Box extends PureComponent {
 		this.selectBox = this.selectBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
+		this.onShortcutKeyUp = this.onShortcutKeyUp.bind(this);
 		this.keyDownHandler = throttle(e => {
 			this.shortcutHandler(e);
 		}, 300);
@@ -184,6 +185,15 @@ class Box extends PureComponent {
 
 		const data = Object.assign({}, position, newValues);
 		this.props.onKeyUp && this.props.onKeyUp(e, data);
+	}
+
+	onShortcutKeyUp(e) {
+		const { position } = this.props;
+		let newValues = {};
+		if (this.box && this.box.current)
+			newValues.node = this.box.current
+		const data = Object.assign({}, position, newValues);
+		this.props.onDragEnd && this.props.onDragEnd(e, data);
 	}
 
 	onResizeStart(e) {
@@ -428,7 +438,7 @@ class Box extends PureComponent {
 				onClick={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={this.shortcutHandler}
-				onKeyUp={this.shortcutHandler}
+				onKeyUp={this.onShortcutKeyUp}
 				ref={this.box}
 				style={boxStyles}
 				tabIndex="0"
