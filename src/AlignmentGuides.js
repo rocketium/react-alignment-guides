@@ -41,6 +41,7 @@ class AlignmentGuides extends Component {
 		this.rotateHandler = this.rotateHandler.bind(this);
 		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
+		this.keyEndHandler = this.keyEndHandler.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
 	}
@@ -605,6 +606,29 @@ class AlignmentGuides extends Component {
 		});
 	}
 
+	keyEndHandler(e, data) {
+	
+		let newData = Object.assign({}, data);
+		if (this.state.boxes[this.state.active].metadata) {
+			newData.metadata = this.state.boxes[this.state.active].metadata;
+		}
+
+		if (data.type && data.type === 'group') {
+			newData.selections = this.state.activeBoxes.map(box => {
+				return Object.assign({}, this.state.boxes[box]);
+			});
+		}
+
+		this.props.onKeyEnd && this.props.onKeyEnd(e, newData);
+		
+
+		this.setState({
+			resizing: false,
+			dragging: false,
+			guidesActive: false
+		});
+	}
+
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
 		const areMultipleBoxesSelected = activeBoxes.length > 1;
@@ -630,6 +654,7 @@ class AlignmentGuides extends Component {
 				onDrag={this.dragHandler}
 				onDragEnd={this.dragEndHandler}
 				onKeyUp={this.keyUpHandler}
+				onKeyEnd={this.keyEndHandler}
 				onResizeStart={this.resizeStartHandler}
 				onResize={this.resizeHandler}
 				onResizeEnd={this.resizeEndHandler}
@@ -719,6 +744,7 @@ AlignmentGuides.propTypes = {
 	onDrag: PropTypes.func,
 	onDragEnd: PropTypes.func,
 	onKeyUp: PropTypes.func,
+	onKeyEnd: PropTypes.func,
 	onResizeStart: PropTypes.func,
 	onResize: PropTypes.func,
 	onResizeEnd: PropTypes.func,

@@ -193,7 +193,10 @@ class Box extends PureComponent {
 		if (this.box && this.box.current)
 			newValues.node = this.box.current
 		const data = Object.assign({}, position, newValues);
-		this.props.onDragEnd && this.props.onDragEnd(e, data);
+		const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']
+		if (keysAllowed.includes(e.key)) {
+			this.props.onKeyEnd && this.props.onKeyEnd(e, data);
+		}
 	}
 
 	onResizeStart(e) {
@@ -508,6 +511,7 @@ Box.propTypes = {
 	onDrag: PropTypes.func,
 	onDragEnd: PropTypes.func,
 	onKeyUp: PropTypes.func,
+	onKeyEnd: PropTypes.func,
 	onResizeStart: PropTypes.func,
 	onResize: PropTypes.func,
 	onResizeEnd: PropTypes.func,
