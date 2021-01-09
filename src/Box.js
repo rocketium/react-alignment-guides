@@ -493,7 +493,7 @@ class Box extends PureComponent {
 				id={id}
 				onClick={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
-				onKeyDown={e => { e.persist(); this.keyDownHandler(e); }}
+				onKeyDown={this.shortcutHandler}
 				onKeyUp={this.shortcutHandler}
 				ref={this.box}
 				style={boxStyles}
