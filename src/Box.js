@@ -238,13 +238,18 @@ class Box extends PureComponent {
 				data.type = this.props.position.type;
 			}
 
+			const ratio = rect.width / rect.height;
+			// used to increase or decrease deltaY accordingly
+			const sign = e.target.id === 'resize-br' || e.target.id === 'resize-tl' ? 1 : -1; 
+
 			this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
 			const onResize = (e) => {
 				const { clientX, clientY } = e;
 				const deltaX = clientX - startX;
-				const deltaY = clientY - startY;
+				const deltaY = e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+
 				const alpha = Math.atan2(deltaY, deltaX);
 				const deltaL = getLength(deltaX, deltaY);
 
@@ -252,8 +257,7 @@ class Box extends PureComponent {
 				const beta = alpha - degToRadian(rotateAngle);
 				const deltaW = deltaL * Math.cos(beta);
 				const deltaH = deltaL * Math.sin(beta);
-				// TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
-				// const ratio = rect.width / rect.height;
+
 				const type = target.id.replace('resize-', '');
 
 				const { position: { cx, cy }, size: { width, height } } = getNewStyle(type, rect, deltaW, deltaH, 10, 10); // Use a better way to set minWidth and minHeight
