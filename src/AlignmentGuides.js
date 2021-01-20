@@ -287,8 +287,9 @@ class AlignmentGuides extends Component {
 	}
 
 	dragHandler(e, data) {
+		let newData;
 		if (this.state.dragging) {
-			let newData = Object.assign({}, data);
+			newData = Object.assign({}, data);
 			if (this.state.boxes[this.state.active].metadata) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
@@ -298,7 +299,7 @@ class AlignmentGuides extends Component {
 				});
 			}
 
-			this.props.onDrag && this.props.onDrag(e, newData);
+			// this.props.onDrag && this.props.onDrag(e, newData);
 		}
 
 		let boxes = null;
@@ -394,12 +395,44 @@ class AlignmentGuides extends Component {
 						y: calculateGuidePositions(boxes[this.state.active], 'y')
 					})
 				})
+
+				const activeBox = {
+					left: this.state.boxes[this.state.active].left,
+					top: this.state.boxes[this.state.active].top
+				}
+
+				Object.keys(guides).map(box => {
+					guides?.[box]?.x.map(position => {
+						if (match?.x?.intersection === position) {
+							activeBox.left = newActiveBoxLeft;
+						}
+					});
+
+					guides?.[box]?.y.map(position => {
+						if (match?.y?.intersection === position) {
+							activeBox.top = newActiveBoxTop;
+						}
+					});
+				});
+
+				const newBoxes = Object.assign({}, this.state.boxes, {
+					[this.state.active] : Object.assign({}, this.state.boxes[this.state.active], {
+						...activeBox
+					})
+				});
+
+
+				newData = Object.assign({}, newData, {
+					...activeBox
+				});
+				
 				this.setState({
-					boxes,
+					boxes: newBoxes,
 					guides,
 					match
 				});
 			}
+			this.state.dragging && this.props.onDrag && this.props.onDrag(e, newData);
 		});
 	}
 
@@ -417,6 +450,66 @@ class AlignmentGuides extends Component {
 		if (data.type && data.type === 'group') {
 			newData.selections = this.state.activeBoxes.map(box => {
 				return Object.assign({}, this.state.boxes[box]);
+			});
+		}
+
+		if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
+			const match = proximityListener(this.state.active, this.state.guides);
+			let newActiveBoxLeft = this.state.boxes[this.state.active].left;
+			let newActiveBoxTop = this.state.boxes[this.state.active].top;
+			for (let axis in match) {
+				const { activeBoxGuides, matchedArray, proximity } = match[axis];
+				const activeBoxProximityIndex = proximity.activeBoxIndex;
+				const matchedBoxProximityIndex = proximity.matchedBoxIndex;
+
+				if (axis === 'x') {
+					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+						newActiveBoxLeft = this.state.boxes[this.state.active].left - proximity.value;
+					} else {
+						newActiveBoxLeft = this.state.boxes[this.state.active].left + proximity.value;
+					}
+				} else {
+					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
+						newActiveBoxTop = this.state.boxes[this.state.active].top - proximity.value;
+					} else {
+						newActiveBoxTop = this.state.boxes[this.state.active].top + proximity.value;
+					}
+				}
+			}
+			const boxes = Object.assign({}, this.state.boxes, {
+				[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
+					left: newActiveBoxLeft,
+					top: newActiveBoxTop
+				})
+			});
+			const guides = Object.assign({}, this.state.guides, {
+				[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
+					x: calculateGuidePositions(boxes[this.state.active], 'x'),
+					y: calculateGuidePositions(boxes[this.state.active], 'y')
+				})
+			})
+
+			const activeBox = {
+				left: this.state.boxes[this.state.active].left,
+				top: this.state.boxes[this.state.active].top
+			}
+
+			Object.keys(guides).map(box => {
+				guides?.[box]?.x.map(position => {
+					if (match?.x?.intersection === position) {
+						activeBox.left = newActiveBoxLeft;
+					}
+				});
+
+				guides?.[box]?.y.map(position => {
+					if (match?.y?.intersection === position) {
+						activeBox.top = newActiveBoxTop;
+					}
+				});
+			});
+
+			newData = Object.assign({}, newData, {
+				...activeBox
 			});
 		}
 
