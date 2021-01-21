@@ -24,7 +24,8 @@ class AlignmentGuides extends Component {
 			isShiftKeyActive: false,
 			match: {},
 			resizing: false,
-			rotating: false
+			rotating: false,
+			activeBoxSnappedPosition: {}
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
@@ -398,19 +399,23 @@ class AlignmentGuides extends Component {
 
 				const activeBox = {
 					left: this.state.boxes[this.state.active].left,
-					top: this.state.boxes[this.state.active].top
+					top: this.state.boxes[this.state.active].top,
+					x: this.state.boxes[this.state.active].x,
+					y: this.state.boxes[this.state.active].y
 				}
 
 				Object.keys(guides).map(box => {
 					guides?.[box]?.x.map(position => {
 						if (match?.x?.intersection === position) {
 							activeBox.left = newActiveBoxLeft;
+							activeBox.x = newActiveBoxLeft;
 						}
 					});
 
 					guides?.[box]?.y.map(position => {
 						if (match?.y?.intersection === position) {
 							activeBox.top = newActiveBoxTop;
+							activeBox.y = newActiveBoxTop;
 						}
 					});
 				});
@@ -429,7 +434,8 @@ class AlignmentGuides extends Component {
 				this.setState({
 					boxes: newBoxes,
 					guides,
-					match
+					match,
+					activeBoxSnappedPosition: activeBox
 				});
 			}
 			this.state.dragging && this.props.onDrag && this.props.onDrag(e, newData);
@@ -454,62 +460,8 @@ class AlignmentGuides extends Component {
 		}
 
 		if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
-			const match = proximityListener(this.state.active, this.state.guides);
-			let newActiveBoxLeft = this.state.boxes[this.state.active].left;
-			let newActiveBoxTop = this.state.boxes[this.state.active].top;
-			for (let axis in match) {
-				const { activeBoxGuides, matchedArray, proximity } = match[axis];
-				const activeBoxProximityIndex = proximity.activeBoxIndex;
-				const matchedBoxProximityIndex = proximity.matchedBoxIndex;
-
-				if (axis === 'x') {
-					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-						newActiveBoxLeft = this.state.boxes[this.state.active].left - proximity.value;
-					} else {
-						newActiveBoxLeft = this.state.boxes[this.state.active].left + proximity.value;
-					}
-				} else {
-					if (activeBoxGuides[activeBoxProximityIndex] > matchedArray[matchedBoxProximityIndex]) {
-						newActiveBoxTop = this.state.boxes[this.state.active].top - proximity.value;
-					} else {
-						newActiveBoxTop = this.state.boxes[this.state.active].top + proximity.value;
-					}
-				}
-			}
-			const boxes = Object.assign({}, this.state.boxes, {
-				[this.state.active]: Object.assign({}, this.state.boxes[this.state.active], {
-					left: newActiveBoxLeft,
-					top: newActiveBoxTop
-				})
-			});
-			const guides = Object.assign({}, this.state.guides, {
-				[this.state.active]: Object.assign({}, this.state.guides[this.state.active], {
-					x: calculateGuidePositions(boxes[this.state.active], 'x'),
-					y: calculateGuidePositions(boxes[this.state.active], 'y')
-				})
-			})
-
-			const activeBox = {
-				left: this.state.boxes[this.state.active].left,
-				top: this.state.boxes[this.state.active].top
-			}
-
-			Object.keys(guides).map(box => {
-				guides?.[box]?.x.map(position => {
-					if (match?.x?.intersection === position) {
-						activeBox.left = newActiveBoxLeft;
-					}
-				});
-
-				guides?.[box]?.y.map(position => {
-					if (match?.y?.intersection === position) {
-						activeBox.top = newActiveBoxTop;
-					}
-				});
-			});
-
 			newData = Object.assign({}, newData, {
-				...activeBox
+				...this.state.activeBoxSnappedPosition
 			});
 		}
 
