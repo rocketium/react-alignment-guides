@@ -144,6 +144,7 @@ class Box extends PureComponent {
 	}
 
 	shortcutHandler(e) {
+		e.preventDefault();
 		const { position } = this.props;
 
 		const DELTA = e.shiftKey ? 10 : 1;
@@ -188,6 +189,7 @@ class Box extends PureComponent {
 	}
 
 	onShortcutKeyUp(e) {
+		e.preventDefault();
 		const { position } = this.props;
 		let newValues = {};
 		if (this.box && this.box.current)
