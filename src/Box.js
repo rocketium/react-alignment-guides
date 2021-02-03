@@ -195,7 +195,7 @@ class Box extends PureComponent {
 		if (this.box && this.box.current)
 			newValues.node = this.box.current
 		const data = Object.assign({}, position, newValues);
-		const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown']
+		const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control']
 		if (keysAllowed.includes(e.key)) {
 			this.props.onKeyEnd && this.props.onKeyEnd(e, data);
 		}
