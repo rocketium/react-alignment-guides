@@ -407,7 +407,7 @@ class Box extends PureComponent {
 	}
 
 	render() {
-		const { areMultipleBoxesSelected, boxStyle, id, isSelected, isShiftKeyActive, position, resolution } = this.props;
+		const { areMultipleBoxesSelected, boxStyle, id, identifier, isSelected, isShiftKeyActive, position, resolution } = this.props;
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
 			const boundingBox = this.props.getBoundingBoxElement();
 			const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
@@ -450,6 +450,7 @@ class Box extends PureComponent {
 				onKeyUp={this.onShortcutKeyUp}
 				ref={this.box}
 				style={boxStyles}
+				identifier={identifier}
 				tabIndex="0"
 			>
 				{

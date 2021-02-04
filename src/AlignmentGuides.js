@@ -682,8 +682,8 @@ class AlignmentGuides extends Component {
 		const draggableBoxes = Object.keys(boxes).map(box => {
 			const position = boxes[box];
 			const id = boxes[box].id || box;
+			const identifier = boxes[box].identifier;  // option index for caption
 			const isSelected = (active === id || activeBoxes.includes(id));
-
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -692,6 +692,7 @@ class AlignmentGuides extends Component {
 				dragging={this.state.dragging}
 				getBoundingBoxElement={this.getBoundingBoxElement}
 				id={id}
+				identifier={identifier}
 				isSelected={isSelected}
 				isShiftKeyActive={this.state.isShiftKeyActive}
 				key={id}
