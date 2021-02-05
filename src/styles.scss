@@ -16,14 +16,16 @@
 	transform-origin: center center;
 
 	&:hover {
-		outline: 2px solid #EB4B48;
+		outline: 1px dashed #ffffff !important;
+		box-shadow: 0 0 0 1px #000;
 	}
 }
 
 .selected,
 .boxGroup {
 	background-color: transparent;
-	outline: 2px solid #EB4B48 !important;
+	outline: 1px dashed #ffffff !important;
+	box-shadow: 0 0 0 1px #000;
 }
 
 .boxGroup {
@@ -33,7 +35,9 @@
 
 .groupElement {
     background-color: transparent;
-    outline: 2px solid rgba(235, 75, 72, 0.8) !important; // Reduce the outline opacity for boxes that are part of a group/multiple selection
+	outline: 1px dashed #ffffff !important;
+	box-shadow: 0 0 0 1px #000;
+    //outline: 2px solid rgba(235, 75, 72, 0.8) !important; // Reduce the outline opacity for boxes that are part of a group/multiple selection
 }
 
 .guide {
@@ -66,12 +70,14 @@
 	position: absolute;
 	top: -20px;
 	left: 0;
-	color: #EB4B48;
+	//color: #EB4B48;
 	font-weight: bold;
 	height: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
+	color: rgba(255, 255, 255, .7);
+	text-shadow: 1px 1px 0 black;
 }
 
 .dimensions {
@@ -81,7 +87,9 @@
 	position: absolute;
 	font-size: 10px;
 	font-weight: bold;
-	color: #EB4B48;
+	//color: #EB4B48;
+	color: rgba(255, 255, 255, .7);
+	text-shadow: 1px 1px 0 black;
 }
 
 .width {
@@ -94,7 +102,7 @@
 	width: 10px;
 	height: 10px;
 	background-color: #FFF;
-	border: 2px solid #EB4B48;
+	border: 2px solid #000;
 	position: absolute;
 	pointer-events: all;
 }
