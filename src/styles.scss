@@ -16,16 +16,16 @@
 	transform-origin: center center;
 
 	&:hover {
-		outline: 1px dashed #ffffff !important;
-		box-shadow: 0 0 0 1px #000;
+		outline: 2px dashed #ffffff !important;
+		box-shadow: 0 0 0 2px #000;
 	}
 }
 
 .selected,
 .boxGroup {
 	background-color: transparent;
-	outline: 1px dashed #ffffff !important;
-	box-shadow: 0 0 0 1px #000;
+	outline: 2px dashed #ffffff !important;
+	box-shadow: 0 0 0 2px #000;
 }
 
 .boxGroup {
@@ -35,8 +35,8 @@
 
 .groupElement {
     background-color: transparent;
-	outline: 1px dashed #ffffff !important;
-	box-shadow: 0 0 0 1px #000;
+	outline: 2px dashed #ffffff !important;
+	box-shadow: 0 0 0 2px #000;
     //outline: 2px solid rgba(235, 75, 72, 0.8) !important; // Reduce the outline opacity for boxes that are part of a group/multiple selection
 }
 
