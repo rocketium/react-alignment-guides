@@ -76,7 +76,7 @@ class AlignmentGuides extends Component {
 			if (activeBoxes.length > 1) {
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
-				boxes['box-ms'].zIndex = 11;
+				boxes['box-ms'].zIndex = 12;
 				const selections = [];
 				for (let box in boxes) {
 					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
@@ -153,7 +153,7 @@ class AlignmentGuides extends Component {
 				}
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
-				boxes['box-ms'].zIndex = 11;
+				boxes['box-ms'].zIndex = 12;
 				const selections = [];
 				for (let box in boxes) {
 					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
@@ -205,7 +205,7 @@ class AlignmentGuides extends Component {
 				}
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
-				boxes['box-ms'].zIndex = 11;
+				boxes['box-ms'].zIndex = 12;
 				const selections = [];
 				for (let box in boxes) {
 					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
@@ -263,7 +263,7 @@ class AlignmentGuides extends Component {
 	dragStartHandler(e, data) {
 		this.setState({
 			active: data.node.id,
-			dragging: true
+			dragging: true,
 		});
 
 		let newData = Object.assign({}, data);
@@ -273,6 +273,12 @@ class AlignmentGuides extends Component {
 		if (data.type && data.type === 'group') {
 			newData.selections = this.state.activeBoxes.map(box => {
 				return Object.assign({}, this.state.boxes[box]);
+			});
+		} else if (!e.shiftKey) {
+			this.setState({
+				activeBoxes: [
+					e.target.parentNode.id
+				],
 			});
 		}
 
@@ -684,6 +690,7 @@ class AlignmentGuides extends Component {
 			const id = boxes[box].id || box;
 			const identifier = boxes[box].identifier;  // option index for caption
 			const isSelected = (active === id || activeBoxes.includes(id));
+			id === 'box2' && console.log(active, activeBoxes);
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
