@@ -263,7 +263,7 @@ class AlignmentGuides extends Component {
 	dragStartHandler(e, data) {
 		this.setState({
 			active: data.node.id,
-			dragging: true,
+			dragging: true
 		});
 
 		let newData = Object.assign({}, data);
@@ -690,7 +690,6 @@ class AlignmentGuides extends Component {
 			const id = boxes[box].id || box;
 			const identifier = boxes[box].identifier;  // option index for caption
 			const isSelected = (active === id || activeBoxes.includes(id));
-			id === 'box2' && console.log(active, activeBoxes);
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
