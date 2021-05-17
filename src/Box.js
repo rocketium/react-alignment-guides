@@ -15,6 +15,7 @@ import {
 import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 
+const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
 class Box extends PureComponent {
 	constructor(props) {
 		super(props);
@@ -144,60 +145,68 @@ class Box extends PureComponent {
 	}
 
 	shortcutHandler(e) {
-		e.preventDefault();
-		const { position } = this.props;
+		if (this.props.isSelected) {  // Only Selected boxes will move on arrow keys
+			if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
+				e.preventDefault();
+			}
+			const { position } = this.props;
 
-		const DELTA = e.shiftKey ? 10 : 1;
-		let newValues = {};
+			const DELTA = e.shiftKey ? 10 : 1;
+			let newValues = {};
 
-		if (e.key === 'ArrowRight') {
-			newValues = e.ctrlKey ? {
-				width: position.width + DELTA
-			} : {
-				left: position.left + DELTA,
-				x: position.x + DELTA
-			}			
-		} else if (e.key === 'ArrowLeft') {
-			newValues = e.ctrlKey ? {
-				width: position.width - DELTA
-			} :  {
-				left: position.left - DELTA,
-				x: position.x - DELTA
-			};
-		} else if (e.key === 'ArrowUp') {
-			newValues = e.ctrlKey ? {
-				height: position.height - DELTA
-			} : {
-				top: position.top - DELTA,
-				y: position.y - DELTA
-			};
-		}  else if (e.key === 'ArrowDown') {
-			newValues = e.ctrlKey ? {
-				height: position.height + DELTA
-			} : {
-				top: position.top + DELTA,
-				y: position.y + DELTA
-			};
-		} 
+			if (e.key === 'ArrowRight') {
+				newValues = e.ctrlKey ? {
+					width: position.width + DELTA
+				} : {
+					left: position.left + DELTA,
+					x: position.x + DELTA
+				}			
+			} else if (e.key === 'ArrowLeft') {
+				newValues = e.ctrlKey ? {
+					width: position.width - DELTA
+				} :  {
+					left: position.left - DELTA,
+					x: position.x - DELTA
+				};
+			} else if (e.key === 'ArrowUp') {
+				newValues = e.ctrlKey ? {
+					height: position.height - DELTA
+				} : {
+					top: position.top - DELTA,
+					y: position.y - DELTA
+				};
+			}  else if (e.key === 'ArrowDown') {
+				newValues = e.ctrlKey ? {
+					height: position.height + DELTA
+				} : {
+					top: position.top + DELTA,
+					y: position.y + DELTA
+				};
+			} 
 
-		if (this.box && this.box.current)
-			newValues.node = this.box.current
+			if (this.box && this.box.current)
+				newValues.node = this.box.current
 
 
-		const data = Object.assign({}, position, newValues);
-		this.props.onKeyUp && this.props.onKeyUp(e, data);
+			const data = Object.assign({}, position, newValues);
+			this.props.onKeyUp && this.props.onKeyUp(e, data);
+		}
 	}
 
 	onShortcutKeyUp(e) {
-		e.preventDefault();
-		const { position } = this.props;
-		let newValues = {};
-		if (this.box && this.box.current)
-			newValues.node = this.box.current
-		const data = Object.assign({}, position, newValues);
-		const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control']
-		if (keysAllowed.includes(e.key)) {
-			this.props.onKeyEnd && this.props.onKeyEnd(e, data);
+		if (this.props.isSelected) {  // Only Selected boxes will move on arrow keys
+			if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
+				e.preventDefault();
+			}
+			const { position } = this.props;
+			let newValues = {};
+			if (this.box && this.box.current)
+				newValues.node = this.box.current
+			const data = Object.assign({}, position, newValues);
+			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control']
+			if (keysAllowed.includes(e.key)) {
+				this.props.onKeyEnd && this.props.onKeyEnd(e, data);
+			}
 		}
 	}
 
@@ -406,6 +415,31 @@ class Box extends PureComponent {
 		}
 	}
 
+	componentDidMount() {
+		if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
+			document.addEventListener('keydown', this.shortcutHandler);
+			document.addEventListener('keyup', this.onShortcutKeyUp);
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		// Added Events to document to accommodate group position shortcuts
+		if (prevProps.areMultipleBoxesSelected !== this.props.areMultipleBoxesSelected || prevProps.isSelected !== this.props.isSelected) {
+			document.removeEventListener('keydown', this.shortcutHandler);
+			document.removeEventListener('keyup', this.onShortcutKeyUp);
+			
+			if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
+				document.addEventListener('keydown', this.shortcutHandler);
+				document.addEventListener('keyup', this.onShortcutKeyUp);
+			}
+		}
+	}
+
+	componentWillUnmount() {
+		document.removeEventListener('keydown', this.shortcutHandler);
+		document.removeEventListener('keyup', this.onShortcutKeyUp);
+	}
+
 	render() {
 		const { areMultipleBoxesSelected, boxStyle, id, identifier, isSelected, isShiftKeyActive, position, resolution } = this.props;
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
@@ -446,8 +480,8 @@ class Box extends PureComponent {
 				id={id}
 				onClick={this.selectBox}
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
-				onKeyDown={this.shortcutHandler}
-				onKeyUp={this.onShortcutKeyUp}
+				onKeyDown={areMultipleBoxesSelected ? null : this.shortcutHandler} // remove event from div when multiple boxes are selected
+				onKeyUp={areMultipleBoxesSelected ? null : this.onShortcutKeyUp} // remove event from div when multiple boxes are selected
 				ref={this.box}
 				style={boxStyles}
 				identifier={identifier}

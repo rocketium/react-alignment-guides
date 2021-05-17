@@ -629,6 +629,11 @@ class AlignmentGuides extends Component {
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
+		if (data.type && data.type === 'group') {
+			newData.selections = this.state.activeBoxes.map(box => {
+				return Object.assign({}, this.state.boxes[box]);
+			});
+		}
 
 		this.props.onKeyUp && this.props.onKeyUp(e, newData);
 
