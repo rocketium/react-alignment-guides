@@ -240,7 +240,7 @@ class AlignmentGuides extends Component {
 
 	unSelectBox(e) {
 		if (
-			e.key === 'Escape' || e.key === 'Esc' ||
+			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
 			e.target === window ||
 			(
 				e.target &&
