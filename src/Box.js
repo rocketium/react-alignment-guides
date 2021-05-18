@@ -213,6 +213,9 @@ class Box extends PureComponent {
 	onResizeStart(e) {
 		if (this.props.position.resize || this.props.position.resize === undefined) { // Allow resize only if resize property for the box is true or undefined
 			e.stopPropagation();
+			if (this.box?.current?.style) {
+				this.box.current.style.zIndex = 99;
+			}
 			const { target, clientX: startX, clientY: startY } = e;
 			const boundingBox = this.props.getBoundingBoxElement();
 			const { position } = this.props;
@@ -319,6 +322,9 @@ class Box extends PureComponent {
 			};
 
 			const onResizeEnd = (e) => {
+				if (this.box?.current?.style) {
+					this.box.current.style.zIndex = this.props.position?.zIndex ? this.props.position.zIndex : 98;
+				}
 				if (this.didResizeHappen) {
 					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					this.props.onResizeEnd && this.props.onResizeEnd(e, data);
