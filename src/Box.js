@@ -14,7 +14,7 @@ import {
 } from './utils/helpers';
 import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
-const DRAG_THRESHOLD = 5;
+const DRAG_THRESHOLD = 4;
 class Box extends PureComponent {
 	constructor(props) {
 		super(props);
