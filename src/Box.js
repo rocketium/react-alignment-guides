@@ -14,7 +14,7 @@ import {
 } from './utils/helpers';
 import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
-
+const DRAG_THRESHOLD = 5;
 class Box extends PureComponent {
 	constructor(props) {
 		super(props);
@@ -122,11 +122,13 @@ class Box extends PureComponent {
 					deltaX: currentPosition.left - startingPosition.left,
 					deltaY: currentPosition.top - startingPosition.top
 				};
-				this.didDragHappen = true;
 				if (this.props.position.type) {
 					data.type = this.props.position.type;
 				}
-				this.props.onDrag && this.props.onDrag(e, data);
+				if ((data.deltaX * data.deltaX + data.deltaY * data.deltaY) > DRAG_THRESHOLD) {
+					this.didDragHappen = true;
+					this.props.onDrag && this.props.onDrag(e, data);
+				}
 			};
 
 			const onDragEnd = (e) => {
