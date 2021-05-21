@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import {
@@ -16,7 +16,7 @@ import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
 const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
-class Box extends PureComponent {
+class Box extends Component{
 	constructor(props) {
 		super(props);
 		this.box = React.createRef();
@@ -34,6 +34,9 @@ class Box extends PureComponent {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+		this.state = {
+			callKeyEnd: false
+		};
 	}
 
 	selectBox(e) {
@@ -157,28 +160,40 @@ class Box extends PureComponent {
 			let newValues = {};
 
 			if (e.key === 'ArrowRight') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					width: position.width + DELTA
 				} : {
 					left: position.left + DELTA,
 					x: position.x + DELTA
 				}			
 			} else if (e.key === 'ArrowLeft') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					width: position.width - DELTA
 				} :  {
 					left: position.left - DELTA,
 					x: position.x - DELTA
 				};
 			} else if (e.key === 'ArrowUp') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					height: position.height - DELTA
 				} : {
 					top: position.top - DELTA,
 					y: position.y - DELTA
 				};
 			}  else if (e.key === 'ArrowDown') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					height: position.height + DELTA
 				} : {
 					top: position.top + DELTA,
@@ -206,8 +221,9 @@ class Box extends PureComponent {
 				newValues.node = this.box.current
 			const data = Object.assign({}, position, newValues);
 			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control']
-			if (keysAllowed.includes(e.key)) {
+			if (keysAllowed.includes(e.key) && this.state.callKeyEnd) {
 				this.props.onKeyEnd && this.props.onKeyEnd(e, data);
+				this.setState({ callKeyEnd: false });
 			}
 		}
 	}
