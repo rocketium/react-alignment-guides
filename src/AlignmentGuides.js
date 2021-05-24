@@ -697,6 +697,7 @@ class AlignmentGuides extends Component {
 			const position = boxes[box];
 			const id = boxes[box].id || box;
 			const identifier = boxes[box].identifier;  // option index for caption
+			const isLayerLocked = boxes[box].isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
 			return <Box
 				{...this.props}
@@ -726,6 +727,7 @@ class AlignmentGuides extends Component {
 				rotating={this.state.rotating}
 				selectBox={this.selectBox}
 				setDragOrResizeState={this.setDragOrResizeState}
+				isLayerLocked={isLayerLocked}
 			/>;
 		});
 
