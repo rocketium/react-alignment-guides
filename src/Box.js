@@ -150,7 +150,20 @@ class Box extends Component{
 	}
 
 	shortcutHandler(e) {
-		if (this.props.isSelected) {  // Only Selected boxes will move on arrow keys
+		if (this.props.preventShortcutEvents) {
+			return;
+		}
+		const { areMultipleBoxesSelected } = this.props;
+		if (
+			this.props.isSelected && 
+			(
+				!areMultipleBoxesSelected || 
+				(
+					this.props.position && 
+					this.props.position.type === 'group'
+				)
+			) 
+		) {  // Only Selected boxes will move on arrow keys
 			if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
 				e.preventDefault();
 			}
@@ -158,6 +171,7 @@ class Box extends Component{
 
 			const DELTA = e.shiftKey ? 10 : 1;
 			let newValues = {};
+			let changedValues = {};
 
 			if (e.key === 'ArrowRight') {
 				if (!this.state.callKeyEnd) {
@@ -168,6 +182,12 @@ class Box extends Component{
 				} : {
 					left: position.left + DELTA,
 					x: position.x + DELTA
+				}
+				changedValues = e.ctrlKey || e.metaKey ? {
+					width: DELTA
+				} : {
+					left: DELTA,
+					x: DELTA
 				}			
 			} else if (e.key === 'ArrowLeft') {
 				if (!this.state.callKeyEnd) {
@@ -179,6 +199,12 @@ class Box extends Component{
 					left: position.left - DELTA,
 					x: position.x - DELTA
 				};
+				changedValues = e.ctrlKey || e.metaKey ? {
+					width: 0 - DELTA
+				} :  {
+					left: 0 - DELTA,
+					x: 0 - DELTA
+				};
 			} else if (e.key === 'ArrowUp') {
 				if (!this.state.callKeyEnd) {
 					this.setState({ callKeyEnd: true });
@@ -188,6 +214,12 @@ class Box extends Component{
 				} : {
 					top: position.top - DELTA,
 					y: position.y - DELTA
+				};
+				changedValues = e.ctrlKey || e.metaKey ? {
+					height: 0 - DELTA
+				} : {
+					top: 0 - DELTA,
+					y: 0 - DELTA
 				};
 			}  else if (e.key === 'ArrowDown') {
 				if (!this.state.callKeyEnd) {
@@ -199,18 +231,29 @@ class Box extends Component{
 					top: position.top + DELTA,
 					y: position.y + DELTA
 				};
+				changedValues = e.ctrlKey || e.metaKey ? {
+					height: DELTA
+				} : {
+					top: DELTA,
+					y: DELTA
+				};
 			} 
 
 			if (this.box && this.box.current)
 				newValues.node = this.box.current
 
 
-			const data = Object.assign({}, position, newValues);
+			const data = Object.assign({}, position, newValues, {
+				changedValues // for group shortcut keys
+			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		}
 	}
 
 	onShortcutKeyUp(e) {
+		if (this.props.preventShortcutEvents) {
+			return;
+		}
 		if (this.props.isSelected) {  // Only Selected boxes will move on arrow keys
 			if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
 				e.preventDefault();
@@ -511,6 +554,11 @@ class Box extends Component{
 				style={boxStyles}
 				identifier={identifier}
 				tabIndex="0"
+				onFocus={() => {
+					if (this.props.preventShortcutEvents) {
+						this.props.setPreventShortcutEvents(false);
+					}
+				}}
 			>
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
