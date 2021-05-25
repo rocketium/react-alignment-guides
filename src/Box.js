@@ -488,7 +488,8 @@ class Box extends Component{
 				top: `${position.top}px`,
 				left: `${position.left}px`,
 				zIndex: position.zIndex ? position.zIndex : 98,
-				transform: `rotate(${rotateAngle}deg)`
+				transform: `rotate(${rotateAngle}deg)`,
+				pointerEvents: this.props.isLayerLocked ? 'none' : '',
 			};
 
 			// if (isSelected) {
@@ -540,6 +541,7 @@ class Box extends Component{
 								className={className}
 								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
 								id={`resize-${handle}`}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
 							/>;
 						}) :
 						null
@@ -553,6 +555,7 @@ class Box extends Component{
 								className={className}
 								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
 								id={`rotate-${handle}`}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
 							/>;
 						}) :
 						null
