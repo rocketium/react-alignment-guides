@@ -520,8 +520,8 @@ class Box extends Component{
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
-			let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
-			boxClassNames = position.type === 'group' ? `${boxClassNames} ${styles.boxGroup}` : boxClassNames;
+			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
+			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
