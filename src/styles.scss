@@ -35,8 +35,8 @@
 
 .groupElement {
     background-color: transparent;
-	outline: 2px dashed #ffffff !important;
-	box-shadow: 0 0 0 2px #000;
+	outline: 1px dashed #1b47f3 !important;
+	box-shadow: 0 0 0 1px #1b47f3;
     //outline: 2px solid rgba(235, 75, 72, 0.8) !important; // Reduce the outline opacity for boxes that are part of a group/multiple selection
 }
 
@@ -102,7 +102,7 @@
 	width: 10px;
 	height: 10px;
 	background-color: #FFF;
-	border: 1px solid #000;
+	border: 1px solid #1b47f3;
 	position: absolute;
 	pointer-events: all;
 }
