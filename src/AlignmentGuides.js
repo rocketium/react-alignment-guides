@@ -751,6 +751,7 @@ class AlignmentGuides extends Component {
 	}
 
 	// draghandler
+	// draghandler
 	createRect(e, el) {
 		posX = e.x;
 		posY = e.y;
@@ -772,19 +773,21 @@ class AlignmentGuides extends Component {
 		rect2.x = rect2.x - boundingBoxPosition.x;
 		rect2.y = rect2.y - boundingBoxPosition.y;
 		this.props.boxes.forEach((rect1, index) => {
-			// console.log(rect1, rect2, rect1.x < rect2.x + rect2.width, rect1.x + rect1.width > rect2.x, rect1.y < rect2.y + rect2.height, rect1.y + rect1.height > rect2.y);
+			const box = document.getElementById('box' + index);
 			if (rect1.x < rect2.x + rect2.width &&
 				rect1.x + rect1.width > rect2.x &&
 				rect1.y < rect2.y + rect2.height &&
 				rect1.y + rect1.height > rect2.y) {
-				const box = document.getElementById('box' + index);
-				console.log('selectBox', 'box' + index);
 				this.selectBox({
 					target : box,
 					shiftKey: true
-				})
+				});
+				console.log('select');
 			} else {
-				// console.log('not touch');
+				console.log('unselect');
+				this.unSelectBox({
+					target : box
+				});
 			}
 		})
 	};
@@ -816,57 +819,60 @@ class AlignmentGuides extends Component {
 			// document.getElementsByTagName('body')[0].removeChild(el);
 		});
 		document.addEventListener('mousedown', function(e) {
-			last_mousex = e.x;
-			last_mousey = e.y;
-			mousedown = true;
-			el.classList.add('rectangle');
-			self.didDragHappen = false;
-			self.isDragHappening = true;
-			// if the starting point is on top of existing boxes, don't allow drag selection
-			self.allowDragSelection = false;
-			// remove offset position for correct calculations.
-			const boundingBox = self.getBoundingBoxElement();
-			const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-			const tempE = {
-				x: e.x,
-				y: e.y
-			};
-			tempE.x = e.x - boundingBoxPosition.x;
-			tempE.y = e.y - boundingBoxPosition.y;
-			if (self.state.activeBoxes && self.state.activeBoxes.length > 0) {
+			if(self.getBoundingBoxElement() && self.getBoundingBoxElement().current) {
+				last_mousex = e.x;
+				last_mousey = e.y;
+				mousedown = true;
+				el.classList.add('rectangle');
+				self.didDragHappen = false;
+				self.isDragHappening = true;
+				// if the starting point is on top of existing boxes, don't allow drag selection
 				self.allowDragSelection = false;
-			} else {
-				self.allowDragSelection = true;
-			}
-			// if drag is initiated outside box-ms box; allow dragSelection.
-			if (self.state.boxes && self.state.boxes['box-ms']) {
-				if (tempE.x >= self.state.boxes['box-ms'].x &&
-					tempE.x <= self.state.boxes['box-ms'].x + self.state.boxes['box-ms'].width &&
-					tempE.y >= self.state.boxes['box-ms'].y &&
-					tempE.y <= self.state.boxes['box-ms'].y + self.state.boxes['box-ms'].height) {
+				// remove offset position for correct calculations.
+				const boundingBox = self.getBoundingBoxElement();
+				const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+				const tempE = {
+					x: e.x,
+					y: e.y
+				};
+				tempE.x = e.x - boundingBoxPosition.x;
+				tempE.y = e.y - boundingBoxPosition.y;
+				if (self.state.activeBoxes && self.state.activeBoxes.length > 0) {
 					self.allowDragSelection = false;
 				} else {
 					self.allowDragSelection = true;
 				}
-			}
-			// If drag starts on existing boxes, don't register them.
-			self.props.boxes.forEach((rect1, index) => {
-				if (tempE.x >= rect1.x &&
-					tempE.x <= rect1.x + rect1.width &&
-					tempE.y >= rect1.y &&
-					tempE.y <= rect1.y + rect1.height) {
-					self.allowDragSelection = false;
+				// if drag is initiated outside box-ms box; allow dragSelection.
+				if (self.state.boxes && self.state.boxes['box-ms']) {
+					if (tempE.x >= self.state.boxes['box-ms'].x &&
+						tempE.x <= self.state.boxes['box-ms'].x + self.state.boxes['box-ms'].width &&
+						tempE.y >= self.state.boxes['box-ms'].y &&
+						tempE.y <= self.state.boxes['box-ms'].y + self.state.boxes['box-ms'].height) {
+						self.allowDragSelection = false;
+					} else {
+						self.allowDragSelection = true;
+					}
 				}
-			});
-			document.getElementsByTagName('body')[0].appendChild(el);
-			el.style.border = '1px solid red';
-			el.style.position = 'absolute';
-			el.style.zIndex = 111;
-			document.onmousemove=function(event) {
-				if (mousedown && self.allowDragSelection) {
-					self.didDragHappen = true;
-					self.decreateRect(event, el);
-					// self.deboxSelect(event);
+				// If drag starts on existing boxes, don't register them.
+				self.props.boxes.forEach((rect1, index) => {
+					if (tempE.x >= rect1.x &&
+						tempE.x <= rect1.x + rect1.width &&
+						tempE.y >= rect1.y &&
+						tempE.y <= rect1.y + rect1.height) {
+						self.allowDragSelection = false;
+					}
+				});
+				document.getElementsByTagName('body')[0].appendChild(el);
+				el.style.border = '1px solid #18a0fb';
+				el.style.backgroundColor = 'rgba(24, 160, 251, 0.2)';
+				el.style.position = 'absolute';
+				el.style.zIndex = 111;
+				document.onmousemove=function(event) {
+					if (mousedown && self.allowDragSelection) {
+						self.didDragHappen = true;
+						self.decreateRect(event, el);
+						// self.deboxSelect(event);
+					}
 				}
 			}
 		});
