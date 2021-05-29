@@ -8,6 +8,13 @@ import {
 	proximityListener,
 } from './utils/helpers'
 import styles from './styles.scss';
+import _ from 'lodash';
+let mousedown = false;
+let last_mousex = 0;
+let last_mousey = 0;
+let posX = 0;
+let posY = 0;
+// let rect2 = null;
 
 class AlignmentGuides extends Component {
 	constructor(props) {
@@ -47,6 +54,9 @@ class AlignmentGuides extends Component {
 		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
+		this.dr = this.dr.bind(this);
+		this.decreateRect = _.throttle(this.createRect, 50);
+		this.deboxSelect  = _.debounce(this.boxSelect, 10);
 	}
 
 	componentDidMount() {
@@ -106,6 +116,7 @@ class AlignmentGuides extends Component {
 				active
 			});
 		}
+		this.dr();
 	}
 
 	componentWillUnmount() {
@@ -152,7 +163,9 @@ class AlignmentGuides extends Component {
 			if (e.shiftKey) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
-					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
+					if (!this.isDragHappening) {
+						activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
+					}
 				} else {
 					activeBoxes = [
 						...activeBoxes,
@@ -245,6 +258,9 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
+		if (this.didDragHappen) {
+			return;
+		}
 		if (
 			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
 			e.target === window ||
@@ -733,6 +749,129 @@ class AlignmentGuides extends Component {
 			guidesActive: false
 		});
 	}
+
+	// draghandler
+	createRect(e, el) {
+		posX = e.x;
+		posY = e.y;
+		el.style.left = last_mousex;
+		el.style.top = last_mousey;
+		el.style.width = Math.abs(posX - last_mousex);
+		el.style.height= Math.abs(posY - last_mousey);
+		if (last_mousex) {
+			el.style.width = Math.abs(posX-last_mousex)+'px'
+			el.style.height = Math.abs(posY-last_mousey)+'px';
+			el.style.left = posX-last_mousex<0?posX+'px':last_mousex+'px';
+			el.style.top = posY-last_mousey<0?posY+'px':last_mousey+'px';
+		} else {
+			return false;
+		}
+		let rect2 = el.getBoundingClientRect();
+		const boundingBox = this.getBoundingBoxElement();
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		rect2.x = rect2.x - boundingBoxPosition.x;
+		rect2.y = rect2.y - boundingBoxPosition.y;
+		this.props.boxes.forEach((rect1, index) => {
+			// console.log(rect1, rect2, rect1.x < rect2.x + rect2.width, rect1.x + rect1.width > rect2.x, rect1.y < rect2.y + rect2.height, rect1.y + rect1.height > rect2.y);
+			if (rect1.x < rect2.x + rect2.width &&
+				rect1.x + rect1.width > rect2.x &&
+				rect1.y < rect2.y + rect2.height &&
+				rect1.y + rect1.height > rect2.y) {
+				const box = document.getElementById('box' + index);
+				console.log('selectBox', 'box' + index);
+				this.selectBox({
+					target : box,
+					shiftKey: true
+				})
+			} else {
+				// console.log('not touch');
+			}
+		})
+	};
+	boxSelect(e) {
+		// this.props.boxes.forEach((rect1, index) => {
+		// 	if (rect1.x < rect2.x + rect2.width &&
+		// 		rect1.x + rect1.width > rect2.x &&
+		// 		rect1.y < rect2.y + rect2.height &&
+		// 		rect1.y + rect1.height > rect2.y) {
+		// 		console.log('collide');
+		// 	} else {
+		// 		this.selectBox(e);
+		// 	}
+		// })
+	}
+	dr() {
+		let self = this;
+		let el = document.createElement('div');
+		this.didDragHappen = false;
+		document.addEventListener('mouseup', function(e) {
+			mousedown = false;
+			last_mousex = false;
+			last_mousey = false;
+			el.style.left = 0;
+			el.style.top = 0;
+			el.style.width = 0;
+			el.style.height= 0;
+			self.isDragHappening = false;
+			// document.getElementsByTagName('body')[0].removeChild(el);
+		});
+		document.addEventListener('mousedown', function(e) {
+			last_mousex = e.x;
+			last_mousey = e.y;
+			mousedown = true;
+			el.classList.add('rectangle');
+			self.didDragHappen = false;
+			self.isDragHappening = true;
+			// if the starting point is on top of existing boxes, don't allow drag selection
+			self.allowDragSelection = false;
+			// remove offset position for correct calculations.
+			const boundingBox = self.getBoundingBoxElement();
+			const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+			const tempE = {
+				x: e.x,
+				y: e.y
+			};
+			tempE.x = e.x - boundingBoxPosition.x;
+			tempE.y = e.y - boundingBoxPosition.y;
+			if (self.state.activeBoxes && self.state.activeBoxes.length > 0) {
+				self.allowDragSelection = false;
+			} else {
+				self.allowDragSelection = true;
+			}
+			// if drag is initiated outside box-ms box; allow dragSelection.
+			if (self.state.boxes && self.state.boxes['box-ms']) {
+				if (tempE.x >= self.state.boxes['box-ms'].x &&
+					tempE.x <= self.state.boxes['box-ms'].x + self.state.boxes['box-ms'].width &&
+					tempE.y >= self.state.boxes['box-ms'].y &&
+					tempE.y <= self.state.boxes['box-ms'].y + self.state.boxes['box-ms'].height) {
+					self.allowDragSelection = false;
+				} else {
+					self.allowDragSelection = true;
+				}
+			}
+			// If drag starts on existing boxes, don't register them.
+			self.props.boxes.forEach((rect1, index) => {
+				if (tempE.x >= rect1.x &&
+					tempE.x <= rect1.x + rect1.width &&
+					tempE.y >= rect1.y &&
+					tempE.y <= rect1.y + rect1.height) {
+					self.allowDragSelection = false;
+				}
+			});
+			document.getElementsByTagName('body')[0].appendChild(el);
+			el.style.border = '1px solid red';
+			el.style.position = 'absolute';
+			el.style.zIndex = 111;
+			document.onmousemove=function(event) {
+				if (mousedown && self.allowDragSelection) {
+					self.didDragHappen = true;
+					self.decreateRect(event, el);
+					// self.deboxSelect(event);
+				}
+			}
+		});
+	}
+	// draghandler
 
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
