@@ -136,6 +136,34 @@
 	left: -5px;
 }
 
+.resize-ct {
+	top: -5px;
+	left: calc(50% - 5px);
+}
+
+.resize-cb {
+	bottom: -5px;
+	left: calc(50% - 5px);
+}
+
+.resize-cl {
+	bottom: calc(50% - 5px);
+	left: -5px;
+}
+
+.resize-cr {
+	top: calc(50% - 5px);
+	right: -5px;
+}
+
+.resize-ct, .resize-cb {
+	cursor: ns-resize;
+}
+
+.resize-cr, .resize-cl {
+	cursor: ew-resize;
+}
+
 .resize-tr, .resize-bl {
 	cursor: nesw-resize;
 }

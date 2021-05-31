@@ -275,6 +275,56 @@ export const getNewStyle = (type, rect, deltaW, deltaH, minWidth, minHeight) => 
 			cy -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle)
 			break
 		}
+		case 'ct': {
+			deltaW = 0;
+			deltaH = -deltaH;
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx -= - deltaH / 2 * sin(rotateAngle)
+			cy -= + deltaH / 2 * cos(rotateAngle)
+			break
+		}
+		case 'cb': {
+			deltaW = 0;
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx -= deltaH / 2 * sin(rotateAngle)
+			cy -= - deltaH / 2 * cos(rotateAngle)
+			break
+		}
+		case 'cl': {
+			deltaH = 0;
+			deltaW = -deltaW;
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx -= deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle)
+			cy -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle)
+			break
+		}
+		case 'cr': {
+			deltaH = 0;
+			const widthAndDeltaW = setWidthAndDeltaW(width, deltaW, minWidth)
+			width = widthAndDeltaW.width
+			deltaW = widthAndDeltaW.deltaW
+			const heightAndDeltaH = setHeightAndDeltaH(height, deltaH, minHeight)
+			height = heightAndDeltaH.height
+			deltaH = heightAndDeltaH.deltaH
+			cx += deltaW / 2 * cos(rotateAngle)
+			cy += deltaW / 2 * sin(rotateAngle)
+			break
+		}
 	}
 
 	return {
