@@ -54,9 +54,9 @@ class AlignmentGuides extends Component {
 		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
-		this.dr = this.dr.bind(this);
-		this.decreateRect = _.throttle(this.createRect, 50);
-		this.deboxSelect  = _.debounce(this.boxSelect, 10);
+		this.mouseDragHandler = this.mouseDragHandler.bind(this);
+		this.debounceBoxSelect  = _.throttle(this.boxSelectByDrag, 50);
+		this.debounceCreateRect  = _.throttle(this.createRectByDrag, 50);
 	}
 
 	componentDidMount() {
@@ -116,7 +116,7 @@ class AlignmentGuides extends Component {
 				active
 			});
 		}
-		this.dr();
+		this.mouseDragHandler();
 	}
 
 	componentWillUnmount() {
@@ -751,8 +751,7 @@ class AlignmentGuides extends Component {
 	}
 
 	// draghandler
-	// draghandler
-	createRect(e, el) {
+	createRectByDrag(e, el) {
 		posX = e.x;
 		posY = e.y;
 		el.style.left = last_mousex;
@@ -767,6 +766,9 @@ class AlignmentGuides extends Component {
 		} else {
 			return false;
 		}
+		this.debounceBoxSelect(el);
+	}
+	boxSelectByDrag(el) {
 		let rect2 = el.getBoundingClientRect();
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
@@ -790,20 +792,8 @@ class AlignmentGuides extends Component {
 				});
 			}
 		})
-	};
-	boxSelect(e) {
-		// this.props.boxes.forEach((rect1, index) => {
-		// 	if (rect1.x < rect2.x + rect2.width &&
-		// 		rect1.x + rect1.width > rect2.x &&
-		// 		rect1.y < rect2.y + rect2.height &&
-		// 		rect1.y + rect1.height > rect2.y) {
-		// 		console.log('collide');
-		// 	} else {
-		// 		this.selectBox(e);
-		// 	}
-		// })
 	}
-	dr() {
+	mouseDragHandler() {
 		let self = this;
 		let el = document.createElement('div');
 		this.didDragHappen = false;
@@ -863,16 +853,22 @@ class AlignmentGuides extends Component {
 					}
 				});
 				document.getElementsByTagName('body')[0].appendChild(el);
+				//add style to rectangle
 				el.style.border = '1px solid #18a0fb';
 				el.style.backgroundColor = 'rgba(24, 160, 251, 0.2)';
 				el.style.position = 'absolute';
 				el.style.zIndex = 111;
+				console.log('window.target', e.target.classList);
 				document.onmousemove=function(event) {
-					if (mousedown && self.allowDragSelection) {
-						self.didDragHappen = true;
-						self.decreateRect(event, el);
-						// self.deboxSelect(event);
+					if (e.target.classList.contains('styles_boundingBox__q5am2') || e.target.classList.contains('preview__videoPreviewWrapper__KpzDu')) {
+						if (mousedown && self.allowDragSelection) {
+							self.didDragHappen = true;
+							self.debounceCreateRect(event, el);
+						}
+					} else {
+						return;
 					}
+
 				}
 			}
 		});
