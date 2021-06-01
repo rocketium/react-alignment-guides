@@ -784,11 +784,11 @@ class AlignmentGuides extends Component {
 					target : box,
 					shiftKey: true
 				});
-				console.log('select');
 			} else {
-				console.log('unselect');
 				this.unSelectBox({
-					target : box
+					target : box,
+					type: 'keydown',
+					key: 'Escape'
 				});
 			}
 		})
@@ -839,7 +839,8 @@ class AlignmentGuides extends Component {
 						tempE.y >= self.state.boxes['box-ms'].y &&
 						tempE.y <= self.state.boxes['box-ms'].y + self.state.boxes['box-ms'].height) {
 						self.allowDragSelection = false;
-					} else {
+					}
+					else {
 						self.allowDragSelection = true;
 					}
 				}
@@ -852,13 +853,21 @@ class AlignmentGuides extends Component {
 						self.allowDragSelection = false;
 					}
 				});
+				if (self.allowDragSelection) {
+					// if drag selection is allowed then unselect all boxes before creating a drag selection
+					self.didDragHappen = false;
+					self.state.activeBoxes.forEach(box => self.unSelectBox({
+						target: document.getElementById(box),
+						type: 'keydown',
+						key: 'Escape'
+					}));
+				}
 				document.getElementsByTagName('body')[0].appendChild(el);
 				//add style to rectangle
 				el.style.border = '1px solid #18a0fb';
 				el.style.backgroundColor = 'rgba(24, 160, 251, 0.2)';
 				el.style.position = 'absolute';
 				el.style.zIndex = 111;
-				console.log('window.target', e.target.classList);
 				document.onmousemove=function(event) {
 					if (e.target.classList.contains('styles_boundingBox__q5am2') || e.target.classList.contains('preview__videoPreviewWrapper__KpzDu')) {
 						if (mousedown && self.allowDragSelection) {
