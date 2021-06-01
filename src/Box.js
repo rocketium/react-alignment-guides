@@ -90,8 +90,8 @@ class Box extends Component{
 			// Update the starting position
 			startingPosition = Object.assign({}, data);
 
-			const deltaX = Math.abs(target.offsetLeft - e.clientX);
-			const deltaY = Math.abs(target.offsetTop - e.clientY);
+			const deltaX = e.clientX - target.offsetLeft;
+			const deltaY = e.clientY - target.offsetTop;
 
 			const onDrag = (e) => {
 				e.stopPropagation();
