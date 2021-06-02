@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import {
@@ -16,7 +16,7 @@ import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
 const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
-class Box extends PureComponent {
+class Box extends Component{
 	constructor(props) {
 		super(props);
 		this.box = React.createRef();
@@ -34,6 +34,9 @@ class Box extends PureComponent {
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+		this.state = {
+			callKeyEnd: false
+		};
 	}
 
 	selectBox(e) {
@@ -87,8 +90,8 @@ class Box extends PureComponent {
 			// Update the starting position
 			startingPosition = Object.assign({}, data);
 
-			const deltaX = Math.abs(target.offsetLeft - e.clientX);
-			const deltaY = Math.abs(target.offsetTop - e.clientY);
+			const deltaX = e.clientX - target.offsetLeft;
+			const deltaY = e.clientY - target.offsetTop;
 
 			const onDrag = (e) => {
 				e.stopPropagation();
@@ -147,7 +150,20 @@ class Box extends PureComponent {
 	}
 
 	shortcutHandler(e) {
-		if (this.props.isSelected) {  // Only Selected boxes will move on arrow keys
+		if (this.props.preventShortcutEvents) {
+			return;
+		}
+		const { areMultipleBoxesSelected } = this.props;
+		if (
+			this.props.isSelected && 
+			(
+				!areMultipleBoxesSelected || 
+				(
+					this.props.position && 
+					this.props.position.type === 'group'
+				)
+			) 
+		) {  // Only Selected boxes will move on arrow keys
 			if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
 				e.preventDefault();
 			}
@@ -155,34 +171,71 @@ class Box extends PureComponent {
 
 			const DELTA = e.shiftKey ? 10 : 1;
 			let newValues = {};
+			let changedValues = {};
 
 			if (e.key === 'ArrowRight') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					width: position.width + DELTA
 				} : {
 					left: position.left + DELTA,
 					x: position.x + DELTA
+				}
+				changedValues = e.ctrlKey || e.metaKey ? {
+					width: DELTA
+				} : {
+					left: DELTA,
+					x: DELTA
 				}			
 			} else if (e.key === 'ArrowLeft') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					width: position.width - DELTA
 				} :  {
 					left: position.left - DELTA,
 					x: position.x - DELTA
 				};
+				changedValues = e.ctrlKey || e.metaKey ? {
+					width: 0 - DELTA
+				} :  {
+					left: 0 - DELTA,
+					x: 0 - DELTA
+				};
 			} else if (e.key === 'ArrowUp') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					height: position.height - DELTA
 				} : {
 					top: position.top - DELTA,
 					y: position.y - DELTA
 				};
+				changedValues = e.ctrlKey || e.metaKey ? {
+					height: 0 - DELTA
+				} : {
+					top: 0 - DELTA,
+					y: 0 - DELTA
+				};
 			}  else if (e.key === 'ArrowDown') {
-				newValues = e.ctrlKey ? {
+				if (!this.state.callKeyEnd) {
+					this.setState({ callKeyEnd: true });
+				}
+				newValues = e.ctrlKey || e.metaKey ? {
 					height: position.height + DELTA
 				} : {
 					top: position.top + DELTA,
 					y: position.y + DELTA
+				};
+				changedValues = e.ctrlKey || e.metaKey ? {
+					height: DELTA
+				} : {
+					top: DELTA,
+					y: DELTA
 				};
 			} 
 
@@ -190,12 +243,17 @@ class Box extends PureComponent {
 				newValues.node = this.box.current
 
 
-			const data = Object.assign({}, position, newValues);
+			const data = Object.assign({}, position, newValues, {
+				changedValues // for group shortcut keys
+			});
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		}
 	}
 
 	onShortcutKeyUp(e) {
+		if (this.props.preventShortcutEvents) {
+			return;
+		}
 		if (this.props.isSelected) {  // Only Selected boxes will move on arrow keys
 			if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
 				e.preventDefault();
@@ -206,8 +264,9 @@ class Box extends PureComponent {
 				newValues.node = this.box.current
 			const data = Object.assign({}, position, newValues);
 			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control']
-			if (keysAllowed.includes(e.key)) {
+			if (keysAllowed.includes(e.key) && this.state.callKeyEnd) {
 				this.props.onKeyEnd && this.props.onKeyEnd(e, data);
+				this.setState({ callKeyEnd: false });
 			}
 		}
 	}
@@ -461,8 +520,8 @@ class Box extends PureComponent {
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
-			let boxClassNames = isSelected ? `${styles.box} ${styles.selected}` : styles.box;
-			boxClassNames = position.type === 'group' ? `${boxClassNames} ${styles.boxGroup}` : boxClassNames;
+			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
+			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
@@ -472,7 +531,8 @@ class Box extends PureComponent {
 				top: `${position.top}px`,
 				left: `${position.left}px`,
 				zIndex: position.zIndex ? position.zIndex : 98,
-				transform: `rotate(${rotateAngle}deg)`
+				transform: `rotate(${rotateAngle}deg)`,
+				pointerEvents: this.props.isLayerLocked ? 'none' : '',
 			};
 
 			// if (isSelected) {
@@ -494,26 +554,31 @@ class Box extends PureComponent {
 				style={boxStyles}
 				identifier={identifier}
 				tabIndex="0"
+				onFocus={() => {
+					if (this.props.preventShortcutEvents) {
+						this.props.setPreventShortcutEvents(false);
+					}
+				}}
 			>
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-						<span
+					(this.props.didDragOrResizeHappen) ? <span
 							ref={this.coordinates}
 							className={styles.coordinates}
 						>
-						{`(${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)})`}
+						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
 					</span> :
-						null
+						null :null
 				}
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-						<span
-							className={`${styles.dimensions} ${styles.width}`}
+					(this.props.didDragOrResizeHappen) ? <span
+							className={`${styles.dimensions} `}
 							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
 						>
-						{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}
+						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
 					</span> :
-						null
+						null :null
 				}
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
@@ -524,6 +589,7 @@ class Box extends PureComponent {
 								className={className}
 								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
 								id={`resize-${handle}`}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
 							/>;
 						}) :
 						null
@@ -537,6 +603,7 @@ class Box extends PureComponent {
 								className={className}
 								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
 								id={`rotate-${handle}`}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
 							/>;
 						}) :
 						null

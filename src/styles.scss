@@ -35,14 +35,14 @@
 
 .groupElement {
     background-color: transparent;
-	outline: 2px dashed #ffffff !important;
-	box-shadow: 0 0 0 2px #000;
+	outline: 1px dashed #1b47f3 !important;
+	box-shadow: 0 0 0 1px #1b47f3;
     //outline: 2px solid rgba(235, 75, 72, 0.8) !important; // Reduce the outline opacity for boxes that are part of a group/multiple selection
 }
 
 .guide {
-	background: #EB4B48;
-	color: #EB4B48;
+	background: #1b47f3;
+	color: #1b47f3;
 	display: none;
 	left: 0;
 	position: absolute;
@@ -66,35 +66,45 @@
 
 // Displaying coordinates and dimensions
 .coordinates {
-	font-size: 10px;
+	font-size: 8px;
 	position: absolute;
 	top: -20px;
 	left: 0;
 	//color: #EB4B48;
 	font-weight: bold;
-	height: 10px;
 	display: flex;
 	align-items: center;
 	justify-content: flex-start;
-	color: rgba(255, 255, 255, .7);
-	text-shadow: 1px 1px 0 black;
+	color: rgb(255, 255, 255);
+	// text-shadow: 1px 1px 0 black;
+	background-color: #007eff;
+	border: 1px solid #007eff;
+	border-radius: 2px;
+	padding: 2px;
 }
 
 .dimensions {
-	display: flex;
+	display: inline-flex;
 	align-items: center;
 	justify-content: center;
 	position: absolute;
-	font-size: 10px;
+	font-size: 8px;
 	font-weight: bold;
 	//color: #EB4B48;
-	color: rgba(255, 255, 255, .7);
-	text-shadow: 1px 1px 0 black;
+	color: rgb(255, 255, 255);
+
 }
 
-.width {
-	height: 10px;
+.dimensions_style{
+	background-color: #007eff;
+	padding: 2px;
+	border: 1px solid #007eff;
+	border-radius: 1px;
 }
+
+// .width {
+// 	height: 10px;
+// }
 
 // Resize Handles
 .resizeCorners,
@@ -102,7 +112,7 @@
 	width: 10px;
 	height: 10px;
 	background-color: #FFF;
-	border: 2px solid #000;
+	border: 1px solid #1b47f3;
 	position: absolute;
 	pointer-events: all;
 }
@@ -235,4 +245,56 @@
 	bottom: -20px;
 	left: -20px;
 	cursor: svg-inline(rotate-bl) 0 0, auto;
+}
+
+.fadeOut {
+	animation: fadeOut ease 4s;
+	-webkit-animation: fadeOut ease 4s;
+	-moz-animation: fadeOut ease 4s;
+	-o-animation: fadeOut ease 4s;
+	-ms-animation: fadeOut ease 4s;
+  }
+  @keyframes fadeOut {
+	0% {
+	  opacity:1;
+	}
+	100% {
+	  opacity:0;
+	}
+  }
+  
+  @-moz-keyframes fadeOut {
+	0% {
+	  opacity:1;
+	}
+	100% {
+	  opacity:0;
+	}
+  }
+  
+  @-webkit-keyframes fadeOut {
+	0% {
+	  opacity:1;
+	}
+	100% {
+	  opacity:0;
+	}
+  }
+  
+  @-o-keyframes fadeOut {
+	0% {
+	  opacity:1;
+	}
+	100% {
+	  opacity:0;
+	}
+  }
+  
+  @-ms-keyframes fadeOut {
+	0% {
+	  opacity:1;
+	}
+	100% {
+	  opacity:0;
+  }
 }

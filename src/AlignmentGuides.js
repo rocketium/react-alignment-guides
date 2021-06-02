@@ -25,7 +25,8 @@ class AlignmentGuides extends Component {
 			match: {},
 			resizing: false,
 			rotating: false,
-			activeBoxSnappedPosition: {}
+			activeBoxSnappedPosition: {},
+			preventShortcutEvents: false
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
@@ -43,6 +44,7 @@ class AlignmentGuides extends Component {
 		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
 		this.keyEndHandler = this.keyEndHandler.bind(this);
+		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
 	}
@@ -126,6 +128,10 @@ class AlignmentGuides extends Component {
 
 	setDragOrResizeState(state) {
 		this.didDragOrResizeHappen = state;
+	}
+
+	setPreventShortcutEvents(val) {
+		this.setState({ preventShortcutEvents: val });
 	}
 
 	selectBox(e) {
@@ -250,6 +256,7 @@ class AlignmentGuides extends Component {
 			)
 		) {
 			if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
+				this.setPreventShortcutEvents(true);
 				return;
 			}
 			const { boxes } = this.state;
@@ -257,7 +264,8 @@ class AlignmentGuides extends Component {
 			this.setState({
 				active: '',
 				activeBoxes: [],
-				boxes
+				boxes,
+				preventShortcutEvents: false
 			});
 			this.props.onUnselect && this.props.onUnselect(e);
 		}
@@ -632,41 +640,79 @@ class AlignmentGuides extends Component {
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
+
+		let boxes = null;
+		let guides = null;
 		if (data.type && data.type === 'group') {
-			newData.selections = this.state.activeBoxes.map(box => {
-				return Object.assign({}, this.state.boxes[box]);
+			boxes = {};
+			for (let box in this.state.boxes) {
+				if (this.state.boxes.hasOwnProperty(box)) {
+					if (this.state.activeBoxes.includes(box)) {
+						boxes[box] = Object.assign({}, this.state.boxes[box], {
+							x: this.state.boxes[box].x + (data.changedValues.x || 0),
+							y: this.state.boxes[box].y + (data.changedValues.y || 0),
+							left: this.state.boxes[box].left + (data.changedValues.left || 0),
+							top: this.state.boxes[box].top + (data.changedValues.top || 0),
+							height: this.state.boxes[box].height + (data.changedValues.height || 0),
+							width: this.state.boxes[box].width + (data.changedValues.width || 0)
+						});
+					}  else if (box === 'box-ms') {
+						boxes[box] = Object.assign({}, data);
+						delete boxes[box].deltaX;
+						delete boxes[box].deltaY;
+					} else {
+						boxes[box] = this.state.boxes[box];
+					}
+				}
+			}
+
+			guides = Object.keys(this.state.guides).map(guide => {
+				if (this.state.activeBoxes.includes(guide)) {
+					return Object.assign({}, this.state.guides[guide], {
+						x: calculateGuidePositions(boxes[guide], 'x'),
+						y: calculateGuidePositions(boxes[guide], 'y')
+					})
+				}
+
+				return this.state.guides[guide];
+			});
+		} else {
+			boxes = Object.assign({}, this.state.boxes, {
+				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+					x: data.x,
+					y: data.y,
+					left: data.left,
+					top: data.top,
+					width: data.width,
+					height: data.height
+				})
+			});
+
+			guides = Object.assign({}, this.state.guides, {
+				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+					x: calculateGuidePositions(boxes[data.node.id], 'x'),
+					y: calculateGuidePositions(boxes[data.node.id], 'y')
+				})
 			});
 		}
-
-		this.props.onKeyUp && this.props.onKeyUp(e, newData);
-
-		const boxes = Object.assign({}, this.state.boxes, {
-			[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-				x: data.x,
-				y: data.y,
-				left: data.left,
-				top: data.top,
-				width: data.width,
-				height: data.height
-			})
-		});
-		const guides = Object.assign({}, this.state.guides, {
-			[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-				x: calculateGuidePositions(boxes[data.node.id], 'x'),
-				y: calculateGuidePositions(boxes[data.node.id], 'y')
-			})
-		});
 
 		this.setState({
 			boxes,
 			guides,
 			resizing: false,
 			guidesActive: false
+		}, () => {
+			if (data.type && data.type === 'group') {
+				newData.selections = this.state.activeBoxes.map(box => {
+					return Object.assign({}, this.state.boxes[box]);
+				});
+			}
+	
+			this.props.onKeyUp && this.props.onKeyUp(e, newData);
 		});
 	}
 
 	keyEndHandler(e, data) {
-	
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[this.state.active].metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
@@ -697,6 +743,7 @@ class AlignmentGuides extends Component {
 			const position = boxes[box];
 			const id = boxes[box].id || box;
 			const identifier = boxes[box].identifier;  // option index for caption
+			const isLayerLocked = boxes[box].isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
 			return <Box
 				{...this.props}
@@ -726,6 +773,11 @@ class AlignmentGuides extends Component {
 				rotating={this.state.rotating}
 				selectBox={this.selectBox}
 				setDragOrResizeState={this.setDragOrResizeState}
+				isLayerLocked={isLayerLocked}
+				preventShortcutEvents={this.state.preventShortcutEvents}
+				setPreventShortcutEvents={this.setPreventShortcutEvents}
+				overRideStyles={this.props.overrideHover}
+				overRideSelected = {this.props.overrideSelected}
 			/>;
 		});
 
