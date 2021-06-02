@@ -55,7 +55,7 @@ class AlignmentGuides extends Component {
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
-		this.debounceBoxSelect  = _.throttle(this.boxSelectByDrag, 50);
+		this.debounceBoxSelect  = _.debounce(this.boxSelectByDrag, 50);
 		this.debounceCreateRect  = _.throttle(this.createRectByDrag, 50);
 	}
 
@@ -163,7 +163,7 @@ class AlignmentGuides extends Component {
 			if (e.shiftKey) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
-					if (!this.isDragHappening) {
+					if (e.unselect || !this.isDragHappening) {
 						activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
 					}
 				} else {
@@ -172,24 +172,33 @@ class AlignmentGuides extends Component {
 						e.target.id
 					];
 				}
-				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
-				boxes['box-ms'].type = 'group';
-				boxes['box-ms'].zIndex = 12;
-				const selections = [];
-				for (let box in boxes) {
-					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
-						selections.push(boxes[box]);
+				if (activeBoxes.length === 0) {
+					let { boxes } = this.state;
+					delete boxes['box-ms'];
+					this.setState({
+						activeBoxes: [],
+						boxes
+					});
+				} else {
+					boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+					boxes['box-ms'].type = 'group';
+					boxes['box-ms'].zIndex = 12;
+					const selections = [];
+					for (let box in boxes) {
+						if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+							selections.push(boxes[box]);
+						}
 					}
+					data = Object.assign({}, boxes['box-ms'], {
+						metadata: { type: 'group' },
+						selections
+					});
+					this.setState({
+						active: 'box-ms',
+						activeBoxes,
+						boxes
+					});
 				}
-				data = Object.assign({}, boxes['box-ms'], {
-					metadata: { type: 'group' },
-					selections
-				});
-				this.setState({
-					active: 'box-ms',
-					activeBoxes,
-					boxes
-				});
 			} else {
 				let { activeBoxes, boxes } = this.state;
 				delete boxes['box-ms'];
@@ -782,14 +791,21 @@ class AlignmentGuides extends Component {
 				rect1.y + rect1.height > rect2.y) {
 				this.selectBox({
 					target : box,
-					shiftKey: true
+					shiftKey: true,
 				});
 			} else {
-				this.unSelectBox({
-					target : box,
-					type: 'keydown',
-					key: 'Escape'
-				});
+				// this.unSelectBox({
+				// 	target : box,
+				// 	type: 'keydown',
+				// 	key: 'Escape'
+				// });
+				if (this.state.activeBoxes.includes('box' + index)) {
+					this.selectBox({
+						target: box,
+						shiftKey: true,
+						unselect: true
+					})
+				}
 			}
 		})
 	}
