@@ -872,15 +872,15 @@ class AlignmentGuides extends Component {
 						self.allowDragSelection = false;
 					}
 				}
-				// if (self.allowDragSelection) {
-				// 	// if drag selection is allowed then unselect all boxes before creating a drag selection
-				// 	self.didDragHappen = false;
-				// 	self.state.activeBoxes.forEach(box => self.unSelectBox({
-				// 		target: document.getElementById(box),
-				// 		type: 'keydown',
-				// 		key: 'Escape'
-				// 	}));
-				// }
+				if (self.allowDragSelection) {
+					// if drag selection is allowed then unselect all boxes before creating a drag selection
+					self.didDragHappen = false;
+					self.state.activeBoxes.forEach(box => this.selectBox({
+						target: document.getElementById(box),
+						shiftKey: true,
+						unselect: true
+					}));
+				}
 				document.getElementsByTagName('body')[0].appendChild(el);
 				//add style to rectangle
 				el.style.border = '1px solid #18a0fb';
