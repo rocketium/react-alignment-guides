@@ -512,6 +512,7 @@ class Box extends Component{
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
 			const boundingBox = this.props.getBoundingBoxElement();
 			const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
+			const dashedCentreNodes = position.dashedCentreNodes;
 			let xFactor = 1;
 			let yFactor = 1;
 
@@ -583,7 +584,7 @@ class Box extends Component{
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 						RESIZE_CORNERS.map(handle => {
-							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]}`;
+							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
 							return <div
 								key={handle}
 								className={className}

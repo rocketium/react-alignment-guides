@@ -146,6 +146,66 @@
 	left: -5px;
 }
 
+.resize-cl, .resize-cr, .resize-ct, .resize-cb {
+    opacity: 0;
+}
+
+.resize-cb, .resize-ct {
+	left: 8px;
+	width: calc(100% - 16px);
+	height: 6px;
+	cursor: ns-resize;
+}
+
+.resize-cl, .resize-cr {
+	top: 8px;
+	height: calc(100% - 16px);
+	width: 6px;
+	cursor: ew-resize;
+}
+
+.resize-ct {
+	top: -3px;
+}
+
+.resize-cb {
+	bottom: -3px;
+}
+
+.resize-cl {
+	left: -3px;
+}
+
+.resize-cr {
+	right: -3px;
+}
+
+.stretchable-resize-cl, .stretchable-resize-cr {
+	height: 30px !important;
+	top: calc(50% - 15px) !important;
+	width: 5px !important;
+	opacity: 1;
+}
+.stretchable-resize-ct, .stretchable-resize-cb {
+	width: 30px !important;
+	left: calc(50% - 15px) !important;
+	height: 5px !important;
+	opacity: 1;
+}
+
+.stretchable-resize-cl {
+	left: -3px;
+}
+.stretchable-resize-cr {
+	right: -3px;
+}
+.stretchable-resize-ct {
+	top: -3px;
+}
+.stretchable-resize-cb {
+	bottom: -3px;
+}
+
 .resize-tr, .resize-bl {
 	cursor: nesw-resize;
 }
