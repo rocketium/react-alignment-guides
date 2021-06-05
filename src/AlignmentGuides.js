@@ -146,9 +146,13 @@ class AlignmentGuides extends Component {
 	}
 
 	selectBox(e) {
+		console.log('selected', this.state.activeBoxes);
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target && e.target.id.indexOf('box') >= 0) {
+			if (e.target.id === '' || e.target.id.startsWith('box-ms')) {
+				return;
+			}
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -167,6 +171,7 @@ class AlignmentGuides extends Component {
 						activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
 					}
 				} else {
+					console.log('e.target.id', e.target.id);
 					activeBoxes = [
 						...activeBoxes,
 						e.target.id
@@ -203,6 +208,7 @@ class AlignmentGuides extends Component {
 					});
 				}
 			} else {
+				console.log('[e.target.id=]', e.target.id);
 				let { activeBoxes, boxes } = this.state;
 				delete boxes['box-ms'];
 				this.setState({
@@ -215,6 +221,10 @@ class AlignmentGuides extends Component {
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
 		} else if (e.target && e.target.parentNode && e.target.parentNode.id.indexOf('box') >= 0) {
+			if (e.target.parentNode.id === '' || e.target.parentNode.id.startsWith('box-ms')) {
+				return;
+			}
+			console.log('run');
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -792,10 +802,18 @@ class AlignmentGuides extends Component {
 				rect1.x + rect1.width > rect2.x &&
 				rect1.y < rect2.y + rect2.height &&
 				rect1.y + rect1.height > rect2.y) {
-				this.selectBox({
-					target : box,
-					shiftKey: true,
-				});
+				if (!rect1.isLayerLocked) {
+					if (this.state.activeBoxes.includes('box' + index)) {
+						return;
+					}
+					this.selectBox({
+						target : box,
+						shiftKey: true,
+					});
+				} else {
+					return;
+				}
+
 			} else {
 				// this.unSelectBox({
 				// 	target : box,
@@ -865,7 +883,7 @@ class AlignmentGuides extends Component {
 				}
 				// If drag starts on existing boxes, don't register them.
 				for (let box in self.state.boxes) {
-					if ( self.state.boxes[box] && tempE.x >= self.state.boxes[box].x &&
+					if ( self.state.boxes[box] && !self.state.boxes[box].isLayerLocked && tempE.x >= self.state.boxes[box].x &&
 						tempE.x <= self.state.boxes[box].x + self.state.boxes[box].width &&
 						tempE.y >= self.state.boxes[box].y &&
 						tempE.y <= self.state.boxes[box].y + self.state.boxes[box].height) {
@@ -892,7 +910,7 @@ class AlignmentGuides extends Component {
 					// 	self.didDragHappen = true;
 					// 	self.debounceCreateRect(event, el);
 					// }
-					if (e.target.classList.contains('styles_boundingBox__q5am2') || e.target.classList.contains('preview__videoPreviewWrapper__KpzDu')) {
+					if (e.target.classList.contains('r-preview-bg-wrapper') || e.target.id === 'r-preview-background' || e.target.classList.contains('bounding-box-wrapper') || e.target.classList.contains('videoPreviewClass')) {
 						if (mousedown && self.allowDragSelection) {
 							self.didDragHappen = true;
 							self.debounceCreateRect(event, el);
@@ -1009,7 +1027,7 @@ class AlignmentGuides extends Component {
 			}, []);
 		}
 
-		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className}`} style={this.props.style}>
+		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
