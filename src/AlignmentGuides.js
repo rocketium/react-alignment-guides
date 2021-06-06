@@ -910,7 +910,7 @@ class AlignmentGuides extends Component {
 					// 	self.didDragHappen = true;
 					// 	self.debounceCreateRect(event, el);
 					// }
-					if (e.target.classList.contains('r-preview-bg-wrapper') || e.target.id === 'r-preview-background' || e.target.classList.contains('bounding-box-wrapper') || e.target.classList.contains('videoPreviewClass')) {
+					if (e.target.classList.contains('r-preview-bg-wrapper') || e.target.id === 'r-preview-background' || e.target.classList.contains('bounding-box-wrapper') || e.target.classList.contains('videoPreviewClass') || e.target.classList.contains('safeArealines')) {
 						if (mousedown && self.allowDragSelection) {
 							self.didDragHappen = true;
 							self.debounceCreateRect(event, el);
