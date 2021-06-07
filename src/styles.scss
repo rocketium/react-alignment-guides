@@ -77,14 +77,13 @@
 	justify-content: flex-start;
 	color: rgb(255, 255, 255);
 	// text-shadow: 1px 1px 0 black;
-	background-color: #007eff;
-	border: 1px solid #007eff;
+	background-color: #44B2FB;
+	border: 1px solid #44B2FB;
 	border-radius: 2px;
-	padding: 2px;
 }
 
 .dimensions {
-	display: inline-flex;
+	display: flex;
 	align-items: center;
 	justify-content: center;
 	position: absolute;
@@ -92,14 +91,15 @@
 	font-weight: bold;
 	//color: #EB4B48;
 	color: rgb(255, 255, 255);
+	margin-top: -5px;
 
 }
 
 .dimensions_style{
-	background-color: #007eff;
-	padding: 2px;
-	border: 1px solid #007eff;
-	border-radius: 1px;
+	background-color: #44B2FB;
+	border: 1px solid #44B2FB;
+	padding-right: 1px;
+	border-radius: 2px;
 }
 
 // .width {
