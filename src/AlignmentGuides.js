@@ -116,7 +116,9 @@ class AlignmentGuides extends Component {
 				active
 			});
 		}
-		this.mouseDragHandler();
+		if (this.props.isStylingPanelEnabled) {
+			this.mouseDragHandler();
+		}
 	}
 
 	componentWillUnmount() {
