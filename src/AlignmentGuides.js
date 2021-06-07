@@ -55,8 +55,8 @@ class AlignmentGuides extends Component {
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
-		this.debounceBoxSelect  = this.boxSelectByDrag;
-		this.debounceCreateRect  = this.createRectByDrag;
+		this.boxSelectByDrag  = this.boxSelectByDrag.bind(this);
+		this.createRectByDrag  = this.createRectByDrag.bind(this);
 	}
 
 	componentDidMount() {
@@ -188,6 +188,9 @@ class AlignmentGuides extends Component {
 					boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 					boxes['box-ms'].type = 'group';
 					boxes['box-ms'].zIndex = 12;
+					if (boxes['box-ms'].width === 0 && boxes['box-ms'].height === 0) {
+						return;
+					}
 					const selections = [];
 					for (let box in boxes) {
 						if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
@@ -772,64 +775,7 @@ class AlignmentGuides extends Component {
 		});
 	}
 
-	// draghandler
-	createRectByDrag(e, el) {
-		posX = e.x;
-		posY = e.y;
-		el.style.left = last_mousex;
-		el.style.top = last_mousey;
-		el.style.width = Math.abs(posX - last_mousex);
-		el.style.height= Math.abs(posY - last_mousey);
-		if (last_mousex) {
-			el.style.width = Math.abs(posX-last_mousex)+'px'
-			el.style.height = Math.abs(posY-last_mousey)+'px';
-			el.style.left = posX-last_mousex<0?posX+'px':last_mousex+'px';
-			el.style.top = posY-last_mousey<0?posY+'px':last_mousey+'px';
-		} else {
-			return false;
-		}
-		this.debounceBoxSelect(el);
-	}
-	boxSelectByDrag(el) {
-		let rect2 = el && el.getBoundingClientRect();
-		const boundingBox = this.getBoundingBoxElement();
-		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-		rect2.x = rect2.x - boundingBoxPosition.x;
-		rect2.y = rect2.y - boundingBoxPosition.y;
-		this.props.boxes.forEach((rect1, index) => {
-			const box = document.getElementById('box' + index);
-			if (rect1.x < rect2.x + rect2.width &&
-				rect1.x + rect1.width > rect2.x &&
-				rect1.y < rect2.y + rect2.height &&
-				rect1.y + rect1.height > rect2.y) {
-				if (!rect1.isLayerLocked) {
-					if (this.state.activeBoxes.includes('box' + index)) {
-						return;
-					}
-					this.selectBox({
-						target : box,
-						shiftKey: true,
-					});
-				} else {
-					return;
-				}
-
-			} else {
-				// this.unSelectBox({
-				// 	target : box,
-				// 	type: 'keydown',
-				// 	key: 'Escape'
-				// });
-				if (this.state.activeBoxes.includes('box' + index)) {
-					this.selectBox({
-						target: box,
-						shiftKey: true,
-						unselect: true
-					})
-				}
-			}
-		})
-	}
+	// drag select handler
 	mouseDragHandler() {
 		let self = this;
 		let el = document.createElement('div');
@@ -843,7 +789,6 @@ class AlignmentGuides extends Component {
 			el.style.width = 0;
 			el.style.height= 0;
 			self.isDragHappening = false;
-			// document.getElementsByTagName('body')[0].removeChild(el);
 		});
 		document.addEventListener('mousedown', function(e) {
 			if(self.getBoundingBoxElement() && self.getBoundingBoxElement().current) {
@@ -890,15 +835,6 @@ class AlignmentGuides extends Component {
 						self.allowDragSelection = false;
 					}
 				}
-				// if (self.allowDragSelection) {
-				// 	// if drag selection is allowed then unselect all boxes before creating a drag selection
-				// 	self.didDragHappen = false;
-				// 	self.state.activeBoxes.forEach(box => this.selectBox({
-				// 		target: document.getElementById(box),
-				// 		shiftKey: true,
-				// 		unselect: true
-				// 	}));
-				// }
 				document.getElementsByTagName('body')[0].appendChild(el);
 				//add style to rectangle
 				el.style.border = '1px solid #18a0fb';
@@ -906,14 +842,10 @@ class AlignmentGuides extends Component {
 				el.style.position = 'absolute';
 				el.style.zIndex = 111;
 				document.onmousemove=function(event) {
-					// if (mousedown && self.allowDragSelection) {
-					// 	self.didDragHappen = true;
-					// 	self.debounceCreateRect(event, el);
-					// }
 					if (e.target.classList.contains('r-preview-bg-wrapper') || e.target.id === 'r-preview-background' || e.target.classList.contains('bounding-box-wrapper') || e.target.classList.contains('videoPreviewClass') || e.target.classList.contains('safeArealines')) {
 						if (mousedown && self.allowDragSelection) {
 							self.didDragHappen = true;
-							self.debounceCreateRect(event, el);
+							self.createRectByDrag(event, el);
 						}
 					} else {
 						return;
@@ -923,7 +855,59 @@ class AlignmentGuides extends Component {
 			}
 		});
 	}
-	// draghandler
+	createRectByDrag(e, el) {
+		posX = e.x;
+		posY = e.y;
+		el.style.left = last_mousex;
+		el.style.top = last_mousey;
+		el.style.width = Math.abs(posX - last_mousex);
+		el.style.height= Math.abs(posY - last_mousey);
+		if (last_mousex) {
+			el.style.width = Math.abs(posX-last_mousex)+'px'
+			el.style.height = Math.abs(posY-last_mousey)+'px';
+			el.style.left = posX-last_mousex<0?posX+'px':last_mousex+'px';
+			el.style.top = posY-last_mousey<0?posY+'px':last_mousey+'px';
+		} else {
+			return false;
+		}
+		this.boxSelectByDrag(el);
+	}
+	boxSelectByDrag(el) {
+		let rect2 = el && el.getBoundingClientRect();
+		const boundingBox = this.getBoundingBoxElement();
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		rect2.x = rect2.x - boundingBoxPosition.x;
+		rect2.y = rect2.y - boundingBoxPosition.y;
+		this.props.boxes.forEach((rect1, index) => {
+			const box = document.getElementById('box' + index);
+			if (rect1.x < rect2.x + rect2.width &&
+				rect1.x + rect1.width > rect2.x &&
+				rect1.y < rect2.y + rect2.height &&
+				rect1.y + rect1.height > rect2.y) {
+				if (!rect1.isLayerLocked) {
+					if (this.state.activeBoxes.includes('box' + index)) {
+						return;
+					}
+					this.selectBox({
+						target : box,
+						shiftKey: true,
+					});
+				} else {
+					return;
+				}
+
+			} else {
+				if (this.state.activeBoxes.includes('box' + index)) {
+					this.selectBox({
+						target: box,
+						shiftKey: true,
+						unselect: true
+					})
+				}
+			}
+		})
+	}
+	// drag select handler
 
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
