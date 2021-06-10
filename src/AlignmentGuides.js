@@ -776,6 +776,7 @@ class AlignmentGuides extends Component {
 				isLayerLocked={isLayerLocked}
 				preventShortcutEvents={this.state.preventShortcutEvents}
 				setPreventShortcutEvents={this.setPreventShortcutEvents}
+				toggleHover={this.props.toggleHover}
 				overRideStyles={this.props.overrideHover}
 				overRideSelected = {this.props.overrideSelected}
 			/>;

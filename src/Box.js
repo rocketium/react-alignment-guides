@@ -25,6 +25,8 @@ class Box extends Component{
 		this.didDragHappen = false;
 		this.didResizeHappen = false;
 		this.selectBox = this.selectBox.bind(this);
+		this.unHoverBox = this.unHoverBox.bind(this);
+		this.hoverBox = this.hoverBox.bind(this);
 		this.onDragStart = this.onDragStart.bind(this);
 		this.shortcutHandler = this.shortcutHandler.bind(this);
 		this.onShortcutKeyUp = this.onShortcutKeyUp.bind(this);
@@ -47,6 +49,14 @@ class Box extends Component{
 		if (this.box && this.box.current) {
 			this.box.current.focus();
 		}
+	}
+
+	hoverBox(e) {
+		e.target.classList.add(this.props.toggleHover);
+	}
+
+	unHoverBox(e) {
+		e.target.classList.remove(this.props.toggleHover);
 	}
 
 	onDragStart(e) {
@@ -506,7 +516,7 @@ class Box extends Component{
 		document.removeEventListener('keydown', this.shortcutHandler);
 		document.removeEventListener('keyup', this.onShortcutKeyUp);
 	}
-
+	
 	render() {
 		const { areMultipleBoxesSelected, boxStyle, id, identifier, isSelected, isShiftKeyActive, position, resolution } = this.props;
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
@@ -551,6 +561,8 @@ class Box extends Component{
 				onMouseDown={this.props.drag ? this.onDragStart : null} // If this.props.drag is false, remove the mouseDown event handler for drag
 				onKeyDown={areMultipleBoxesSelected ? null : this.shortcutHandler} // remove event from div when multiple boxes are selected
 				onKeyUp={areMultipleBoxesSelected ? null : this.onShortcutKeyUp} // remove event from div when multiple boxes are selected
+				onMouseOver={this.hoverBox}
+				onMouseOut={this.unHoverBox}
 				ref={this.box}
 				style={boxStyles}
 				identifier={identifier}
