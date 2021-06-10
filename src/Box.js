@@ -141,14 +141,20 @@ class Box extends Component{
 				}
 				if ((data.deltaX * data.deltaX + data.deltaY * data.deltaY) > DRAG_THRESHOLD) {
 					this.didDragHappen = true;
-					this.props.onDrag && this.props.onDrag(e, data);
+					if (this.props.dragDisabled !== true) {
+						this.props.onDrag && this.props.onDrag(e, data);
+					} else if (typeof this.props.dragDisabledCallback === 'function') {
+						this.props.dragDisabledCallback();
+					}
 				}
 			};
 
 			const onDragEnd = (e) => {
 				if (this.didDragHappen) {
 					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
-					this.props.onDragEnd && this.props.onDragEnd(e, data);
+					if (this.props.dragDisabled !== true) {
+						this.props.onDragEnd && this.props.onDragEnd(e, data);
+					}
 				}
 				document.removeEventListener('mousemove', onDrag);
 				document.removeEventListener('mouseup', onDragEnd);
@@ -256,6 +262,12 @@ class Box extends Component{
 			const data = Object.assign({}, position, newValues, {
 				changedValues // for group shortcut keys
 			});
+			if (this.props.dragDisabled === true) {
+				if (typeof this.props.dragDisabledCallback === 'function') {
+					this.props.dragDisabledCallback();
+				}
+				return;
+			}
 			this.props.onKeyUp && this.props.onKeyUp(e, data);
 		}
 	}
@@ -273,7 +285,10 @@ class Box extends Component{
 			if (this.box && this.box.current)
 				newValues.node = this.box.current
 			const data = Object.assign({}, position, newValues);
-			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control']
+			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control'];
+			if (this.props.dragDisabled === true) {
+				return;
+			}
 			if (keysAllowed.includes(e.key) && this.state.callKeyEnd) {
 				this.props.onKeyEnd && this.props.onKeyEnd(e, data);
 				this.setState({ callKeyEnd: false });
@@ -389,7 +404,11 @@ class Box extends Component{
 				if (this.props.position.type) {
 					data.type = this.props.position.type;
 				}
-				this.props.onResize && this.props.onResize(e, data);
+				if (this.props.dragDisabled !== true) {
+					this.props.onResize && this.props.onResize(e, data);
+				} else if (typeof this.props.dragDisabledCallback === 'function') {
+					this.props.dragDisabledCallback();
+				}
 			};
 
 			const onResizeEnd = (e) => {
@@ -398,7 +417,9 @@ class Box extends Component{
 				}
 				if (this.didResizeHappen) {
 					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
-					this.props.onResizeEnd && this.props.onResizeEnd(e, data);
+					if (this.props.dragDisabled !== true) {
+						this.props.onResizeEnd && this.props.onResizeEnd(e, data);
+					}
 				}
 				onResize && document.removeEventListener('mousemove', onResize);
 				onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
@@ -472,13 +493,19 @@ class Box extends Component{
 				});
 
 				const newCoordinates = getNewCoordinates(data);
-				this.props.onRotate && this.props.onRotate(e, newCoordinates);
+				if (this.props.dragDisabled !== true) {
+					this.props.onRotate && this.props.onRotate(e, newCoordinates);
+				} else if (typeof this.props.dragDisabledCallback === 'function') {
+					this.props.dragDisabledCallback();
+				}
 			};
 
 			const onRotateEnd = (e) => {
 				onRotate && document.removeEventListener('mousemove', onRotate);
 				onRotateEnd && document.removeEventListener('mouseup', onRotateEnd);
-				this.props.onRotateEnd && this.props.onRotateEnd(e, data);
+				if (this.props.dragDisabled !== true) {
+					this.props.onRotateEnd && this.props.onRotateEnd(e, data);
+				}
 			};
 
 			onRotate && document.addEventListener('mousemove', onRotate);
