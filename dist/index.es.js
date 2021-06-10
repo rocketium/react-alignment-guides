@@ -1,4 +1,4 @@
-import React, { PureComponent, Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -443,11 +443,11 @@ function toNumber(value) {
 
 var lodash_throttle = throttle;
 
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$2(Object(source), true).forEach(function (key) { _defineProperty$2(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 var calculateGuidePositions = function calculateGuidePositions(dimensions, axis) {
   if (axis === 'x') {
@@ -475,13 +475,13 @@ var proximityListener = function proximityListener(active, allGuides) {
   var allMatchedGuides = {};
 
   if (xAxisMatchedGuides.proximity) {
-    allMatchedGuides.x = _objectSpread({}, xAxisMatchedGuides, {
+    allMatchedGuides.x = _objectSpread$2(_objectSpread$2({}, xAxisMatchedGuides), {}, {
       activeBoxGuides: xAxisGuidesForActiveBox
     });
   }
 
   if (yAxisMatchedGuides.proximity) {
-    allMatchedGuides.y = _objectSpread({}, yAxisMatchedGuides, {
+    allMatchedGuides.y = _objectSpread$2(_objectSpread$2({}, yAxisMatchedGuides), {}, {
       activeBoxGuides: yAxisGuidesForActiveBox
     });
   }
@@ -540,7 +540,7 @@ var checkValueProximities = function checkValueProximities(activeBoxGuidesInOneA
   };
 };
 var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, width, height, bounds) {
-  var boundingBox = _objectSpread({}, bounds);
+  var boundingBox = _objectSpread$2({}, bounds);
 
   if (left >= 0 && left <= boundingBox.width - width && top >= 0 && top <= boundingBox.height - height) {
     return {
@@ -566,7 +566,7 @@ var calculateBoundariesForDrag = function calculateBoundariesForDrag(left, top, 
 }; // Calculate boundaries for boxes given an output resolution
 
 var calculateBoundariesForResize = function calculateBoundariesForResize(left, top, width, height, bounds) {
-  var boundingBox = _objectSpread({}, bounds);
+  var boundingBox = _objectSpread$2({}, bounds);
 
   var widthDifference = 0;
   var heightDifference = 0;
@@ -778,6 +778,80 @@ var getNewStyle = function getNewStyle(type, rect, deltaW, deltaH, minWidth, min
         cy -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle);
         break;
       }
+
+    case 'ct':
+      {
+        deltaW = 0;
+        deltaH = -deltaH;
+
+        var _widthAndDeltaW4 = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW4.width;
+        deltaW = _widthAndDeltaW4.deltaW;
+
+        var _heightAndDeltaH4 = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH4.height;
+        deltaH = _heightAndDeltaH4.deltaH;
+        cx -= -deltaH / 2 * sin(rotateAngle);
+        cy -= +deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+
+    case 'cb':
+      {
+        deltaW = 0;
+
+        var _widthAndDeltaW5 = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW5.width;
+        deltaW = _widthAndDeltaW5.deltaW;
+
+        var _heightAndDeltaH5 = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH5.height;
+        deltaH = _heightAndDeltaH5.deltaH;
+        cx -= deltaH / 2 * sin(rotateAngle);
+        cy -= -deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+
+    case 'cl':
+      {
+        deltaH = 0;
+        deltaW = -deltaW;
+
+        var _widthAndDeltaW6 = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW6.width;
+        deltaW = _widthAndDeltaW6.deltaW;
+
+        var _heightAndDeltaH6 = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH6.height;
+        deltaH = _heightAndDeltaH6.deltaH;
+        cx -= deltaW / 2 * cos(rotateAngle) - deltaH / 2 * sin(rotateAngle);
+        cy -= deltaW / 2 * sin(rotateAngle) + deltaH / 2 * cos(rotateAngle);
+        break;
+      }
+
+    case 'cr':
+      {
+        deltaH = 0;
+
+        var _widthAndDeltaW7 = setWidthAndDeltaW(width, deltaW, minWidth);
+
+        width = _widthAndDeltaW7.width;
+        deltaW = _widthAndDeltaW7.deltaW;
+
+        var _heightAndDeltaH7 = setHeightAndDeltaH(height, deltaH, minHeight);
+
+        height = _heightAndDeltaH7.height;
+        deltaH = _heightAndDeltaH7.deltaH;
+        cx += deltaW / 2 * cos(rotateAngle);
+        cy += deltaW / 2 * sin(rotateAngle);
+        break;
+      }
   }
 
   return {
@@ -874,7 +948,7 @@ var getMultipleSelectionCoordinates = function getMultipleSelectionCoordinates(a
 
 // Key map for changing the position and size of draggable boxes
 
-var RESIZE_CORNERS = ['tr', 'tl', 'br', 'bl']; // Positions for rotate handles
+var RESIZE_CORNERS = ['tr', 'tl', 'br', 'bl', 'ct', 'cl', 'cb', 'cr']; // Positions for rotate handles
 
 var ROTATE_HANDLES = ['tr', 'tl', 'br', 'bl'];
 
@@ -905,67 +979,75 @@ function styleInject(css, ref) {
   }
 }
 
-var css_248z = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    outline: 2px solid #EB4B48; }\n\n.styles_selected__2PEpG,\n.styles_boxGroup__10v7H {\n  background-color: transparent;\n  outline: 2px solid #EB4B48 !important; }\n\n.styles_boxGroup__10v7H {\n  position: absolute;\n  background-color: transparent !important; }\n\n.styles_groupElement__1_x2s {\n  background-color: transparent;\n  outline: 2px solid rgba(235, 75, 72, 0.8) !important; }\n\n.styles_guide__3lcsS {\n  background: #EB4B48;\n  color: #EB4B48;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 10px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  color: #EB4B48;\n  font-weight: bold;\n  height: 10px;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 10px;\n  font-weight: bold;\n  color: #EB4B48; }\n\n.styles_width__2MzYI {\n  height: 10px; }\n\n.styles_resizeCorners__3nhDk,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 2px solid #EB4B48;\n  position: absolute;\n  pointer-events: all; }\n\n.styles_resizeCorners__3nhDk {\n  z-index: 99; }\n\n.styles_resizeEdges__1A7d8 {\n  background-color: #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n";
-var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","selected":"styles_selected__2PEpG","boxGroup":"styles_boxGroup__10v7H","groupElement":"styles_groupElement__1_x2s","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","width":"styles_width__2MzYI","resizeCorners":"styles_resizeCorners__3nhDk","rotateHandle":"styles_rotateHandle__26rVp","resizeEdges":"styles_resizeEdges__1A7d8","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr"};
+var css_248z = "* {\n  box-sizing: border-box; }\n\n.styles_boundingBox__q5am2 {\n  padding: 0;\n  position: fixed;\n  background-color: transparent; }\n\n.styles_box__3n5vw {\n  background-color: transparent;\n  position: absolute;\n  outline: none;\n  z-index: 10;\n  transform-origin: center center; }\n  .styles_box__3n5vw:hover {\n    outline: 2px dashed #ffffff !important;\n    box-shadow: 0 0 0 2px #000; }\n\n.styles_hoverCaption__308cV {\n  outline: 1px solid #1b47f3 !important;\n  box-shadow: 0 0 0 1px #1b47f3; }\n\n.styles_selected__2PEpG,\n.styles_boxGroup__10v7H {\n  background-color: transparent;\n  outline: 2px dashed #ffffff !important;\n  box-shadow: 0 0 0 2px #000; }\n\n.styles_boxGroup__10v7H {\n  position: absolute;\n  background-color: transparent !important; }\n\n.styles_groupElement__1_x2s {\n  background-color: transparent;\n  outline: 1px dashed #1b47f3 !important;\n  box-shadow: 0 0 0 1px #1b47f3; }\n\n.styles_guide__3lcsS {\n  background: #1b47f3;\n  color: #1b47f3;\n  display: none;\n  left: 0;\n  position: absolute;\n  top: 0;\n  z-index: 100; }\n\n.styles_active__1jaJY {\n  display: block; }\n\n.styles_xAxis__1ag77 {\n  height: 100%;\n  width: 1px; }\n\n.styles_yAxis__LO1fy {\n  height: 1px;\n  width: 100%; }\n\n.styles_coordinates__ulL0y {\n  font-size: 8px;\n  position: absolute;\n  top: -20px;\n  left: 0;\n  font-weight: bold;\n  display: flex;\n  align-items: center;\n  justify-content: flex-start;\n  color: white;\n  background-color: #44B2FB;\n  border: 1px solid #44B2FB;\n  border-radius: 2px; }\n\n.styles_dimensions__27ria {\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  position: absolute;\n  font-size: 8px;\n  font-weight: bold;\n  color: white;\n  margin-top: -5px; }\n\n.styles_dimensions_style__3o0dM {\n  background-color: #44B2FB;\n  border: 1px solid #44B2FB;\n  padding-right: 1px;\n  border-radius: 2px; }\n\n.styles_resizeCorners__3nhDk,\n.styles_rotateHandle__26rVp {\n  width: 10px;\n  height: 10px;\n  background-color: #FFF;\n  border: 1px solid #1b47f3;\n  position: absolute;\n  pointer-events: all; }\n\n.styles_resizeCorners__3nhDk {\n  z-index: 99; }\n\n.styles_resizeEdges__1A7d8 {\n  background-color: #EB4B48;\n  position: absolute; }\n\n.styles_resize-tr__ZvMqh {\n  top: -5px;\n  right: -5px; }\n\n.styles_resize-tl__2WkU4 {\n  top: -5px;\n  left: -5px; }\n\n.styles_resize-br__1bQX3 {\n  bottom: -5px;\n  right: -5px; }\n\n.styles_resize-bl__2hmh_ {\n  bottom: -5px;\n  left: -5px; }\n\n.styles_resize-cl__39KBz, .styles_resize-cr__3t5LJ, .styles_resize-ct__2okeH, .styles_resize-cb__2Ul0P {\n  opacity: 0; }\n\n.styles_resize-cb__2Ul0P, .styles_resize-ct__2okeH {\n  left: 8px;\n  width: calc(100% - 16px);\n  height: 6px;\n  cursor: ns-resize; }\n\n.styles_resize-cl__39KBz, .styles_resize-cr__3t5LJ {\n  top: 8px;\n  height: calc(100% - 16px);\n  width: 6px;\n  cursor: ew-resize; }\n\n.styles_resize-ct__2okeH {\n  top: -3px; }\n\n.styles_resize-cb__2Ul0P {\n  bottom: -3px; }\n\n.styles_resize-cl__39KBz {\n  left: -3px; }\n\n.styles_resize-cr__3t5LJ {\n  right: -3px; }\n\n.styles_stretchable-resize-cl__GJ8dn, .styles_stretchable-resize-cr__1rxr2 {\n  height: 30px !important;\n  top: calc(50% - 15px) !important;\n  width: 5px !important;\n  opacity: 1; }\n\n.styles_stretchable-resize-ct__1vicN, .styles_stretchable-resize-cb__3VL9s {\n  width: 30px !important;\n  left: calc(50% - 15px) !important;\n  height: 5px !important;\n  opacity: 1; }\n\n.styles_stretchable-resize-cl__GJ8dn {\n  left: -3px; }\n\n.styles_stretchable-resize-cr__1rxr2 {\n  right: -3px; }\n\n.styles_stretchable-resize-ct__1vicN {\n  top: -3px; }\n\n.styles_stretchable-resize-cb__3VL9s {\n  bottom: -3px; }\n\n.styles_resize-tr__ZvMqh, .styles_resize-bl__2hmh_ {\n  cursor: nesw-resize; }\n\n.styles_resize-tl__2WkU4, .styles_resize-br__1bQX3 {\n  cursor: nwse-resize; }\n\n.styles_rotateHandle__26rVp {\n  width: 25px;\n  height: 25px;\n  z-index: 98;\n  opacity: 0; }\n\n.styles_rotate-tr__1qWDZ {\n  top: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-tl__3lNBx {\n  top: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(-90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-br__baNeE {\n  bottom: -20px;\n  right: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(90)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_rotate-bl__3zhHr {\n  bottom: -20px;\n  left: -20px;\n  cursor: url(\"data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' height='15' width='15' fill='%23333' viewBox='0 0 24 24' stroke='%23FFF' transform='rotate(180)'%3E%3Cpath d='M14.722 16.802c-.687 0-1.373.343-1.545 1.028-.344.686-.172 1.371.343 1.886l3.777 3.77c.172.171.344.343.515.343.172.171.515.171.687.171.172 0 .515 0 .687-.171.172-.172.343-.172.515-.343l3.777-3.77c.515-.515.687-1.2.343-1.886-.343-.685-.858-1.028-1.545-1.028h-2.06v-2.228A10.762 10.762 0 009.4 3.777H7.168V1.721c0-.686-.344-1.371-1.03-1.543C5.45-.164 4.764.007 4.249.521L.472 4.291C.3 4.463.13 4.634.13 4.806c-.172.342-.172.856 0 1.37.171.172.171.343.343.515l3.777 3.77c.344.343.687.514 1.202.514.172 0 .515 0 .687-.171.686-.343 1.03-.857 1.03-1.543V7.205H9.4c4.12 0 7.382 3.256 7.382 7.37v2.227z' stroke-width='1.715'/%3E%3C/svg%3E\") 0 0, auto; }\n\n.styles_fadeOut__1FkJy {\n  animation: styles_fadeOut__1FkJy ease 4s;\n  -webkit-animation: styles_fadeOut__1FkJy ease 4s;\n  -moz-animation: styles_fadeOut__1FkJy ease 4s;\n  -o-animation: styles_fadeOut__1FkJy ease 4s;\n  -ms-animation: styles_fadeOut__1FkJy ease 4s; }\n\n@keyframes styles_fadeOut__1FkJy {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@-moz-keyframes styles_fadeOut__1FkJy {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@-webkit-keyframes styles_fadeOut__1FkJy {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@-o-keyframes styles_fadeOut__1FkJy {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n\n@-ms-keyframes styles_fadeOut__1FkJy {\n  0% {\n    opacity: 1; }\n  100% {\n    opacity: 0; } }\n";
+var styles = {"boundingBox":"styles_boundingBox__q5am2","box":"styles_box__3n5vw","hoverCaption":"styles_hoverCaption__308cV","selected":"styles_selected__2PEpG","boxGroup":"styles_boxGroup__10v7H","groupElement":"styles_groupElement__1_x2s","guide":"styles_guide__3lcsS","active":"styles_active__1jaJY","xAxis":"styles_xAxis__1ag77","yAxis":"styles_yAxis__LO1fy","coordinates":"styles_coordinates__ulL0y","dimensions":"styles_dimensions__27ria","dimensions_style":"styles_dimensions_style__3o0dM","resizeCorners":"styles_resizeCorners__3nhDk","rotateHandle":"styles_rotateHandle__26rVp","resizeEdges":"styles_resizeEdges__1A7d8","resize-tr":"styles_resize-tr__ZvMqh","resize-tl":"styles_resize-tl__2WkU4","resize-br":"styles_resize-br__1bQX3","resize-bl":"styles_resize-bl__2hmh_","resize-cl":"styles_resize-cl__39KBz","resize-cr":"styles_resize-cr__3t5LJ","resize-ct":"styles_resize-ct__2okeH","resize-cb":"styles_resize-cb__2Ul0P","stretchable-resize-cl":"styles_stretchable-resize-cl__GJ8dn","stretchable-resize-cr":"styles_stretchable-resize-cr__1rxr2","stretchable-resize-ct":"styles_stretchable-resize-ct__1vicN","stretchable-resize-cb":"styles_stretchable-resize-cb__3VL9s","rotate-tr":"styles_rotate-tr__1qWDZ","rotate-tl":"styles_rotate-tl__3lNBx","rotate-br":"styles_rotate-br__baNeE","rotate-bl":"styles_rotate-bl__3zhHr","fadeOut":"styles_fadeOut__1FkJy"};
 styleInject(css_248z);
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+function _typeof$1(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
 
-function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
 function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$1(Object(source), true).forEach(function (key) { _defineProperty$1(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
 function _defineProperty$1(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _defineProperties$1(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+function _createClass$1(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties$1(Constructor.prototype, protoProps); if (staticProps) _defineProperties$1(Constructor, staticProps); return Constructor; }
 
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+function _inherits$1(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf$1(subClass, superClass); }
 
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+function _setPrototypeOf$1(o, p) { _setPrototypeOf$1 = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf$1(o, p); }
 
-function _createSuper(Derived) { return function () { var Super = _getPrototypeOf(Derived), result; if (_isNativeReflectConstruct()) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
+function _createSuper$1(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$1(); return function _createSuperInternal() { var Super = _getPrototypeOf$1(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf$1(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn$1(this, result); }; }
 
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+function _possibleConstructorReturn$1(self, call) { if (call && (_typeof$1(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized$1(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _assertThisInitialized$1(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _getPrototypeOf$1(o) { _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf$1(o); }
+var DRAG_THRESHOLD = 4;
+var PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
 
-var Box = /*#__PURE__*/function (_PureComponent) {
-  _inherits(Box, _PureComponent);
+var Box = /*#__PURE__*/function (_Component) {
+  _inherits$1(Box, _Component);
 
-  var _super = _createSuper(Box);
+  var _super = _createSuper$1(Box);
 
   function Box(props) {
     var _this;
 
-    _classCallCheck(this, Box);
+    _classCallCheck$1(this, Box);
 
     _this = _super.call(this, props);
-    _this.box = React.createRef();
-    _this.coordinates = React.createRef();
-    _this.height = React.createRef();
+    _this.box = /*#__PURE__*/React.createRef();
+    _this.coordinates = /*#__PURE__*/React.createRef();
+    _this.height = /*#__PURE__*/React.createRef();
     _this.didDragHappen = false;
     _this.didResizeHappen = false;
-    _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
-    _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized(_this));
-    _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized(_this));
+    _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
+    _this.unHoverBox = _this.unHoverBox.bind(_assertThisInitialized$1(_this));
+    _this.hoverBox = _this.hoverBox.bind(_assertThisInitialized$1(_this));
+    _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized$1(_this));
+    _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized$1(_this));
+    _this.onShortcutKeyUp = _this.onShortcutKeyUp.bind(_assertThisInitialized$1(_this));
     _this.keyDownHandler = lodash_throttle(function (e) {
       _this.shortcutHandler(e);
     }, 300);
-    _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized(_this));
-    _this.onRotateStart = _this.onRotateStart.bind(_assertThisInitialized(_this));
-    _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized(_this));
+    _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized$1(_this));
+    _this.onRotateStart = _this.onRotateStart.bind(_assertThisInitialized$1(_this));
+    _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized$1(_this));
+    _this.state = {
+      callKeyEnd: false
+    };
     return _this;
   }
 
-  _createClass(Box, [{
+  _createClass$1(Box, [{
     key: "selectBox",
     value: function selectBox(e) {
       // To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
@@ -976,6 +1058,16 @@ var Box = /*#__PURE__*/function (_PureComponent) {
       if (this.box && this.box.current) {
         this.box.current.focus();
       }
+    }
+  }, {
+    key: "hoverBox",
+    value: function hoverBox(e) {
+      e.target.classList.add(this.props.toggleHover);
+    }
+  }, {
+    key: "unHoverBox",
+    value: function unHoverBox(e) {
+      e.target.classList.remove(this.props.toggleHover);
     }
   }, {
     key: "onDragStart",
@@ -1022,8 +1114,8 @@ var Box = /*#__PURE__*/function (_PureComponent) {
         this.props.onDragStart && this.props.onDragStart(e, data); // Update the starting position
 
         startingPosition = Object.assign({}, data);
-        var deltaX = Math.abs(target.offsetLeft - e.clientX);
-        var deltaY = Math.abs(target.offsetTop - e.clientY);
+        var deltaX = e.clientX - target.offsetLeft;
+        var deltaY = e.clientY - target.offsetTop;
 
         var onDrag = function onDrag(e) {
           e.stopPropagation();
@@ -1059,13 +1151,15 @@ var Box = /*#__PURE__*/function (_PureComponent) {
             deltaX: currentPosition.left - startingPosition.left,
             deltaY: currentPosition.top - startingPosition.top
           };
-          _this2.didDragHappen = true;
 
           if (_this2.props.position.type) {
             data.type = _this2.props.position.type;
           }
 
-          _this2.props.onDrag && _this2.props.onDrag(e, data);
+          if (data.deltaX * data.deltaX + data.deltaY * data.deltaY > DRAG_THRESHOLD) {
+            _this2.didDragHappen = true;
+            _this2.props.onDrag && _this2.props.onDrag(e, data);
+          }
         };
 
         var onDragEnd = function onDragEnd(e) {
@@ -1085,127 +1179,134 @@ var Box = /*#__PURE__*/function (_PureComponent) {
   }, {
     key: "shortcutHandler",
     value: function shortcutHandler(e) {
-      var position = this.props.position;
+      if (this.props.preventShortcutEvents) {
+        return;
+      }
 
-      if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-        var data = Object.assign({}, position, {
-          node: this.box.current,
-          left: position.left + 1,
-          x: position.x + 1
+      var areMultipleBoxesSelected = this.props.areMultipleBoxesSelected;
+
+      if (this.props.isSelected && (!areMultipleBoxesSelected || this.props.position && this.props.position.type === 'group')) {
+        // Only Selected boxes will move on arrow keys
+        if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
+          e.preventDefault();
+        }
+
+        var position = this.props.position;
+        var DELTA = e.shiftKey ? 10 : 1;
+        var newValues = {};
+        var changedValues = {};
+
+        if (e.key === 'ArrowRight') {
+          if (!this.state.callKeyEnd) {
+            this.setState({
+              callKeyEnd: true
+            });
+          }
+
+          newValues = e.ctrlKey || e.metaKey ? {
+            width: position.width + DELTA
+          } : {
+            left: position.left + DELTA,
+            x: position.x + DELTA
+          };
+          changedValues = e.ctrlKey || e.metaKey ? {
+            width: DELTA
+          } : {
+            left: DELTA,
+            x: DELTA
+          };
+        } else if (e.key === 'ArrowLeft') {
+          if (!this.state.callKeyEnd) {
+            this.setState({
+              callKeyEnd: true
+            });
+          }
+
+          newValues = e.ctrlKey || e.metaKey ? {
+            width: position.width - DELTA
+          } : {
+            left: position.left - DELTA,
+            x: position.x - DELTA
+          };
+          changedValues = e.ctrlKey || e.metaKey ? {
+            width: 0 - DELTA
+          } : {
+            left: 0 - DELTA,
+            x: 0 - DELTA
+          };
+        } else if (e.key === 'ArrowUp') {
+          if (!this.state.callKeyEnd) {
+            this.setState({
+              callKeyEnd: true
+            });
+          }
+
+          newValues = e.ctrlKey || e.metaKey ? {
+            height: position.height - DELTA
+          } : {
+            top: position.top - DELTA,
+            y: position.y - DELTA
+          };
+          changedValues = e.ctrlKey || e.metaKey ? {
+            height: 0 - DELTA
+          } : {
+            top: 0 - DELTA,
+            y: 0 - DELTA
+          };
+        } else if (e.key === 'ArrowDown') {
+          if (!this.state.callKeyEnd) {
+            this.setState({
+              callKeyEnd: true
+            });
+          }
+
+          newValues = e.ctrlKey || e.metaKey ? {
+            height: position.height + DELTA
+          } : {
+            top: position.top + DELTA,
+            y: position.y + DELTA
+          };
+          changedValues = e.ctrlKey || e.metaKey ? {
+            height: DELTA
+          } : {
+            top: DELTA,
+            y: DELTA
+          };
+        }
+
+        if (this.box && this.box.current) newValues.node = this.box.current;
+        var data = Object.assign({}, position, newValues, {
+          changedValues: changedValues // for group shortcut keys
+
         });
         this.props.onKeyUp && this.props.onKeyUp(e, data);
-      } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowRight') {
-        var _data = Object.assign({}, position, {
-          node: this.box.current,
-          left: position.left + 10,
-          x: position.x + 10
-        });
+      }
+    }
+  }, {
+    key: "onShortcutKeyUp",
+    value: function onShortcutKeyUp(e) {
+      if (this.props.preventShortcutEvents) {
+        return;
+      }
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data);
-      } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-        var _data2 = Object.assign({}, position, {
-          node: this.box.current,
-          left: position.left - 1,
-          x: position.x - 1
-        });
+      if (this.props.isSelected) {
+        // Only Selected boxes will move on arrow keys
+        if (PREVENT_DEFAULT_KEYS.includes(e.key)) {
+          e.preventDefault();
+        }
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data2);
-      } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowLeft') {
-        var _data3 = Object.assign({}, position, {
-          node: this.box.current,
-          left: position.left - 10,
-          x: position.x - 10
-        });
+        var position = this.props.position;
+        var newValues = {};
+        if (this.box && this.box.current) newValues.node = this.box.current;
+        var data = Object.assign({}, position, newValues);
+        var keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control'];
 
-        this.props.onKeyUp && this.props.onKeyUp(e, _data3);
-      } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-        var _data4 = Object.assign({}, position, {
-          node: this.box.current,
-          top: position.top - 1,
-          y: position.y - 1
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data4);
-      } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowUp') {
-        var _data5 = Object.assign({}, position, {
-          node: this.box.current,
-          top: position.top - 10,
-          y: position.y - 10
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data5);
-      } else if (!e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-        var _data6 = Object.assign({}, position, {
-          node: this.box.current,
-          top: position.top + 1,
-          y: position.y + 1
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data6);
-      } else if (e.shiftKey && !e.ctrlKey && e.key === 'ArrowDown') {
-        var _data7 = Object.assign({}, position, {
-          node: this.box.current,
-          top: position.top + 10,
-          y: position.y + 10
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data7);
-      } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowRight') {
-        var _data8 = Object.assign({}, position, {
-          node: this.box.current,
-          width: position.width + 1
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data8);
-      } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowRight') {
-        var _data9 = Object.assign({}, position, {
-          node: this.box.current,
-          width: position.width + 10
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data9);
-      } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowLeft') {
-        var _data10 = Object.assign({}, position, {
-          node: this.box.current,
-          width: position.width - 1
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data10);
-      } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowLeft') {
-        var _data11 = Object.assign({}, position, {
-          node: this.box.current,
-          width: position.width - 10
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data11);
-      } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowDown') {
-        var _data12 = Object.assign({}, position, {
-          node: this.box.current,
-          height: position.height + 1
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data12);
-      } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowDown') {
-        var _data13 = Object.assign({}, position, {
-          node: this.box.current,
-          height: position.height + 10
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data13);
-      } else if (e.ctrlKey && !e.shiftKey && e.key === 'ArrowUp') {
-        var _data14 = Object.assign({}, position, {
-          node: this.box.current,
-          height: position.height - 1
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data14);
-      } else if (e.ctrlKey && e.shiftKey && e.key === 'ArrowUp') {
-        var _data15 = Object.assign({}, position, {
-          node: this.box.current,
-          height: position.height - 10
-        });
-
-        this.props.onKeyUp && this.props.onKeyUp(e, _data15);
+        if (keysAllowed.includes(e.key) && this.state.callKeyEnd) {
+          this.props.onKeyEnd && this.props.onKeyEnd(e, data);
+          this.setState({
+            callKeyEnd: false
+          });
+        }
       }
     }
   }, {
@@ -1214,8 +1315,15 @@ var Box = /*#__PURE__*/function (_PureComponent) {
       var _this3 = this;
 
       if (this.props.position.resize || this.props.position.resize === undefined) {
+        var _this$box, _this$box$current;
+
         // Allow resize only if resize property for the box is true or undefined
         e.stopPropagation();
+
+        if ((_this$box = this.box) !== null && _this$box !== void 0 && (_this$box$current = _this$box.current) !== null && _this$box$current !== void 0 && _this$box$current.style) {
+          this.box.current.style.zIndex = 99;
+        }
+
         var target = e.target,
             startX = e.clientX,
             startY = e.clientY;
@@ -1272,6 +1380,9 @@ var Box = /*#__PURE__*/function (_PureComponent) {
           data.type = this.props.position.type;
         }
 
+        var ratio = rect.width / rect.height; // used to increase or decrease deltaY accordingly
+
+        var sign = e.target.id === 'resize-br' || e.target.id === 'resize-tl' ? 1 : -1;
         this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
         this.props.onResizeStart && this.props.onResizeStart(e, data);
         var startingPosition = Object.assign({}, data);
@@ -1280,15 +1391,13 @@ var Box = /*#__PURE__*/function (_PureComponent) {
           var clientX = e.clientX,
               clientY = e.clientY;
           var deltaX = clientX - startX;
-          var deltaY = clientY - startY;
+          var deltaY = e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
           var alpha = Math.atan2(deltaY, deltaX);
           var deltaL = getLength(deltaX, deltaY); // const { minWidth, minHeight } = this.props;
 
           var beta = alpha - degToRadian(rotateAngle);
           var deltaW = deltaL * Math.cos(beta);
-          var deltaH = deltaL * Math.sin(beta); // TODO: Account for ratio when there are more points for resizing and when adding extras like constant aspect ratio resizing, shift + resize etc.
-          // const ratio = rect.width / rect.height;
-
+          var deltaH = deltaL * Math.sin(beta);
           var type = target.id.replace('resize-', '');
 
           var _getNewStyle = getNewStyle(type, rect, deltaW, deltaH, 10, 10),
@@ -1349,6 +1458,14 @@ var Box = /*#__PURE__*/function (_PureComponent) {
         };
 
         var onResizeEnd = function onResizeEnd(e) {
+          var _this3$box, _this3$box$current;
+
+          if ((_this3$box = _this3.box) !== null && _this3$box !== void 0 && (_this3$box$current = _this3$box.current) !== null && _this3$box$current !== void 0 && _this3$box$current.style) {
+            var _this3$props$position;
+
+            _this3.box.current.style.zIndex = (_this3$props$position = _this3.props.position) !== null && _this3$props$position !== void 0 && _this3$props$position.zIndex ? _this3.props.position.zIndex : 98;
+          }
+
           if (_this3.didResizeHappen) {
             _this3.props.setDragOrResizeState && _this3.props.setDragOrResizeState(false);
             _this3.props.onResizeEnd && _this3.props.onResizeEnd(e, data);
@@ -1452,6 +1569,34 @@ var Box = /*#__PURE__*/function (_PureComponent) {
       }
     }
   }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
+        document.addEventListener('keydown', this.shortcutHandler);
+        document.addEventListener('keyup', this.onShortcutKeyUp);
+      }
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps) {
+      // Added Events to document to accommodate group position shortcuts
+      if (prevProps.areMultipleBoxesSelected !== this.props.areMultipleBoxesSelected || prevProps.isSelected !== this.props.isSelected) {
+        document.removeEventListener('keydown', this.shortcutHandler);
+        document.removeEventListener('keyup', this.onShortcutKeyUp);
+
+        if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
+          document.addEventListener('keydown', this.shortcutHandler);
+          document.addEventListener('keyup', this.onShortcutKeyUp);
+        }
+      }
+    }
+  }, {
+    key: "componentWillUnmount",
+    value: function componentWillUnmount() {
+      document.removeEventListener('keydown', this.shortcutHandler);
+      document.removeEventListener('keyup', this.onShortcutKeyUp);
+    }
+  }, {
     key: "render",
     value: function render() {
       var _this5 = this;
@@ -1460,6 +1605,7 @@ var Box = /*#__PURE__*/function (_PureComponent) {
           areMultipleBoxesSelected = _this$props.areMultipleBoxesSelected,
           boxStyle = _this$props.boxStyle,
           id = _this$props.id,
+          identifier = _this$props.identifier,
           isSelected = _this$props.isSelected,
           isShiftKeyActive = _this$props.isShiftKeyActive,
           position = _this$props.position,
@@ -1468,6 +1614,7 @@ var Box = /*#__PURE__*/function (_PureComponent) {
       if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
         var boundingBox = this.props.getBoundingBoxElement();
         var boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
+        var dashedCentreNodes = position.dashedCentreNodes;
         var xFactor = 1;
         var yFactor = 1;
 
@@ -1476,23 +1623,23 @@ var Box = /*#__PURE__*/function (_PureComponent) {
           yFactor = resolution.height / boundingBoxDimensions.height;
         }
 
-        var boxClassNames = isSelected ? "".concat(styles.box, " ").concat(styles.selected) : styles.box;
-        boxClassNames = position.type === 'group' ? "".concat(boxClassNames, " ").concat(styles.boxGroup) : boxClassNames;
+        var boxClassNames = isSelected ? "".concat(this.props.overRideStyles ? this.props.overRideStyles : styles.box, " ").concat(this.props.overRideSelected ? this.props.overRideSelected : styles.selected) : "".concat(this.props.overRideStyles ? this.props.overRideStyles : styles.box);
+        boxClassNames = position.type === 'group' ? "".concat(boxClassNames, " ").concat(this.props.overRideSelected) : boxClassNames;
         boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? "".concat(boxClassNames, " ").concat(styles.groupElement) : boxClassNames;
         var rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 
-        var boxStyles = _objectSpread$1({}, boxStyle, {
+        var boxStyles = _objectSpread$1(_objectSpread$1({}, boxStyle), {}, {
           width: "".concat(position.width, "px"),
           height: "".concat(position.height, "px"),
           top: "".concat(position.top, "px"),
           left: "".concat(position.left, "px"),
           zIndex: position.zIndex ? position.zIndex : 98,
-          transform: "rotate(".concat(rotateAngle, "deg)")
-        });
+          transform: "rotate(".concat(rotateAngle, "deg)"),
+          pointerEvents: this.props.isLayerLocked ? 'none' : ''
+        }); // if (isSelected) {
+        // 	boxStyles.zIndex = 99;
+        // }
 
-        if (isSelected) {
-          boxStyles.zIndex = 99;
-        }
 
         if (position.type && position.type === 'group' && isShiftKeyActive) {
           boxStyles.pointerEvents = 'none';
@@ -1504,32 +1651,43 @@ var Box = /*#__PURE__*/function (_PureComponent) {
           onClick: this.selectBox,
           onMouseDown: this.props.drag ? this.onDragStart : null // If this.props.drag is false, remove the mouseDown event handler for drag
           ,
-          onKeyDown: function onKeyDown(e) {
-            e.persist();
-
-            _this5.keyDownHandler(e);
-          },
-          onKeyUp: this.shortcutHandler,
+          onKeyDown: areMultipleBoxesSelected ? null : this.shortcutHandler // remove event from div when multiple boxes are selected
+          ,
+          onKeyUp: areMultipleBoxesSelected ? null : this.onShortcutKeyUp // remove event from div when multiple boxes are selected
+          ,
+          onMouseOver: this.hoverBox,
+          onMouseOut: this.unHoverBox,
           ref: this.box,
           style: boxStyles,
-          tabIndex: "0"
-        }, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? /*#__PURE__*/React.createElement("span", {
+          identifier: identifier,
+          tabIndex: "0",
+          onFocus: function onFocus() {
+            if (_this5.props.preventShortcutEvents) {
+              _this5.props.setPreventShortcutEvents(false);
+            }
+          }
+        }, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? this.props.didDragOrResizeHappen ? /*#__PURE__*/React.createElement("span", {
           ref: this.coordinates,
           className: styles.coordinates
-        }, "(".concat(Math.round(position.x * xFactor), ", ").concat(Math.round(position.y * yFactor), ")")) : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? /*#__PURE__*/React.createElement("span", {
-          className: "".concat(styles.dimensions, " ").concat(styles.width),
+        }, "".concat(Math.round(position.x * xFactor), ", ").concat(Math.round(position.y * yFactor))) : null : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? this.props.didDragOrResizeHappen ? /*#__PURE__*/React.createElement("span", {
+          className: "".concat(styles.dimensions, " "),
           style: {
             width: "".concat(position.width, "px"),
             top: "".concat(position.height + 10, "px")
           }
-        }, "".concat(Math.round(position.width * xFactor), " x ").concat(Math.round(position.height * yFactor))) : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? RESIZE_CORNERS.map(function (handle) {
-          var className = "".concat(styles.resizeCorners, " ").concat(styles["resize-".concat(handle)]);
+        }, /*#__PURE__*/React.createElement("div", {
+          className: "".concat(styles.dimensions_style)
+        }, "".concat(Math.round(position.width * xFactor), " x ").concat(Math.round(position.height * yFactor)))) : null : null, isSelected && !areMultipleBoxesSelected || position.type && position.type === 'group' ? RESIZE_CORNERS.map(function (handle) {
+          var className = "".concat(styles.resizeCorners, " ").concat(styles["resize-".concat(handle)], " ") + "".concat(dashedCentreNodes ? styles["stretchable-resize-".concat(handle)] : null);
           return /*#__PURE__*/React.createElement("div", {
             key: handle,
             className: className,
             onMouseDown: _this5.props.resize ? _this5.onResizeStart : null // If this.props.resize is false then remove the mouseDown event handler for resize
             ,
-            id: "resize-".concat(handle)
+            id: "resize-".concat(handle),
+            style: {
+              pointerEvents: _this5.props.isLayerLocked ? 'none' : ''
+            }
           });
         }) : null, isSelected && !areMultipleBoxesSelected ? ROTATE_HANDLES.map(function (handle) {
           var className = "".concat(styles.rotateHandle, " ").concat(styles["rotate-".concat(handle)]);
@@ -1538,7 +1696,10 @@ var Box = /*#__PURE__*/function (_PureComponent) {
             className: className,
             onMouseDown: _this5.props.rotate ? _this5.onRotateStart : null // If this.props.rotate is false then remove the mouseDown event handler for rotate
             ,
-            id: "rotate-".concat(handle)
+            id: "rotate-".concat(handle),
+            style: {
+              pointerEvents: _this5.props.isLayerLocked ? 'none' : ''
+            }
           });
         }) : null);
       }
@@ -1548,7 +1709,7 @@ var Box = /*#__PURE__*/function (_PureComponent) {
   }]);
 
   return Box;
-}(PureComponent);
+}(Component);
 
 Box.propTypes = {
   areMultipleBoxesSelected: PropTypes.bool,
@@ -1562,6 +1723,7 @@ Box.propTypes = {
   onDrag: PropTypes.func,
   onDragEnd: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onKeyEnd: PropTypes.func,
   onResizeStart: PropTypes.func,
   onResize: PropTypes.func,
   onResizeEnd: PropTypes.func,
@@ -1574,60 +1736,60 @@ Box.propTypes = {
   rotate: PropTypes.bool
 };
 
-function _typeof$1(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof$1 = function _typeof(obj) { return typeof obj; }; } else { _typeof$1 = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof$1(obj); }
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _extends() { _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
 
-function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); keys.push.apply(keys, symbols); } return keys; }
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 
-function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys$2(Object(source), true).forEach(function (key) { _defineProperty$2(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; if (i % 2) { ownKeys(Object(source), true).forEach(function (key) { _defineProperty(target, key, source[key]); }); } else if (Object.getOwnPropertyDescriptors) { Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)); } else { ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } } return target; }
 
-function _defineProperty$2(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(n); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter); }
+function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
-function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _defineProperties$1(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
 
-function _createClass$1(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties$1(Constructor.prototype, protoProps); if (staticProps) _defineProperties$1(Constructor, staticProps); return Constructor; }
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-function _inherits$1(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf$1(subClass, superClass); }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
-function _setPrototypeOf$1(o, p) { _setPrototypeOf$1 = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf$1(o, p); }
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
-function _createSuper$1(Derived) { return function () { var Super = _getPrototypeOf$1(Derived), result; if (_isNativeReflectConstruct$1()) { var NewTarget = _getPrototypeOf$1(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn$1(this, result); }; }
+function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
 
-function _possibleConstructorReturn$1(self, call) { if (call && (_typeof$1(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized$1(self); }
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized$1(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
-function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Date.prototype.toString.call(Reflect.construct(Date, [], function () {})); return true; } catch (e) { return false; } }
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
 
-function _getPrototypeOf$1(o) { _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf$1(o); }
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 var AlignmentGuides = /*#__PURE__*/function (_Component) {
-  _inherits$1(AlignmentGuides, _Component);
+  _inherits(AlignmentGuides, _Component);
 
-  var _super = _createSuper$1(AlignmentGuides);
+  var _super = _createSuper(AlignmentGuides);
 
   function AlignmentGuides(props) {
     var _this;
 
-    _classCallCheck$1(this, AlignmentGuides);
+    _classCallCheck(this, AlignmentGuides);
 
     _this = _super.call(this, props);
-    _this.boundingBox = React.createRef();
+    _this.boundingBox = /*#__PURE__*/React.createRef();
     _this.state = {
       active: '',
       activeBoxes: [],
@@ -1639,29 +1801,33 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       isShiftKeyActive: false,
       match: {},
       resizing: false,
-      rotating: false
+      rotating: false,
+      activeBoxSnappedPosition: {},
+      preventShortcutEvents: false
     };
-    _this.setShiftKeyState = _this.setShiftKeyState.bind(_assertThisInitialized$1(_this));
-    _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized$1(_this));
-    _this.setDragOrResizeState = _this.setDragOrResizeState.bind(_assertThisInitialized$1(_this));
-    _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
-    _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized$1(_this));
-    _this.dragStartHandler = _this.dragStartHandler.bind(_assertThisInitialized$1(_this));
-    _this.dragHandler = _this.dragHandler.bind(_assertThisInitialized$1(_this));
-    _this.dragEndHandler = _this.dragEndHandler.bind(_assertThisInitialized$1(_this));
-    _this.resizeStartHandler = _this.resizeStartHandler.bind(_assertThisInitialized$1(_this));
-    _this.resizeHandler = _this.resizeHandler.bind(_assertThisInitialized$1(_this));
-    _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized$1(_this));
-    _this.rotateStartHandler = _this.rotateStartHandler.bind(_assertThisInitialized$1(_this));
-    _this.rotateHandler = _this.rotateHandler.bind(_assertThisInitialized$1(_this));
-    _this.rotateEndHandler = _this.rotateEndHandler.bind(_assertThisInitialized$1(_this));
-    _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized$1(_this));
+    _this.setShiftKeyState = _this.setShiftKeyState.bind(_assertThisInitialized(_this));
+    _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized(_this));
+    _this.setDragOrResizeState = _this.setDragOrResizeState.bind(_assertThisInitialized(_this));
+    _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
+    _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized(_this));
+    _this.dragStartHandler = _this.dragStartHandler.bind(_assertThisInitialized(_this));
+    _this.dragHandler = _this.dragHandler.bind(_assertThisInitialized(_this));
+    _this.dragEndHandler = _this.dragEndHandler.bind(_assertThisInitialized(_this));
+    _this.resizeStartHandler = _this.resizeStartHandler.bind(_assertThisInitialized(_this));
+    _this.resizeHandler = _this.resizeHandler.bind(_assertThisInitialized(_this));
+    _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized(_this));
+    _this.rotateStartHandler = _this.rotateStartHandler.bind(_assertThisInitialized(_this));
+    _this.rotateHandler = _this.rotateHandler.bind(_assertThisInitialized(_this));
+    _this.rotateEndHandler = _this.rotateEndHandler.bind(_assertThisInitialized(_this));
+    _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized(_this));
+    _this.keyEndHandler = _this.keyEndHandler.bind(_assertThisInitialized(_this));
+    _this.setPreventShortcutEvents = _this.setPreventShortcutEvents.bind(_assertThisInitialized(_this));
     _this.startingPositions = null;
     _this.didDragOrResizeHappen = false;
     return _this;
   }
 
-  _createClass$1(AlignmentGuides, [{
+  _createClass(AlignmentGuides, [{
     key: "componentDidMount",
     value: function componentDidMount() {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
@@ -1695,7 +1861,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         if (activeBoxes.length > 1) {
           boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
           boxes['box-ms'].type = 'group';
-          boxes['box-ms'].zIndex = 11;
+          boxes['box-ms'].zIndex = 12;
           var selections = [];
 
           for (var box in boxes) {
@@ -1713,6 +1879,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         document.addEventListener('click', this.unSelectBox);
         window.addEventListener('blur', this.unSelectBox);
         document.addEventListener('keydown', this.setShiftKeyState);
+        document.addEventListener('keydown', this.unSelectBox);
         document.addEventListener('keyup', this.setShiftKeyState);
         this.setState({
           boundingBox: boundingBox,
@@ -1729,6 +1896,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       document.removeEventListener('click', this.unSelectBox);
       window.removeEventListener('blur', this.unSelectBox);
       document.removeEventListener('keydown', this.setShiftKeyState);
+      document.removeEventListener('keydown', this.unSelectBox);
       document.removeEventListener('keyup', this.setShiftKeyState);
     }
   }, {
@@ -1747,6 +1915,13 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
     key: "setDragOrResizeState",
     value: function setDragOrResizeState(state) {
       this.didDragOrResizeHappen = state;
+    }
+  }, {
+    key: "setPreventShortcutEvents",
+    value: function setPreventShortcutEvents(val) {
+      this.setState({
+        preventShortcutEvents: val
+      });
     }
   }, {
     key: "selectBox",
@@ -1782,7 +1957,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
 
           boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
           boxes['box-ms'].type = 'group';
-          boxes['box-ms'].zIndex = 11;
+          boxes['box-ms'].zIndex = 12;
           var selections = [];
 
           for (var box in boxes) {
@@ -1803,9 +1978,9 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
             boxes: boxes
           });
         } else {
-          var _this$state2 = this.state,
-              _activeBoxes = _this$state2.activeBoxes,
-              _boxes = _this$state2.boxes;
+          var _this$state2 = this.state;
+              _this$state2.activeBoxes;
+              var _boxes = _this$state2.boxes;
           delete _boxes['box-ms'];
           this.setState({
             active: e.target.id,
@@ -1844,7 +2019,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
 
           _boxes2['box-ms'] = getMultipleSelectionCoordinates(_boxes2, _activeBoxes2);
           _boxes2['box-ms'].type = 'group';
-          _boxes2['box-ms'].zIndex = 11;
+          _boxes2['box-ms'].zIndex = 12;
           var _selections = [];
 
           for (var _box in _boxes2) {
@@ -1880,8 +2055,9 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
   }, {
     key: "unSelectBox",
     value: function unSelectBox(e) {
-      if (e.target === window || e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode && e.target.parentNode.id.indexOf('box') === -1) {
+      if (e.type === 'keydown' ? e.key === 'Escape' || e.key === 'Esc' : e.target === window || e.target && e.target.id.indexOf('box') === -1 && e.target.parentNode && e.target.parentNode.id.indexOf('box') === -1) {
         if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
+          this.setPreventShortcutEvents(true);
           return;
         }
 
@@ -1890,7 +2066,8 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         this.setState({
           active: '',
           activeBoxes: [],
-          boxes: boxes
+          boxes: boxes,
+          preventShortcutEvents: false
         });
         this.props.onUnselect && this.props.onUnselect(e);
       }
@@ -1914,6 +2091,10 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         newData.selections = this.state.activeBoxes.map(function (box) {
           return Object.assign({}, _this2.state.boxes[box]);
         });
+      } else if (!e.shiftKey) {
+        this.setState({
+          activeBoxes: [e.target.parentNode.id]
+        });
       }
 
       this.props.onDragStart && this.props.onDragStart(e, newData); // Update starting positions so we can use it to update when group resize happens
@@ -1930,8 +2111,10 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
     value: function dragHandler(e, data) {
       var _this3 = this;
 
+      var newData;
+
       if (this.state.dragging) {
-        var newData = Object.assign({}, data);
+        newData = Object.assign({}, data);
 
         if (this.state.boxes[this.state.active].metadata) {
           newData.metadata = this.state.boxes[this.state.active].metadata;
@@ -1941,9 +2124,8 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           newData.selections = this.state.activeBoxes.map(function (box) {
             return Object.assign({}, _this3.state.boxes[box]);
           });
-        }
+        } // this.props.onDrag && this.props.onDrag(e, newData);
 
-        this.props.onDrag && this.props.onDrag(e, newData);
       }
 
       var boxes = null;
@@ -1982,7 +2164,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           return _this3.state.guides[guide];
         });
       } else {
-        boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+        boxes = Object.assign({}, this.state.boxes, _defineProperty({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
           x: data.x,
           y: data.y,
           left: data.left,
@@ -1990,7 +2172,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           width: data.width,
           height: data.height
         })));
-        guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        guides = Object.assign({}, this.state.guides, _defineProperty({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
           x: calculateGuidePositions(boxes[data.node.id], 'x'),
           y: calculateGuidePositions(boxes[data.node.id], 'y')
         })));
@@ -2029,22 +2211,54 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
             }
           }
 
-          var _boxes4 = Object.assign({}, _this3.state.boxes, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
+          var _boxes4 = Object.assign({}, _this3.state.boxes, _defineProperty({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], {
             left: newActiveBoxLeft,
             top: newActiveBoxTop
           })));
 
-          var _guides = Object.assign({}, _this3.state.guides, _defineProperty$2({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
+          var _guides = Object.assign({}, _this3.state.guides, _defineProperty({}, _this3.state.active, Object.assign({}, _this3.state.guides[_this3.state.active], {
             x: calculateGuidePositions(_boxes4[_this3.state.active], 'x'),
             y: calculateGuidePositions(_boxes4[_this3.state.active], 'y')
           })));
 
+          var activeBox = {
+            left: _this3.state.boxes[_this3.state.active].left,
+            top: _this3.state.boxes[_this3.state.active].top,
+            x: _this3.state.boxes[_this3.state.active].x,
+            y: _this3.state.boxes[_this3.state.active].y
+          };
+          Object.keys(_guides).map(function (box) {
+            var _guides$box, _guides$box2;
+
+            _guides === null || _guides === void 0 ? void 0 : (_guides$box = _guides[box]) === null || _guides$box === void 0 ? void 0 : _guides$box.x.map(function (position) {
+              var _match$x;
+
+              if ((match === null || match === void 0 ? void 0 : (_match$x = match.x) === null || _match$x === void 0 ? void 0 : _match$x.intersection) === position) {
+                activeBox.left = newActiveBoxLeft;
+                activeBox.x = newActiveBoxLeft;
+              }
+            });
+            _guides === null || _guides === void 0 ? void 0 : (_guides$box2 = _guides[box]) === null || _guides$box2 === void 0 ? void 0 : _guides$box2.y.map(function (position) {
+              var _match$y;
+
+              if ((match === null || match === void 0 ? void 0 : (_match$y = match.y) === null || _match$y === void 0 ? void 0 : _match$y.intersection) === position) {
+                activeBox.top = newActiveBoxTop;
+                activeBox.y = newActiveBoxTop;
+              }
+            });
+          });
+          var newBoxes = Object.assign({}, _this3.state.boxes, _defineProperty({}, _this3.state.active, Object.assign({}, _this3.state.boxes[_this3.state.active], _objectSpread({}, activeBox))));
+          newData = Object.assign({}, newData, _objectSpread({}, activeBox));
+
           _this3.setState({
-            boxes: _boxes4,
+            boxes: newBoxes,
             guides: _guides,
-            match: match
+            match: match,
+            activeBoxSnappedPosition: activeBox
           });
         }
+
+        _this3.state.dragging && _this3.props.onDrag && _this3.props.onDrag(e, newData);
       });
     }
   }, {
@@ -2066,6 +2280,10 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         newData.selections = this.state.activeBoxes.map(function (box) {
           return Object.assign({}, _this4.state.boxes[box]);
         });
+      }
+
+      if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
+        newData = Object.assign({}, newData, _objectSpread({}, this.state.activeBoxSnappedPosition));
       }
 
       this.props.onDragEnd && this.props.onDragEnd(e, newData);
@@ -2151,7 +2369,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           }
         });
       } else {
-        boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+        boxes = Object.assign({}, this.state.boxes, _defineProperty({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
           x: data.x,
           y: data.y,
           left: data.left,
@@ -2159,7 +2377,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           width: data.width,
           height: data.height
         })));
-        guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+        guides = Object.assign({}, this.state.guides, _defineProperty({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
           x: calculateGuidePositions(boxes[data.node.id], 'x'),
           y: calculateGuidePositions(boxes[data.node.id], 'y')
         })));
@@ -2208,7 +2426,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
   }, {
     key: "rotateHandler",
     value: function rotateHandler(e, data) {
-      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], _objectSpread$2({}, this.state.boxes[this.state.active], {
+      var boxes = Object.assign({}, this.state.boxes, _defineProperty({}, this.state.active, Object.assign({}, this.state.boxes[this.state.active], _objectSpread(_objectSpread({}, this.state.boxes[this.state.active]), {}, {
         x: data.x,
         y: data.y,
         rotateAngle: data.rotateAngle
@@ -2232,36 +2450,109 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
   }, {
     key: "keyUpHandler",
     value: function keyUpHandler(e, data) {
+      var _this8 = this;
+
       var newData = Object.assign({}, data);
 
       if (this.state.boxes[data.node.id].metadata) {
         newData.metadata = this.state.boxes[data.node.id].metadata;
       }
 
-      this.props.onKeyUp && this.props.onKeyUp(e, newData);
-      var boxes = Object.assign({}, this.state.boxes, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
-        x: data.x,
-        y: data.y,
-        left: data.left,
-        top: data.top,
-        width: data.width,
-        height: data.height
-      })));
-      var guides = Object.assign({}, this.state.guides, _defineProperty$2({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
-        x: calculateGuidePositions(boxes[data.node.id], 'x'),
-        y: calculateGuidePositions(boxes[data.node.id], 'y')
-      })));
+      var boxes = null;
+      var guides = null;
+
+      if (data.type && data.type === 'group') {
+        boxes = {};
+
+        for (var box in this.state.boxes) {
+          if (this.state.boxes.hasOwnProperty(box)) {
+            if (this.state.activeBoxes.includes(box)) {
+              boxes[box] = Object.assign({}, this.state.boxes[box], {
+                x: this.state.boxes[box].x + (data.changedValues.x || 0),
+                y: this.state.boxes[box].y + (data.changedValues.y || 0),
+                left: this.state.boxes[box].left + (data.changedValues.left || 0),
+                top: this.state.boxes[box].top + (data.changedValues.top || 0),
+                height: this.state.boxes[box].height + (data.changedValues.height || 0),
+                width: this.state.boxes[box].width + (data.changedValues.width || 0)
+              });
+            } else if (box === 'box-ms') {
+              boxes[box] = Object.assign({}, data);
+              delete boxes[box].deltaX;
+              delete boxes[box].deltaY;
+            } else {
+              boxes[box] = this.state.boxes[box];
+            }
+          }
+        }
+
+        guides = Object.keys(this.state.guides).map(function (guide) {
+          if (_this8.state.activeBoxes.includes(guide)) {
+            return Object.assign({}, _this8.state.guides[guide], {
+              x: calculateGuidePositions(boxes[guide], 'x'),
+              y: calculateGuidePositions(boxes[guide], 'y')
+            });
+          }
+
+          return _this8.state.guides[guide];
+        });
+      } else {
+        boxes = Object.assign({}, this.state.boxes, _defineProperty({}, data.node.id, Object.assign({}, this.state.boxes[data.node.id], {
+          x: data.x,
+          y: data.y,
+          left: data.left,
+          top: data.top,
+          width: data.width,
+          height: data.height
+        })));
+        guides = Object.assign({}, this.state.guides, _defineProperty({}, data.node.id, Object.assign({}, this.state.guides[data.node.id], {
+          x: calculateGuidePositions(boxes[data.node.id], 'x'),
+          y: calculateGuidePositions(boxes[data.node.id], 'y')
+        })));
+      }
+
       this.setState({
         boxes: boxes,
         guides: guides,
         resizing: false,
+        guidesActive: false
+      }, function () {
+        if (data.type && data.type === 'group') {
+          newData.selections = _this8.state.activeBoxes.map(function (box) {
+            return Object.assign({}, _this8.state.boxes[box]);
+          });
+        }
+
+        _this8.props.onKeyUp && _this8.props.onKeyUp(e, newData);
+      });
+    }
+  }, {
+    key: "keyEndHandler",
+    value: function keyEndHandler(e, data) {
+      var _this9 = this;
+
+      var newData = Object.assign({}, data);
+
+      if (this.state.boxes[this.state.active].metadata) {
+        newData.metadata = this.state.boxes[this.state.active].metadata;
+      }
+
+      if (data.type && data.type === 'group') {
+        newData.selections = this.state.activeBoxes.map(function (box) {
+          return Object.assign({}, _this9.state.boxes[box]);
+        });
+      }
+
+      this.props.onKeyEnd && this.props.onKeyEnd(e, newData);
+      this.setState({
+        resizing: false,
+        dragging: false,
         guidesActive: false
       });
     }
   }, {
     key: "render",
     value: function render() {
-      var _this8 = this;
+      var _this10 = this;
 
       var _this$state4 = this.state,
           active = _this$state4.active,
@@ -2273,32 +2564,43 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       var draggableBoxes = Object.keys(boxes).map(function (box) {
         var position = boxes[box];
         var id = boxes[box].id || box;
+        var identifier = boxes[box].identifier; // option index for caption
+
+        var isLayerLocked = boxes[box].isLayerLocked;
         var isSelected = active === id || activeBoxes.includes(id);
-        return /*#__PURE__*/React.createElement(Box, _extends({}, _this8.props, {
+        return /*#__PURE__*/React.createElement(Box, _extends({}, _this10.props, {
           areMultipleBoxesSelected: areMultipleBoxesSelected,
-          boundingBox: _this8.state.boundingBox,
-          didDragOrResizeHappen: _this8.didDragOrResizeHappen,
-          dragging: _this8.state.dragging,
-          getBoundingBoxElement: _this8.getBoundingBoxElement,
+          boundingBox: _this10.state.boundingBox,
+          didDragOrResizeHappen: _this10.didDragOrResizeHappen,
+          dragging: _this10.state.dragging,
+          getBoundingBoxElement: _this10.getBoundingBoxElement,
           id: id,
+          identifier: identifier,
           isSelected: isSelected,
-          isShiftKeyActive: _this8.state.isShiftKeyActive,
+          isShiftKeyActive: _this10.state.isShiftKeyActive,
           key: id,
-          onDragStart: _this8.dragStartHandler,
-          onDrag: _this8.dragHandler,
-          onDragEnd: _this8.dragEndHandler,
-          onKeyUp: _this8.keyUpHandler,
-          onResizeStart: _this8.resizeStartHandler,
-          onResize: _this8.resizeHandler,
-          onResizeEnd: _this8.resizeEndHandler,
-          onRotateStart: _this8.rotateStartHandler,
-          onRotate: _this8.rotateHandler,
-          onRotateEnd: _this8.rotateEndHandler,
+          onDragStart: _this10.dragStartHandler,
+          onDrag: _this10.dragHandler,
+          onDragEnd: _this10.dragEndHandler,
+          onKeyUp: _this10.keyUpHandler,
+          onKeyEnd: _this10.keyEndHandler,
+          onResizeStart: _this10.resizeStartHandler,
+          onResize: _this10.resizeHandler,
+          onResizeEnd: _this10.resizeEndHandler,
+          onRotateStart: _this10.rotateStartHandler,
+          onRotate: _this10.rotateHandler,
+          onRotateEnd: _this10.rotateEndHandler,
           position: position,
-          resizing: _this8.state.resizing,
-          rotating: _this8.state.rotating,
-          selectBox: _this8.selectBox,
-          setDragOrResizeState: _this8.setDragOrResizeState
+          resizing: _this10.state.resizing,
+          rotating: _this10.state.rotating,
+          selectBox: _this10.selectBox,
+          setDragOrResizeState: _this10.setDragOrResizeState,
+          isLayerLocked: isLayerLocked,
+          preventShortcutEvents: _this10.state.preventShortcutEvents,
+          setPreventShortcutEvents: _this10.setPreventShortcutEvents,
+          toggleHover: _this10.props.toggleHover,
+          overRideStyles: _this10.props.overrideHover,
+          overRideSelected: _this10.props.overrideSelected
         }));
       }); // Create a guide(s) when the following conditions are met:
       // 1. A box aligns with another (top, center or bottom)
@@ -2311,12 +2613,12 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
 
       if (guides) {
         xAxisGuides = Object.keys(guides).reduce(function (result, box) {
-          var guideClassNames = _this8.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
+          var guideClassNames = _this10.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.xAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.xAxis);
           var xAxisGuidesForCurrentBox = null;
 
           if (guides[box] && guides[box].x) {
             xAxisGuidesForCurrentBox = guides[box].x.map(function (position, index) {
-              if (_this8.state.active && _this8.state.active === box && _this8.state.match && _this8.state.match.x && _this8.state.match.x.intersection && _this8.state.match.x.intersection === position) {
+              if (_this10.state.active && _this10.state.active === box && _this10.state.match && _this10.state.match.x && _this10.state.match.x.intersection && _this10.state.match.x.intersection === position) {
                 return /*#__PURE__*/React.createElement("div", {
                   key: "".concat(position, "-").concat(index),
                   className: guideClassNames,
@@ -2333,12 +2635,12 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           return result.concat(xAxisGuidesForCurrentBox);
         }, []);
         yAxisGuides = Object.keys(guides).reduce(function (result, box) {
-          var guideClassNames = _this8.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
+          var guideClassNames = _this10.state.guidesActive ? "".concat(styles.guide, " ").concat(styles.yAxis, " ").concat(styles.active) : "".concat(styles.guide, " ").concat(styles.yAxis);
           var yAxisGuidesForCurrentBox = null;
 
           if (guides[box] && guides[box].y) {
             yAxisGuidesForCurrentBox = guides[box].y.map(function (position, index) {
-              if (_this8.state.active && _this8.state.active === box && _this8.state.match && _this8.state.match.y && _this8.state.match.y.intersection && _this8.state.match.y.intersection === position) {
+              if (_this10.state.active && _this10.state.active === box && _this10.state.match && _this10.state.match.y && _this10.state.match.y.intersection && _this10.state.match.y.intersection === position) {
                 return /*#__PURE__*/React.createElement("div", {
                   key: "".concat(position, "-").concat(index),
                   className: guideClassNames,
@@ -2379,6 +2681,7 @@ AlignmentGuides.propTypes = {
   onDrag: PropTypes.func,
   onDragEnd: PropTypes.func,
   onKeyUp: PropTypes.func,
+  onKeyEnd: PropTypes.func,
   onResizeStart: PropTypes.func,
   onResize: PropTypes.func,
   onResizeEnd: PropTypes.func,
