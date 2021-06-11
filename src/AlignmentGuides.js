@@ -8,6 +8,13 @@ import {
 	proximityListener,
 } from './utils/helpers'
 import styles from './styles.scss';
+import _ from 'lodash';
+let mousedown = false;
+let last_mousex = 0;
+let last_mousey = 0;
+let posX = 0;
+let posY = 0;
+// let rect2 = null;
 
 class AlignmentGuides extends Component {
 	constructor(props) {
@@ -47,6 +54,9 @@ class AlignmentGuides extends Component {
 		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
+		this.mouseDragHandler = this.mouseDragHandler.bind(this);
+		this.boxSelectByDrag  = this.boxSelectByDrag.bind(this);
+		this.createRectByDrag  = this.createRectByDrag.bind(this);
 	}
 
 	componentDidMount() {
@@ -106,6 +116,9 @@ class AlignmentGuides extends Component {
 				active
 			});
 		}
+		if (this.props.isStylingPanelEnabled) {
+			this.mouseDragHandler();
+		}
 	}
 
 	componentWillUnmount() {
@@ -138,6 +151,9 @@ class AlignmentGuides extends Component {
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target && e.target.id.indexOf('box') >= 0) {
+			if (e.target.id === '' || e.target.id.startsWith('box-ms')) {
+				return;
+			}
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -152,31 +168,48 @@ class AlignmentGuides extends Component {
 			if (e.shiftKey) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
-					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
+					if (e.unselect || !this.isDragHappening) {
+						activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
+					}
 				} else {
 					activeBoxes = [
 						...activeBoxes,
 						e.target.id
 					];
 				}
-				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
-				boxes['box-ms'].type = 'group';
-				boxes['box-ms'].zIndex = 12;
-				const selections = [];
-				for (let box in boxes) {
-					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
-						selections.push(boxes[box]);
+				if (activeBoxes.length === 0) {
+					let { boxes } = this.state;
+					delete boxes['box-ms'];
+					this.setState({
+						activeBoxes: [],
+						boxes
+					});
+				} else {
+					boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+					boxes['box-ms'].type = 'group';
+					boxes['box-ms'].zIndex = 12;
+					if (boxes['box-ms'].width === 0 && boxes['box-ms'].height === 0) {
+						return;
 					}
+					const selections = [];
+					for (let box in boxes) {
+						if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+							selections.push(boxes[box]);
+						}
+					}
+					if (selections.length > 1) {
+						data = Object.assign({}, boxes['box-ms'], {
+							metadata: { type: 'group' },
+							selections
+						});
+					}
+
+					this.setState({
+						active: 'box-ms',
+						activeBoxes,
+						boxes
+					});
 				}
-				data = Object.assign({}, boxes['box-ms'], {
-					metadata: { type: 'group' },
-					selections
-				});
-				this.setState({
-					active: 'box-ms',
-					activeBoxes,
-					boxes
-				});
 			} else {
 				let { activeBoxes, boxes } = this.state;
 				delete boxes['box-ms'];
@@ -190,6 +223,9 @@ class AlignmentGuides extends Component {
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
 		} else if (e.target && e.target.parentNode && e.target.parentNode.id.indexOf('box') >= 0) {
+			if (e.target.parentNode.id === '' || e.target.parentNode.id.startsWith('box-ms')) {
+				return;
+			}
 			const boxDimensions = e.target.parentNode.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -245,6 +281,9 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
+		if (this.didDragHappen) {
+			return;
+		}
 		if (
 			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
 			e.target === window ||
@@ -734,6 +773,140 @@ class AlignmentGuides extends Component {
 		});
 	}
 
+	// drag select handler
+	mouseDragHandler() {
+		let self = this;
+		let el = document.createElement('div');
+		this.didDragHappen = false;
+		document.addEventListener('mouseup', function(e) {
+			mousedown = false;
+			last_mousex = false;
+			last_mousey = false;
+			el.style.left = 0;
+			el.style.top = 0;
+			el.style.width = 0;
+			el.style.height= 0;
+			self.isDragHappening = false;
+		});
+		document.addEventListener('mousedown', function(e) {
+			if(self.getBoundingBoxElement() && self.getBoundingBoxElement().current) {
+				last_mousex = e.x;
+				last_mousey = e.y;
+				mousedown = true;
+				el.classList.add('rectangle');
+				self.didDragHappen = false;
+				self.isDragHappening = true;
+				// if the starting point is on top of existing boxes, don't allow drag selection
+				self.allowDragSelection = false;
+				// remove offset position for correct calculations.
+				const boundingBox = self.getBoundingBoxElement();
+				const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+				const tempE = {
+					x: e.x,
+					y: e.y
+				};
+				tempE.x = e.x - boundingBoxPosition.x;
+				tempE.y = e.y - boundingBoxPosition.y;
+				if (self.state.activeBoxes && self.state.activeBoxes.length > 1) {
+					self.allowDragSelection = false;
+				} else {
+					self.allowDragSelection = true;
+				}
+				// if drag is initiated outside box-ms box; allow dragSelection.
+				if (self.state.boxes && self.state.boxes['box-ms']) {
+					if (tempE.x >= self.state.boxes['box-ms'].x &&
+						tempE.x <= self.state.boxes['box-ms'].x + self.state.boxes['box-ms'].width &&
+						tempE.y >= self.state.boxes['box-ms'].y &&
+						tempE.y <= self.state.boxes['box-ms'].y + self.state.boxes['box-ms'].height) {
+						self.allowDragSelection = false;
+					}
+					else {
+						self.allowDragSelection = true;
+					}
+				}
+				// If drag starts on existing boxes, don't register them.
+				for (let box in self.state.boxes) {
+					if ( self.state.boxes[box] && !self.state.boxes[box].isLayerLocked && tempE.x >= self.state.boxes[box].x &&
+						tempE.x <= self.state.boxes[box].x + self.state.boxes[box].width &&
+						tempE.y >= self.state.boxes[box].y &&
+						tempE.y <= self.state.boxes[box].y + self.state.boxes[box].height) {
+						self.allowDragSelection = false;
+					}
+				}
+				document.getElementsByTagName('body')[0].appendChild(el);
+				//add style to rectangle
+				el.style.border = '1px solid #18a0fb';
+				el.style.backgroundColor = 'rgba(24, 160, 251, 0.2)';
+				el.style.position = 'absolute';
+				el.style.zIndex = 111;
+				document.onmousemove=function(event) {
+					if (e.target.classList.contains('r-preview-bg-wrapper') || e.target.id === 'r-preview-background' || e.target.classList.contains('bounding-box-wrapper') || e.target.classList.contains('videoPreviewClass') || e.target.classList.contains('safeArealines')) {
+						if (mousedown && self.allowDragSelection) {
+							self.didDragHappen = true;
+							self.createRectByDrag(event, el);
+						}
+					} else {
+						return;
+					}
+
+				}
+			}
+		});
+	}
+	createRectByDrag(e, el) {
+		posX = e.x;
+		posY = e.y;
+		el.style.left = last_mousex;
+		el.style.top = last_mousey;
+		el.style.width = Math.abs(posX - last_mousex);
+		el.style.height= Math.abs(posY - last_mousey);
+		if (last_mousex) {
+			el.style.width = Math.abs(posX-last_mousex)+'px'
+			el.style.height = Math.abs(posY-last_mousey)+'px';
+			el.style.left = posX-last_mousex<0?posX+'px':last_mousex+'px';
+			el.style.top = posY-last_mousey<0?posY+'px':last_mousey+'px';
+		} else {
+			return false;
+		}
+		this.boxSelectByDrag(el);
+	}
+	boxSelectByDrag(el) {
+		let rect2 = el && el.getBoundingClientRect();
+		const boundingBox = this.getBoundingBoxElement();
+		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
+		rect2.x = rect2.x - boundingBoxPosition.x;
+		rect2.y = rect2.y - boundingBoxPosition.y;
+		this.props.boxes.forEach((rect1, index) => {
+			const box = document.getElementById('box' + index);
+			if (rect1.x < rect2.x + rect2.width &&
+				rect1.x + rect1.width > rect2.x &&
+				rect1.y < rect2.y + rect2.height &&
+				rect1.y + rect1.height > rect2.y) {
+				if (!rect1.isLayerLocked) {
+					if (this.state.activeBoxes.includes('box' + index)) {
+						return;
+					}
+					this.selectBox({
+						target : box,
+						shiftKey: true,
+					});
+				} else {
+					return;
+				}
+
+			} else {
+				if (this.state.activeBoxes.includes('box' + index)) {
+					this.selectBox({
+						target: box,
+						shiftKey: true,
+						unselect: true
+					})
+				}
+			}
+		})
+	}
+	// drag select handler
+
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
 		const areMultipleBoxesSelected = activeBoxes.length > 1;
@@ -837,7 +1010,7 @@ class AlignmentGuides extends Component {
 			}, []);
 		}
 
-		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className}`} style={this.props.style}>
+		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
