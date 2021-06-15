@@ -153,9 +153,6 @@ class AlignmentGuides extends Component {
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target && e.target.id.indexOf('box') >= 0) {
-			if (e.target.id === '' || e.target.id.startsWith('box-ms')) {
-				return;
-			}
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -173,7 +170,7 @@ class AlignmentGuides extends Component {
 					if (e.unselect || !this.isDragHappening) {
 						activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
 					}
-				} else {
+				} else if (e.target.id !== 'box-ms') {
 					activeBoxes = [
 						...activeBoxes,
 						e.target.id
@@ -246,7 +243,7 @@ class AlignmentGuides extends Component {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.parentNode.id)) {
 					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.parentNode.id);
-				} else {
+				} else if (e.target.id !== 'box-ms') {
 					activeBoxes = [
 						...activeBoxes,
 						e.target.id
