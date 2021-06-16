@@ -375,6 +375,17 @@ export const getMultipleSelectionCoordinates = (allBoxes, activeBoxes) => {
 			selectedBoxes.push(allBoxes[box]);
 		}
 	}
+	if (selectedBoxes.length === 0) {
+		return {
+			x: 0,
+			y: 0,
+			top: 0,
+			left: 0,
+			width: 0,
+			height: 0
+		};
+	}
+
 
 	const x = selectedBoxes.reduce((min, b) => b.x < min ? b.x : min, selectedBoxes[0].x);
 	const y = selectedBoxes.reduce((min, b) => b.y < min ? b.y : min, selectedBoxes[0].y);
