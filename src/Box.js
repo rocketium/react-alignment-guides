@@ -52,7 +52,8 @@ class Box extends Component{
 	}
 
 	hoverBox(e) {
-		e.target.classList.add(this.props.toggleHover);
+		if (e.target.hasAttribute('identifier'))
+			e.target.classList.add(this.props.toggleHover);
 	}
 
 	unHoverBox(e) {
