@@ -43,7 +43,7 @@ class Box extends Component{
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (this.props.didDragOrResizeHappen) {
+		if (this.props.didDragOrResizeHappen && e.target.hasAttribute('identifier') ) {
 			this.props.selectBox(e);
 		}
 		if (this.box && this.box.current) {
