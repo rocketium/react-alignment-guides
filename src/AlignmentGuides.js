@@ -107,6 +107,7 @@ class AlignmentGuides extends Component {
 			document.addEventListener('keydown', this.setShiftKeyState);
 			document.addEventListener('keydown', this.unSelectBox);
 			document.addEventListener('keyup', this.setShiftKeyState);
+			document.addEventListener('contextmenu', this.selectBox);
 
 			this.setState({
 				boundingBox,
@@ -127,6 +128,7 @@ class AlignmentGuides extends Component {
 		document.removeEventListener('keydown', this.setShiftKeyState);
 		document.removeEventListener('keydown', this.unSelectBox);
 		document.removeEventListener('keyup', this.setShiftKeyState);
+		document.removeEventListener('contextmenu', this.selectBox);
 	}
 
 	setShiftKeyState(e) {
@@ -151,9 +153,6 @@ class AlignmentGuides extends Component {
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target && e.target.id.indexOf('box') >= 0) {
-			if (e.target.id === '' || e.target.id.startsWith('box-ms')) {
-				return;
-			}
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -165,13 +164,13 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			if (e.shiftKey) {
+			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1)) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
 					if (e.unselect || !this.isDragHappening) {
 						activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.id);
 					}
-				} else {
+				} else if (e.target.id !== 'box-ms') {
 					activeBoxes = [
 						...activeBoxes,
 						e.target.id
@@ -221,6 +220,9 @@ class AlignmentGuides extends Component {
 					boxes
 				});
 			}
+			if (e.type === 'contextmenu') {
+				return this.props.onSecondaryClick && this.props.onSecondaryClick(e, data);
+			}
 			this.props.onSelect && this.props.onSelect(e, data);
 		} else if (e.target && e.target.parentNode && e.target.parentNode.id.indexOf('box') >= 0) {
 			if (e.target.parentNode.id === '' || e.target.parentNode.id.startsWith('box-ms')) {
@@ -237,11 +239,11 @@ class AlignmentGuides extends Component {
 				node: e.target.parentNode,
 				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
-			if (e.shiftKey) {
+			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1)) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.parentNode.id)) {
 					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.parentNode.id);
-				} else {
+				} else if (e.target.id !== 'box-ms') {
 					activeBoxes = [
 						...activeBoxes,
 						e.target.id
@@ -275,6 +277,9 @@ class AlignmentGuides extends Component {
 					],
 					boxes
 				});
+			}
+			if (e.type === 'contextmenu') {
+				return this.props.onSecondaryClick && this.props.onSecondaryClick(e, data);
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
 		}
@@ -1039,6 +1044,7 @@ AlignmentGuides.propTypes = {
 	onRotateEnd: PropTypes.func,
 	onSelect: PropTypes.func,
 	onUnselect: PropTypes.func,
+	onSecondaryClick: PropTypes.func,
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
