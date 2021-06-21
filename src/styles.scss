@@ -66,9 +66,11 @@
 
 // Displaying coordinates and dimensions
 .coordinates {
-	font-size: 8px;
+	line-height: normal;
+	font-size: 9px;
 	position: absolute;
-	top: -20px;
+	padding: 2px;
+	top: -23px;
 	left: 0;
 	//color: #EB4B48;
 	font-weight: bold;
@@ -80,6 +82,7 @@
 	background-color: #44B2FB;
 	border: 1px solid #44B2FB;
 	border-radius: 2px;
+	pointer-events: none;
 }
 
 .dimensions {
@@ -87,7 +90,7 @@
 	align-items: center;
 	justify-content: center;
 	position: absolute;
-	font-size: 8px;
+	font-size: 9px; 
 	font-weight: bold;
 	//color: #EB4B48;
 	color: rgb(255, 255, 255);
@@ -100,6 +103,9 @@
 	border: 1px solid #44B2FB;
 	padding-right: 1px;
 	border-radius: 2px;
+	line-height: normal;
+	padding: 2px;
+	pointer-events: none;
 }
 
 // .width {
