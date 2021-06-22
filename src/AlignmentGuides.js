@@ -132,13 +132,15 @@ class AlignmentGuides extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		if (this.state.activeBoxes.length > 1 && JSON.stringify(prevState.activeBoxes) !== JSON.stringify(this.state.activeBoxes)) {
+		if (this.state.activeBoxes.length > 1) {
 			const activeBoxWithoutLock = this.state.activeBoxes.filter(activeBox => {
 				return !this.state.boxes[activeBox].isLayerLocked;
 			});
-			this.setState({
-				activeBoxes: activeBoxWithoutLock
-			});
+			if (JSON.stringify(this.state.activeBoxes) !== JSON.stringify(activeBoxWithoutLock)) {
+				this.setState({
+					activeBoxes: activeBoxWithoutLock
+				});
+			}
 		}
 	}
 	setShiftKeyState(e) {
