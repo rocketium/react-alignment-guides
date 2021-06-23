@@ -131,6 +131,18 @@ class AlignmentGuides extends Component {
 		document.removeEventListener('contextmenu', this.selectBox);
 	}
 
+	componentDidUpdate(prevProps, prevState) {
+		if (this.state.activeBoxes.length > 1) {
+			const activeBoxWithoutLock = this.state.activeBoxes.filter(activeBox => {
+				return !this.state.boxes[activeBox].isLayerLocked;
+			});
+			if (JSON.stringify(this.state.activeBoxes) !== JSON.stringify(activeBoxWithoutLock)) {
+				this.setState({
+					activeBoxes: activeBoxWithoutLock
+				});
+			}
+		}
+	}
 	setShiftKeyState(e) {
 		this.setState({
 			isShiftKeyActive: e.shiftKey
