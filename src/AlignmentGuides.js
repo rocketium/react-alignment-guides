@@ -559,6 +559,7 @@ class AlignmentGuides extends Component {
 			this.state.activeBoxes.forEach(box => {
 				this.startingPositions[box] = this.state.boxes[box];
 			});
+			this.startingPositions['box-ms'] = this.state.boxes['box-ms'];
 		}
 	}
 
@@ -583,14 +584,34 @@ class AlignmentGuides extends Component {
 					if (this.state.activeBoxes.includes(box)) {
 						// Adding bounding box's starting position
 						// This is because it's added only to the group's box and not the individual members of the group
-						boxes[box] = Object.assign({}, this.state.boxes[box], {
-							x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
-							y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
-							left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
-							top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
-							width: this.startingPositions[box].width + data.deltaW,
-							height: this.startingPositions[box].height + data.deltaH
-						});
+						if (this.startingPositions['box-ms']) {
+							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions['box-ms'].width)) * Math.abs(this.startingPositions[box].width));
+							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions['box-ms'].height)) * Math.abs(this.startingPositions[box].height));
+
+							const initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions['box-ms'].x) / this.startingPositions['box-ms'].width;
+							const xDiff = data.deltaX + initialDeltaXPercentage * (data.deltaW);
+
+							const initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions['box-ms'].y) / this.startingPositions['box-ms'].height;
+							const yDiff = data.deltaY + initialDeltaYPercentage * (data.deltaH);
+
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
+								width: this.startingPositions[box].width + widthDiff,
+								height: this.startingPositions[box].height + heightDiff
+							});
+						} else {
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+								width: this.startingPositions[box].width + data.deltaW,
+								height: this.startingPositions[box].height + data.deltaH
+							});
+						}
 					} else if (box === 'box-ms') {
 						boxes[box] = Object.assign({}, data);
 						delete boxes[box].deltaX;
