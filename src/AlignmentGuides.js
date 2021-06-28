@@ -776,7 +776,6 @@ class AlignmentGuides extends Component {
 		this.setState({
 			boxes,
 			guides,
-			resizing: false,
 			guidesActive: false
 		}, () => {
 			if (data.type && data.type === 'group') {
