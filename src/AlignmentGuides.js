@@ -298,9 +298,13 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		if (this.didDragHappen) {
+		if (
+			this.didDragHappen &&
+			!(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))
+		) {
 			return;
 		}
+
 		if (
 			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
 			e.target === window ||
