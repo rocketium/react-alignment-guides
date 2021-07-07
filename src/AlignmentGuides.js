@@ -958,6 +958,7 @@ class AlignmentGuides extends Component {
 			const identifier = boxes[box].identifier;  // option index for caption
 			const isLayerLocked = boxes[box].isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
+			const url = boxes[box]?.metadata?.url;
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -992,6 +993,7 @@ class AlignmentGuides extends Component {
 				toggleHover={this.props.toggleHover}
 				overRideStyles={this.props.overrideHover}
 				overRideSelected = {this.props.overrideSelected}
+				url={url}
 			/>;
 		});
 

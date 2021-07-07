@@ -38,14 +38,19 @@ class Box extends Component{
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
 		this.state = {
-			callKeyEnd: false
+			callKeyEnd: false,
+			isCropModeActive: false
 		};
-		this.refCallback = this.refCallback.bind(this);
 		this.handleDoubleClick = this.handleDoubleClick.bind(this);
 	}
 
 	handleDoubleClick() {
 		console.log('double clicked');
+		if (this.props.url) {
+			this.setState({
+				isCropModeActive : true
+			})
+		}
 	};
 
 	selectBox(e) {
@@ -609,9 +614,9 @@ class Box extends Component{
 					}
 				}}
 			>
-				{/* <div style={{width:'100%', height: '100%', 'pointer-events': 'none'}}>
-					<img src='http://dev-media-rocketium.s3-accelerate.amazonaws.com/tools/5d75a800e531aa4045d4c2f3_layer2_1624016875141.png'></img>
-				</div> */}
+				{this.state.isCropModeActive && <div style={{width:'100%', height: '100%', 'pointer-events': 'none'}}>
+					<img src={this.props.url}/>
+				</div>}
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
