@@ -31,7 +31,8 @@ class AlignmentGuides extends Component {
 			match: {},
 			resizing: false,
 			rotating: false,
-			activeBoxSnappedPosition: {}
+			activeBoxSnappedPosition: {},
+			preventShortcutEvents: false
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
@@ -49,7 +50,7 @@ class AlignmentGuides extends Component {
 		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
 		this.keyEndHandler = this.keyEndHandler.bind(this);
-		// this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
+		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
@@ -153,6 +154,10 @@ class AlignmentGuides extends Component {
 
 	setDragOrResizeState(state) {
 		this.didDragOrResizeHappen = state;
+	}
+
+	setPreventShortcutEvents(val) {
+		this.setState({ preventShortcutEvents: val });
 	}
 
 	selectBox(e) {
@@ -300,7 +305,7 @@ class AlignmentGuides extends Component {
 		}
 
 		if (
-			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
+			(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc')) ||
 			e.target === window ||
 			(
 				e.target &&
@@ -310,7 +315,7 @@ class AlignmentGuides extends Component {
 			)
 		) {
 			if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
-				this.props.setPreventShortcutEvents(true);
+				this.setPreventShortcutEvents(true);
 				return;
 			}
 			const { boxes } = this.state;
@@ -318,9 +323,9 @@ class AlignmentGuides extends Component {
 			this.setState({
 				active: '',
 				activeBoxes: [],
-				boxes
+				boxes,
+				preventShortcutEvents: false
 			});
-			this.props.setPreventShortcutEvents(false);
 			this.props.onUnselect && this.props.onUnselect(e);
 		}
 	}
@@ -982,8 +987,8 @@ class AlignmentGuides extends Component {
 				selectBox={this.selectBox}
 				setDragOrResizeState={this.setDragOrResizeState}
 				isLayerLocked={isLayerLocked}
-				preventShortcutEvents={this.props.preventShortcutEvents || false}
-				setPreventShortcutEvents={this.props.setPreventShortcutEvents}
+				preventShortcutEvents={this.state.preventShortcutEvents}
+				setPreventShortcutEvents={this.setPreventShortcutEvents}
 				toggleHover={this.props.toggleHover}
 				overRideStyles={this.props.overrideHover}
 				overRideSelected = {this.props.overrideSelected}
@@ -1079,9 +1084,7 @@ AlignmentGuides.propTypes = {
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
 	snap: PropTypes.bool,
-	style: PropTypes.object,
-	preventShortcutEvents: PropTypes.bool,
-	setPreventShortcutEvents: PropTypes.func
+	style: PropTypes.object
 };
 
 // Default values for props
