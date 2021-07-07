@@ -8,7 +8,6 @@ import {
 	proximityListener,
 } from './utils/helpers'
 import styles from './styles.scss';
-import _ from 'lodash';
 let mousedown = false;
 let last_mousex = 0;
 let last_mousey = 0;

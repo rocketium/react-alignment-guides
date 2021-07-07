@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import {
@@ -39,11 +40,17 @@ class Box extends Component{
 		this.state = {
 			callKeyEnd: false
 		};
+		this.refCallback = this.refCallback.bind(this);
+		this.handleDoubleClick = this.handleDoubleClick.bind(this);
 	}
+
+	handleDoubleClick() {
+		console.log('double clicked');
+	};
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (this.props.didDragOrResizeHappen && e.target.hasAttribute('identifier') ) {
+		if (this.props.didDragOrResizeHappen && e.currentTarget.hasAttribute('identifier') ) {
 			this.props.selectBox(e);
 		}
 		if (this.box && this.box.current) {
@@ -52,12 +59,12 @@ class Box extends Component{
 	}
 
 	hoverBox(e) {
-		if (e.target.hasAttribute('identifier'))
-			e.target.classList.add(this.props.toggleHover);
+		if (e.currentTarget.hasAttribute('identifier'))
+			e.currentTarget.classList.add(this.props.toggleHover);
 	}
 
 	unHoverBox(e) {
-		e.target.classList.remove(this.props.toggleHover);
+		e.currentTarget.classList.remove(this.props.toggleHover);
 	}
 
 	onDragStart(e) {
@@ -595,12 +602,16 @@ class Box extends Component{
 				style={boxStyles}
 				identifier={identifier}
 				tabIndex="0"
+				onDoubleClick={this.handleDoubleClick}
 				onFocus={() => {
 					if (this.props.preventShortcutEvents) {
 						this.props.setPreventShortcutEvents(false);
 					}
 				}}
 			>
+				{/* <div style={{width:'100%', height: '100%', 'pointer-events': 'none'}}>
+					<img src='http://dev-media-rocketium.s3-accelerate.amazonaws.com/tools/5d75a800e531aa4045d4c2f3_layer2_1624016875141.png'></img>
+				</div> */}
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
