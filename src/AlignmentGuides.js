@@ -8,7 +8,6 @@ import {
 	proximityListener,
 } from './utils/helpers'
 import styles from './styles.scss';
-import _ from 'lodash';
 let mousedown = false;
 let last_mousex = 0;
 let last_mousey = 0;
@@ -32,8 +31,7 @@ class AlignmentGuides extends Component {
 			match: {},
 			resizing: false,
 			rotating: false,
-			activeBoxSnappedPosition: {},
-			preventShortcutEvents: false
+			activeBoxSnappedPosition: {}
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
@@ -51,7 +49,7 @@ class AlignmentGuides extends Component {
 		this.rotateEndHandler = this.rotateEndHandler.bind(this);
 		this.keyUpHandler = this.keyUpHandler.bind(this);
 		this.keyEndHandler = this.keyEndHandler.bind(this);
-		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
+		// this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
@@ -155,10 +153,6 @@ class AlignmentGuides extends Component {
 
 	setDragOrResizeState(state) {
 		this.didDragOrResizeHappen = state;
-	}
-
-	setPreventShortcutEvents(val) {
-		this.setState({ preventShortcutEvents: val });
 	}
 
 	selectBox(e) {
@@ -316,7 +310,7 @@ class AlignmentGuides extends Component {
 			)
 		) {
 			if (typeof this.props.isValidUnselect === 'function' && this.props.isValidUnselect(e) === false) {
-				this.setPreventShortcutEvents(true);
+				this.props.setPreventShortcutEvents(true);
 				return;
 			}
 			const { boxes } = this.state;
@@ -324,9 +318,9 @@ class AlignmentGuides extends Component {
 			this.setState({
 				active: '',
 				activeBoxes: [],
-				boxes,
-				preventShortcutEvents: false
+				boxes
 			});
+			this.props.setPreventShortcutEvents(false);
 			this.props.onUnselect && this.props.onUnselect(e);
 		}
 	}
@@ -988,8 +982,8 @@ class AlignmentGuides extends Component {
 				selectBox={this.selectBox}
 				setDragOrResizeState={this.setDragOrResizeState}
 				isLayerLocked={isLayerLocked}
-				preventShortcutEvents={this.state.preventShortcutEvents}
-				setPreventShortcutEvents={this.setPreventShortcutEvents}
+				preventShortcutEvents={this.props.preventShortcutEvents || false}
+				setPreventShortcutEvents={this.props.setPreventShortcutEvents}
 				toggleHover={this.props.toggleHover}
 				overRideStyles={this.props.overrideHover}
 				overRideSelected = {this.props.overrideSelected}
@@ -1085,7 +1079,9 @@ AlignmentGuides.propTypes = {
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
 	snap: PropTypes.bool,
-	style: PropTypes.object
+	style: PropTypes.object,
+	preventShortcutEvents: PropTypes.bool,
+	setPreventShortcutEvents: PropTypes.func
 };
 
 // Default values for props
