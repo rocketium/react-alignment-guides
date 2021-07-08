@@ -8,7 +8,6 @@ import {
 	proximityListener,
 } from './utils/helpers'
 import styles from './styles.scss';
-import _ from 'lodash';
 let mousedown = false;
 let last_mousex = 0;
 let last_mousey = 0;
@@ -306,7 +305,7 @@ class AlignmentGuides extends Component {
 		}
 
 		if (
-			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
+			(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc')) ||
 			e.target === window ||
 			(
 				e.target &&
@@ -1054,7 +1053,7 @@ class AlignmentGuides extends Component {
 			}, []);
 		}
 
-		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
+		return <div id={this.props.id} ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
