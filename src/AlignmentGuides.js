@@ -717,6 +717,9 @@ class AlignmentGuides extends Component {
 	}
 
 	keyUpHandler(e, data) {
+		if (data.isLayerLocked) {
+			return;
+		}
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
