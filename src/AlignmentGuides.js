@@ -305,7 +305,7 @@ class AlignmentGuides extends Component {
 		}
 
 		if (
-			e.type === 'keydown' ? (e.key === 'Escape' || e.key === 'Esc') :
+			(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc')) ||
 			e.target === window ||
 			(
 				e.target &&
@@ -716,6 +716,9 @@ class AlignmentGuides extends Component {
 	}
 
 	keyUpHandler(e, data) {
+		if (data.isLayerLocked) {
+			return;
+		}
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
@@ -1052,7 +1055,7 @@ class AlignmentGuides extends Component {
 			}, []);
 		}
 
-		return <div ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
+		return <div id={this.props.id} ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
