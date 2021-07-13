@@ -615,7 +615,7 @@ class Box extends Component{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
 							className={`${styles.dimensions} `}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
+							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px' }}
 						>
 						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
 					</span> :
