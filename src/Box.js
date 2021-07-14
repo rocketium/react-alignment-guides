@@ -549,6 +549,10 @@ class Box extends Component{
 				document.addEventListener('keydown', this.shortcutHandler);
 				document.addEventListener('keyup', this.onShortcutKeyUp);
 			}
+
+			if (prevProps.isSelected) {
+				this.setState({isCropModeActive: false});
+			}
 		}
 	}
 
@@ -614,8 +618,11 @@ class Box extends Component{
 					}
 				}}
 			>
-				{this.state.isCropModeActive && <div style={{width:'100%', height: '100%', 'pointer-events': 'none'}}>
-					<img src={this.props.url}/>
+				{this.state.isCropModeActive && !areMultipleBoxesSelected && <div style={{position: 'absolute', opacity: '0.75'}} className={styles.overlayImage}>
+					<img style={{transform: 'scale(2)'}}src={this.props.url}/>
+				</div>}
+				{this.state.isCropModeActive && !areMultipleBoxesSelected && <div style={{width:'100%', height: '100%', 'pointer-events': 'none', overflow: 'hidden'}}>
+					<img style={{transform: 'scale(2)'}}src={this.props.url}/>
 				</div>}
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
