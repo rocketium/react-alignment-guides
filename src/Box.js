@@ -619,10 +619,10 @@ class Box extends Component{
 				}}
 			>
 				{this.state.isCropModeActive && !areMultipleBoxesSelected && <div style={{position: 'absolute', opacity: '0.75'}} className={styles.overlayImage}>
-					<img style={{transform: 'scale(2)'}}src={this.props.url}/>
+					<img style={{transform: `scale(${this.props.zoomScale})`}} src={this.props.url}/>
 				</div>}
 				{this.state.isCropModeActive && !areMultipleBoxesSelected && <div style={{width:'100%', height: '100%', 'pointer-events': 'none', overflow: 'hidden'}}>
-					<img style={{transform: 'scale(2)'}}src={this.props.url}/>
+					<img style={{transform: `scale(${this.props.zoomScale})`}} src={this.props.url}/>
 				</div>}
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?

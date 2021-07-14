@@ -962,6 +962,7 @@ class AlignmentGuides extends Component {
 			const isLayerLocked = boxes[box].isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
 			const url = boxes[box]?.metadata?.url;
+			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -997,6 +998,7 @@ class AlignmentGuides extends Component {
 				overRideStyles={this.props.overrideHover}
 				overRideSelected = {this.props.overrideSelected}
 				url={url}
+				zoomScale={zoomScale}
 			/>;
 		});
 
