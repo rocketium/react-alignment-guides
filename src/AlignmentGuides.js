@@ -153,6 +153,7 @@ class AlignmentGuides extends Component {
 	}
 
 	setDragOrResizeState(state) {
+		this.props.dragOrResizeHappen(state);
 		this.didDragOrResizeHappen = state;
 	}
 
