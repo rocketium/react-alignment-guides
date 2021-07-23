@@ -303,7 +303,11 @@ class AlignmentGuides extends Component {
 		) {
 			return;
 		}
-
+		
+		if (this.props.isDragging || (e.type === 'keydown' && (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.keyCode === 13))) {
+			return;
+		}
+				
 		if (
 			(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc')) ||
 			e.target === window ||
