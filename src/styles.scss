@@ -285,6 +285,7 @@
 	cursor: svg-inline(rotate-bl) 0 0, auto;
 }
 
+
 .fadeOut {
 	animation: fadeOut ease 4s;
 	-webkit-animation: fadeOut ease 4s;
@@ -335,4 +336,68 @@
 	100% {
 	  opacity:0;
   }
+}
+
+.cropper_notch_lb {
+	position: absolute;
+	bottom: -4px;
+	left: -4px;
+}
+
+.cropper_notch_lt {
+	position: absolute;
+	top: -4px;
+    left: -4px;
+    transform: scaleY(-1);
+}
+
+.cropper_notch_rt {
+	position: absolute;
+	top: -4px;
+	right: -4px;
+    transform: scale(-1);
+}
+
+.cropper_notch_rb {
+	position: absolute;
+	bottom: -4px;
+	right: -4px;
+	transform: scaleX(-1);
+}
+
+.cropper_notch_lc {
+	position: absolute;
+	top: calc(50% - 8px);
+    left: -10px;
+    transform: rotate(90deg) scaleX(1.5);
+}
+
+.cropper_notch_tc {
+	position: absolute;
+	top: -4px;
+    left: calc(50% - 8px);
+    transform: scaleX(1.5);
+}
+
+.cropper_notch_rc {
+	position: absolute;
+	top: calc(50% - 4px);
+    right: -10px;
+    transform: rotate(90deg) scaleX(1.5);
+}
+
+.cropper_notch_bc {
+	position: absolute;
+	bottom: -4px;
+    left: calc(50% - 8px);
+    transform: scaleX(1.5);
+}
+
+.cropper_border {
+	width: calc(100% + 8px);
+    height: calc(100% + 8px);
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    border: 4px solid #00000020;
 }

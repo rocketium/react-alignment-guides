@@ -69,12 +69,15 @@
 		"rollup-plugin-node-resolve": "^5.2.0",
 		"rollup-plugin-peer-deps-external": "^2.2.2",
 		"rollup-plugin-postcss": "^2.5.0",
-		"rollup-plugin-url": "^3.0.1"
+		"rollup-plugin-url": "^3.0.1",
+		"svg-url-loader": "^7.1.1"
 	},
 	"files": [
 		"dist"
 	],
 	"dependencies": {
-		"lodash.throttle": "^4.1.1"
+		"lodash.throttle": "^4.1.1",
+		"re-resizable": "^6.9.0",
+		"react-rnd": "^10.3.4"
 	}
 }

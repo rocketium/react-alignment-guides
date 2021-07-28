@@ -17,6 +17,8 @@ import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
 const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
+import Cropper from "./Cropper";
+
 class Box extends Component{
 	constructor(props) {
 		super(props);
@@ -532,6 +534,7 @@ class Box extends Component{
 		}
 	}
 
+
 	componentDidMount() {
 		if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
 			document.addEventListener('keydown', this.shortcutHandler);
@@ -550,9 +553,9 @@ class Box extends Component{
 				document.addEventListener('keyup', this.onShortcutKeyUp);
 			}
 
-			if (prevProps.isSelected) {
-				this.setState({isCropModeActive: false});
-			}
+			// if (prevProps.isSelected) {
+			// 	this.setState({isCropModeActive: false});
+			// }
 		}
 	}
 
@@ -598,6 +601,8 @@ class Box extends Component{
 				boxStyles.pointerEvents = 'none';
 			}
 
+			const {isCropModeActive} = this.state;
+
 			return <div
 				className={boxClassNames}
 				id={id}
@@ -618,60 +623,59 @@ class Box extends Component{
 					}
 				}}
 			>
-				{this.state.isCropModeActive && !areMultipleBoxesSelected && <div style={{position: 'absolute', opacity: '0.75'}} className={styles.overlayImage}>
-					<img style={{transform: `scale(${this.props.zoomScale})`}} src={this.props.url}/>
-				</div>}
-				{this.state.isCropModeActive && !areMultipleBoxesSelected && <div style={{width:'100%', height: '100%', 'pointer-events': 'none', overflow: 'hidden'}}>
-					<img style={{transform: `scale(${this.props.zoomScale})`}} src={this.props.url}/>
-				</div>}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-					(this.props.didDragOrResizeHappen) ? <span
-							ref={this.coordinates}
-							className={styles.coordinates}
-						>
-						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
-					</span> :
-						null :null
-				}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-					(this.props.didDragOrResizeHappen) ? <span
-							className={`${styles.dimensions} `}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
-						>
-						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
-					</span> :
-						null :null
-				}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-						RESIZE_CORNERS.map(handle => {
-							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
-							return <div
-								key={handle}
-								className={className}
-								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
-								id={`resize-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
-							/>;
-						}) :
-						null
-				}
-				{
-					isSelected && !areMultipleBoxesSelected ?
-						ROTATE_HANDLES.map(handle => {
-							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
-							return <div
-								key={handle}
-								className={className}
-								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
-								id={`rotate-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
-							/>;
-						}) :
-						null
-				}
+				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={() => {this.setState({isCropModeActive: false});}} style={{opacity: 0.5}} {...this.props}/>}
+
+				{!isCropModeActive && <>
+
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+							(this.props.didDragOrResizeHappen) ? <span
+								ref={this.coordinates}
+								className={styles.coordinates}
+							>
+								{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
+							</span> :
+								null : null
+					}
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+							(this.props.didDragOrResizeHappen) ? <span
+								className={`${styles.dimensions} `}
+								style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
+							>
+								<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
+							</span> :
+								null : null
+					}
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+							RESIZE_CORNERS.map(handle => {
+								const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
+								return <div
+									key={handle}
+									className={className}
+									onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
+									id={`resize-${handle}`}
+									style={{ pointerEvents: this.props.isLayerLocked ? 'none' : '' }}
+								/>;
+							}) :
+							null
+					}
+					{
+						isSelected && !areMultipleBoxesSelected ?
+							ROTATE_HANDLES.map(handle => {
+								const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
+								return <div
+									key={handle}
+									className={className}
+									onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
+									id={`rotate-${handle}`}
+									style={{ pointerEvents: this.props.isLayerLocked ? 'none' : '' }}
+								/>;
+							}) :
+							null
+					}
+				</>}
 			</div>;
 		}
 

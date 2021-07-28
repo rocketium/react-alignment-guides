@@ -82,6 +82,11 @@ class AlignmentGuides extends Component {
 				if (dimensions.active) {
 					activeBoxes.push(`box${index}`);
 				}
+
+				if (dimensions?.metadata?.url) {
+					const img = new Image();
+					img.src = dimensions.metadata.url;
+				}
 			});
 
 			if (activeBoxes.length > 1) {
