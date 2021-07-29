@@ -66,6 +66,8 @@
 
 // Displaying coordinates and dimensions
 .coordinates {
+	overflow: hidden;
+    white-space: nowrap;
 	line-height: normal;
 	font-size: 9px;
 	position: absolute;

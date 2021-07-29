@@ -626,55 +626,54 @@ class Box extends Component{
 				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={() => {this.setState({isCropModeActive: false});}} {...this.props}/>}
 
 				{!isCropModeActive && <>
-
-					{
-						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-							(this.props.didDragOrResizeHappen) ? <span
-								ref={this.coordinates}
-								className={styles.coordinates}
-							>
-								{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
-							</span> :
-								null : null
-					}
-					{
-						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-							(this.props.didDragOrResizeHappen) ? <span
-								className={`${styles.dimensions} `}
-								style={{ width: `${position.width}px`, top: `${position.height + 10}px` }}
-							>
-								<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
-							</span> :
-								null : null
-					}
-					{
-						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-							RESIZE_CORNERS.map(handle => {
-								const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
-								return <div
-									key={handle}
-									className={className}
-									onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
-									id={`resize-${handle}`}
-									style={{ pointerEvents: this.props.isLayerLocked ? 'none' : '' }}
-								/>;
-							}) :
-							null
-					}
-					{
-						isSelected && !areMultipleBoxesSelected ?
-							ROTATE_HANDLES.map(handle => {
-								const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
-								return <div
-									key={handle}
-									className={className}
-									onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
-									id={`rotate-${handle}`}
-									style={{ pointerEvents: this.props.isLayerLocked ? 'none' : '' }}
-								/>;
-							}) :
-							null
-					}
+				{
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+					(this.props.didDragOrResizeHappen) ? <span
+							ref={this.coordinates}
+							className={styles.coordinates}
+						>
+						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
+					</span> :
+						null :null
+				}
+				{
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+					(this.props.didDragOrResizeHappen) ? <span
+							className={`${styles.dimensions} `}
+							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px' }}
+						>
+						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
+					</span> :
+						null :null
+				}
+				{
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+						RESIZE_CORNERS.map(handle => {
+							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
+							return <div
+								key={handle}
+								className={className}
+								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
+								id={`resize-${handle}`}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
+							/>;
+						}) :
+						null
+				}
+				{
+					isSelected && !areMultipleBoxesSelected ?
+						ROTATE_HANDLES.map(handle => {
+							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
+							return <div
+								key={handle}
+								className={className}
+								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
+								id={`rotate-${handle}`}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
+							/>;
+						}) :
+						null
+				}
 				</>}
 			</div>;
 		}
