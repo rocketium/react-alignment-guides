@@ -51,20 +51,23 @@ export default class Cropper extends Component {
         }
 
         this.setState({
-            isMoved: true,
             scale: newScale,
-            width: ref.offsetWidth, //position.width,
-            height: ref.offsetHeight, //position.height,
-            translateX: position.x, //position.x - (this.props.position.width / 2 - this.state.onLoadBoundingRect.width / 2),
-            translateY: position.y, //position.y - (this.props.position.height / 2 - this.state.onLoadBoundingRect.height / 2) 
+            width: ref.offsetWidth,
+            height: ref.offsetHeight, 
+            translateX: position.x, 
+            translateY: position.y,
         })
         console.log('New scale', newScale);
     }
 
     handleImageLoaded(e) {
-        console.log('image loaded: ', e?.current?.target);
+        const boundingRect = e?.target?.getBoundingClientRect();
         this.setState({
-            onLoadBoundingRect: e?.target?.getBoundingClientRect()
+            onLoadBoundingRect: boundingRect,
+            width: boundingRect.width,
+            height: boundingRect.height, 
+            translateX: this.props.position.width/2 - boundingRect.width/2 , 
+            translateY: this.props.position.height/2 - boundingRect.height/2 ,
         })
     }
 
@@ -78,19 +81,26 @@ export default class Cropper extends Component {
             background: "transparent"
         };
 
+        const innerDraggableStyle = {
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            border: "solid 1px #0f0",
+            background: "transparent"
+        }
+
         const newScale = this.state.scale || this.props.zoomScale;
 
-        const width = this.state.width || this?.rnd?.props?.default?.width;
-        const height = this.state.height || this?.rnd?.props?.default?.height;
+        const outerImageWidth = this.state.width || this?.rnd?.props?.default?.width;
+        const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
 
 
-        const outerImageStyles = this.state.isMoved ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width, height, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
-        const innerImageStyles = this.state.isMoved ? {'max-width': 'none', width, height, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        const outerImageStyles = this.state.onLoadBoundingRect ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
 
         return (
             <>
                 <img onLoad={this.handleImageLoaded} draggable="false" style={outerImageStyles} src={this.props.url} />
-
 
                 <div style={{ width: '100%', height: '100%', 'pointer-events': 'none', overflow: 'hidden'}}>
                     <img onLoad={this.handleImageLoaded} draggable="false" style={innerImageStyles} src={this.props.url} />
@@ -102,9 +112,8 @@ export default class Cropper extends Component {
                     lockAspectRatio={true}
                     onDragStop={(e, d) => {
                         this.setState({
-                            isMoved: true,
-                            translateX: d.x, // (d.x - (this.props.position.width / 2 - this.state.onLoadBoundingRect.width / 2)),
-                            translateY: d.y, // (d.y - (this.props.position.height / 2 - this.state.onLoadBoundingRect.height / 2))
+                            translateX: d.x, 
+                            translateY: d.y, 
                         })
                     }}
                     onResizeStop={(e, direction, ref, delta, position) => this.calculateNewScale(e, direction, ref, delta, position)}
@@ -115,8 +124,20 @@ export default class Cropper extends Component {
                         width: this.state.onLoadBoundingRect.width,
                         height: this.state.onLoadBoundingRect.height
                     }}
-                >
-                </Rnd>}
+                />}
+
+                {this.state.onLoadBoundingRect && <Rnd
+                    lockAspectRatio={false}
+                    style={innerDraggableStyle}
+                    onDragStop={(e, d) => {
+                    }}
+                    default={{
+                        x: 0,
+                        y: 0,
+                        width: '100%',
+                        height: '100%'
+                    }}
+                />}
 
                 <img src={cornerNotch} className={styles.cropper_notch_lt} />
                 <img src={cornerNotch} className={styles.cropper_notch_rt} />
