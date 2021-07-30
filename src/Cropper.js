@@ -17,6 +17,7 @@ export default class Cropper extends Component {
             scale: null
         }
         this.escFunction = this.escFunction.bind(this);
+        this.calculateNewObjectPosition = this.calculateNewObjectPosition.bind(this);
     }
     escFunction(event) {
         if (event.keyCode === 27) {
@@ -30,25 +31,19 @@ export default class Cropper extends Component {
         document.removeEventListener("keydown", this.escFunction, false);
     }
 
+    calculateNewObjectPosition() {
+        const {initialTranslateX, translateX, initialTranslateY, translateY} = this.state;
+        const differenceInX =  translateX - initialTranslateX;
+        const differenceInY =  translateY - initialTranslateY;
+
+        const clientXPercentage = (differenceInX /  this.props.renderedResolution.width) * 100;
+        const clientYPercentage = (differenceInY / this.props.renderedResolution.height ) * 100;
+        console.log(`calculated object position ${clientXPercentage} : ${clientYPercentage}`);
+    }
+
     calculateNewScale(e, direction, ref, delta, position) {
         const originalWidth = this.state.onLoadBoundingRect.width / this.props.zoomScale ;
         const newScale =  Math.abs(ref.offsetWidth / originalWidth);
-        let newTranslateX =  0; //this.state.translateX + delta.width;
-        let newTranslateY = 0; //this.state.translateY + delta.height;
-        
-        if (direction === 'topLeft') {
-            newTranslateX = this.state.translateX - delta.width;
-            newTranslateY = this.state.translateY - delta.height; 
-        } else if (direction === 'topRight') {
-            newTranslateX = this.state.translateX + delta.width;
-            newTranslateY = this.state.translateY - delta.height; 
-        } else if (direction === 'bottomLeft') {
-            newTranslateX = this.state.translateX - delta.width;
-            newTranslateY = this.state.translateY + delta.height; 
-        } else if (direction === 'bottomRight') {
-            newTranslateX = this.state.translateX + delta.width;
-            newTranslateY = this.state.translateY + delta.height;       
-        }
 
         this.setState({
             scale: newScale,
@@ -67,7 +62,9 @@ export default class Cropper extends Component {
             width: boundingRect.width,
             height: boundingRect.height, 
             translateX: this.props.position.width/2 - boundingRect.width/2 , 
-            translateY: this.props.position.height/2 - boundingRect.height/2 ,
+            translateY: this.props.position.height/2 - boundingRect.height/2,
+            initialTranslateX: this.props.position.width/2 - boundingRect.width/2,
+            initialTranslateY: this.props.position.height/2 - boundingRect.height/2
         })
     }
 
@@ -95,8 +92,8 @@ export default class Cropper extends Component {
         const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
 
 
-        const outerImageStyles = this.state.onLoadBoundingRect ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
-        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        const outerImageStyles = this.state.onLoadBoundingRect ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
 
         return (
             <>
@@ -114,7 +111,10 @@ export default class Cropper extends Component {
                         this.setState({
                             translateX: d.x, 
                             translateY: d.y, 
+                        }, () => {
+                            this.calculateNewObjectPosition();
                         })
+                        
                     }}
                     onResizeStop={(e, direction, ref, delta, position) => this.calculateNewScale(e, direction, ref, delta, position)}
                     style={draggableStyle}

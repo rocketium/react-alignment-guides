@@ -1011,6 +1011,7 @@ class AlignmentGuides extends Component {
 				overRideSelected = {this.props.overrideSelected}
 				url={url}
 				zoomScale={zoomScale}
+				renderedResolution={this.props.renderedResolution}
 			/>;
 		});
 
@@ -1102,8 +1103,9 @@ AlignmentGuides.propTypes = {
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
+	renderedResolution: PropTypes.object,
 	snap: PropTypes.bool,
-	style: PropTypes.object
+	style: PropTypes.object,
 };
 
 // Default values for props
