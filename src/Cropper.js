@@ -24,8 +24,8 @@ export default class Cropper extends Component {
             const scale = this.state.scale || this.props.zoomScale
             this.props.endCropMode({
                 scale,
-                clientXPercentage: this.state.clientXPercentage / scale,
-                clientYPercentage: this.state.clientYPercentage / scale
+                clientXPercentage: this.state.clientXPercentage ? this.state.clientXPercentage : this.props.objectPosition.horizontal,
+                clientYPercentage: this.state.clientYPercentage ? this.state.clientYPercentage : this.props.objectPosition.vertical
             });
         }
     }
@@ -41,14 +41,19 @@ export default class Cropper extends Component {
         const differenceInX =  translateX - initialTranslateX;
         const differenceInY =  translateY - initialTranslateY;
 
-        const clientXPercentage = (differenceInX /  this.props.renderedResolution.width) * 100;
-        const clientYPercentage = (differenceInY / this.props.renderedResolution.height ) * 100;
+        if (differenceInX !== 0) {
+            const clientXPercentage = (differenceInX /  this.props.renderedResolution.width) * 100;
+            this.setState({
+                clientXPercentage
+            })
+        }
 
-        this.setState({
-            clientXPercentage,
-            clientYPercentage
-        })
-        console.log(`calculated object position ${clientXPercentage} : ${clientYPercentage}`);
+        if (differenceInY !== 0) {
+            const clientYPercentage = (differenceInY / this.props.renderedResolution.height ) * 100;   
+            this.setState({
+                clientYPercentage
+            })
+        }
     }
 
     calculateNewScale(e, direction, ref, delta, position) {
@@ -68,14 +73,26 @@ export default class Cropper extends Component {
 
     handleImageLoaded(e) {
         const boundingRect = e?.target?.getBoundingClientRect();
+
+        const newScale = this.state.scale || this.props.zoomScale || 1;
+
+        let initX = this.props.position.width/2 - boundingRect.width/2;
+        let initY = this.props.position.height/2 - boundingRect.height/2;
+
+        if (this.props.objectPosition) {
+            initX = initX + Math.round((this.props.objectPosition.horizontal * newScale * this.props.renderedResolution.width) / 100);
+            initY = initY + Math.round((this.props.objectPosition.vertical * newScale * this.props.renderedResolution.height) / 100);
+        }
+        
+
         this.setState({
             onLoadBoundingRect: boundingRect,
             width: boundingRect.width,
             height: boundingRect.height, 
-            translateX: this.props.position.width/2 - boundingRect.width/2 , 
-            translateY: this.props.position.height/2 - boundingRect.height/2,
-            initialTranslateX: this.props.position.width/2 - boundingRect.width/2,
-            initialTranslateY: this.props.position.height/2 - boundingRect.height/2
+            translateX: initX, 
+            translateY: initY,
+            initialTranslateX: initX,
+            initialTranslateY: initY
         })
     }
 
@@ -97,7 +114,7 @@ export default class Cropper extends Component {
             background: "transparent"
         }
 
-        const newScale = this.state.scale || this.props.zoomScale;
+        const newScale = this.state.scale || this.props.zoomScale || 1;
 
         const outerImageWidth = this.state.width || this?.rnd?.props?.default?.width;
         const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
@@ -130,8 +147,8 @@ export default class Cropper extends Component {
                     onResizeStop={(e, direction, ref, delta, position) => this.calculateNewScale(e, direction, ref, delta, position)}
                     style={draggableStyle}
                     default={{
-                        x: this.props.position.width/2 - this.state.onLoadBoundingRect.width/2 ,
-                        y: this.props.position.height/2 - this.state.onLoadBoundingRect.height/2 ,
+                        x: this.state.translateX,
+                        y: this.state.translateY,
                         width: this.state.onLoadBoundingRect.width,
                         height: this.state.onLoadBoundingRect.height
                     }}
