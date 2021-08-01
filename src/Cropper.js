@@ -21,7 +21,12 @@ export default class Cropper extends Component {
     }
     escFunction(event) {
         if (event.keyCode === 27) {
-            this.props.endCropMode();
+            const scale = this.state.scale || this.props.zoomScale
+            this.props.endCropMode({
+                scale,
+                clientXPercentage: this.state.clientXPercentage / scale,
+                clientYPercentage: this.state.clientYPercentage / scale
+            });
         }
     }
     componentDidMount() {
@@ -38,6 +43,11 @@ export default class Cropper extends Component {
 
         const clientXPercentage = (differenceInX /  this.props.renderedResolution.width) * 100;
         const clientYPercentage = (differenceInY / this.props.renderedResolution.height ) * 100;
+
+        this.setState({
+            clientXPercentage,
+            clientYPercentage
+        })
         console.log(`calculated object position ${clientXPercentage} : ${clientYPercentage}`);
     }
 
@@ -51,7 +61,8 @@ export default class Cropper extends Component {
             height: ref.offsetHeight, 
             translateX: position.x, 
             translateY: position.y,
-        })
+        });
+        this.calculateNewObjectPosition();
         console.log('New scale', newScale);
     }
 

@@ -975,6 +975,7 @@ class AlignmentGuides extends Component {
 			const isSelected = (active === id || activeBoxes.includes(id));
 			const url = boxes[box]?.metadata?.url;
 			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
+			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -1011,6 +1012,7 @@ class AlignmentGuides extends Component {
 				overRideSelected = {this.props.overrideSelected}
 				url={url}
 				zoomScale={zoomScale}
+				objectPosition={objectPosition}
 				renderedResolution={this.props.renderedResolution}
 			/>;
 		});

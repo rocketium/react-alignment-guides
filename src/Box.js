@@ -623,7 +623,10 @@ class Box extends Component{
 					}
 				}}
 			>
-				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={() => {this.setState({isCropModeActive: false});}} {...this.props}/>}
+				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={data => {
+					this.setState({ isCropModeActive: false });
+					this.props.onCropEnd(data);
+				}} {...this.props} />}
 
 				{!isCropModeActive && <>
 				{
