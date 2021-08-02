@@ -40,16 +40,17 @@ export default class Cropper extends Component {
         const {initialTranslateX, translateX, initialTranslateY, translateY} = this.state;
         const differenceInX =  translateX - initialTranslateX;
         const differenceInY =  translateY - initialTranslateY;
+        const newScale = this.state.scale || this.props.zoomScale || 1;
 
         if (differenceInX !== 0) {
-            const clientXPercentage = (differenceInX /  this.props.renderedResolution.width) * 100;
+            const clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
             this.setState({
                 clientXPercentage
             })
         }
 
         if (differenceInY !== 0) {
-            const clientYPercentage = (differenceInY / this.props.renderedResolution.height ) * 100;   
+            const clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
             this.setState({
                 clientYPercentage
             })
@@ -80,8 +81,8 @@ export default class Cropper extends Component {
         let initY = this.props.position.height/2 - boundingRect.height/2;
 
         if (this.props.objectPosition) {
-            initX = initX + Math.round((this.props.objectPosition.horizontal * newScale * this.props.renderedResolution.width) / 100);
-            initY = initY + Math.round((this.props.objectPosition.vertical * newScale * this.props.renderedResolution.height) / 100);
+            initX = initX + Math.round(((this.props.objectPosition?.horizontal || 0) * newScale * this.props.renderedResolution.width) / 100);
+            initY = initY + Math.round(((this.props.objectPosition?.vertical || 0) * newScale * this.props.renderedResolution.height) / 100);
         }
         
 
@@ -120,7 +121,8 @@ export default class Cropper extends Component {
         const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
 
 
-        const outerImageStyles = this.state.onLoadBoundingRect ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        const outerImageStyles = this.state.onLoadBoundingRect ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : 
+            {"max-height": "100%", position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
         const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
 
         return (
