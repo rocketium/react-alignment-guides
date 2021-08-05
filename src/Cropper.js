@@ -14,14 +14,33 @@ export default class Cropper extends Component {
         this.state = {
             translateX : 0,
             translateY : 0,
-            scale: null
+            scale: null,
+            centerSet: false
         }
         this.escFunction = this.escFunction.bind(this);
         this.calculateNewObjectPosition = this.calculateNewObjectPosition.bind(this);
+        this.myRef = React.createRef();
+        this.calculateNewObjectPositionCenter = this.calculateNewObjectPositionCenter.bind(this);
     }
     escFunction(event) {
         if (event.keyCode === 27) {
-            const scale = this.state.scale || this.props.zoomScale
+            // this.calculateNewObjectPosition();
+            const scale = this.state.scale || this.props.zoomScale;
+            // const widthDiff = (this.state.width - this.state.initWidth) / 2;
+            // const heightDiff = (this.state.height - this.state.initHeight) / 2;
+
+            // if (widthDiff !== 0) {
+            //     const clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((widthDiff /  this.props.renderedResolution.width) * 100));
+            //     console.log('new x%: ', clientXPercentage, 'old x% ', this.state.clientXPercentage);
+            // }
+    
+            // if (heightDiff !== 0) {
+            //     const clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((heightDiff / this.props.renderedResolution.height ) * 100));   
+            //     console.log('new y%: ', clientYPercentage, 'old y% ', this.state.clientYPercentage);
+            // }
+
+            this.calculateNewObjectPositionCenter();
+
             this.props.endCropMode({
                 scale,
                 clientXPercentage: this.state.clientXPercentage ? this.state.clientXPercentage : this.props.objectPosition.horizontal,
@@ -36,25 +55,76 @@ export default class Cropper extends Component {
         document.removeEventListener("keydown", this.escFunction, false);
     }
 
-    calculateNewObjectPosition() {
-        const {initialTranslateX, translateX, initialTranslateY, translateY} = this.state;
-        const differenceInX =  translateX - initialTranslateX;
-        const differenceInY =  translateY - initialTranslateY;
+    componentDidUpdate(previousProps, previousState) {
+        if (!previousState.centerSet) {
+            if (this.myRef && this.myRef.current) {
+                console.log('init Center Rect:', this.myRef.current.getBoundingClientRect())
+                this.setState({
+                    initCenterRect : this.myRef.current.getBoundingClientRect(),
+                    centerSet: true
+                })
+            }
+        }
+    }
+
+    calculateNewObjectPositionCenter() {
+        const currentCenter = this.myRef.current.getBoundingClientRect();
+        const {initCenterRect} = this.state;
+
+        console.log('center moved by: (', initCenterRect.x - currentCenter.x, ",", initCenterRect.y - currentCenter.y, ")");
+
+        const differenceInX =  currentCenter.x - initCenterRect.x;
+        const differenceInY =  currentCenter.y - initCenterRect.y;
         const newScale = this.state.scale || this.props.zoomScale || 1;
 
+        let clientXPercentage = 0;
+
         if (differenceInX !== 0) {
-            const clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
+            clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
             this.setState({
                 clientXPercentage
             })
         }
 
+        let clientYPercentage = 0;
+
         if (differenceInY !== 0) {
-            const clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
+            clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
             this.setState({
                 clientYPercentage
             })
         }
+
+        console.log('center calculated new pos: ', clientXPercentage, clientYPercentage);
+    }
+
+    calculateNewObjectPosition() {
+
+        const {initialTranslateX, translateX, initialTranslateY, translateY} = this.state;
+        const differenceInX =  translateX - initialTranslateX;
+        const differenceInY =  translateY - initialTranslateY;
+        const newScale = this.state.scale || this.props.zoomScale || 1;
+
+
+        let clientXPercentage = (this.props?.objectPosition?.horizontal || 0);
+        let clientYPercentage = (this.props?.objectPosition?.vertical || 0);
+
+        // if (differenceInX !== 0) {
+        //     clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
+        //     this.setState({
+        //         clientXPercentage
+        //     })
+        // }
+
+        // if (differenceInY !== 0) {
+        //     clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
+        //     this.setState({
+        //         clientYPercentage
+        //     })
+        // }
+
+        console.log('translate calculated new pos: ', clientXPercentage , clientYPercentage);
+
     }
 
     calculateNewScale(e, direction, ref, delta, position) {
@@ -67,9 +137,9 @@ export default class Cropper extends Component {
             height: ref.offsetHeight, 
             translateX: position.x, 
             translateY: position.y,
+        }, () => {
+            this.calculateNewObjectPosition();
         });
-        this.calculateNewObjectPosition();
-        console.log('New scale', newScale);
     }
 
     handleImageLoaded(e) {
@@ -85,15 +155,16 @@ export default class Cropper extends Component {
             initY = initY + Math.round(((this.props.objectPosition?.vertical || 0) * newScale * this.props.renderedResolution.height) / 100);
         }
         
-
         this.setState({
             onLoadBoundingRect: boundingRect,
             width: boundingRect.width,
             height: boundingRect.height, 
+            initWidth: boundingRect.width,
+            initHeight:  boundingRect.height, 
             translateX: initX, 
             translateY: initY,
             initialTranslateX: initX,
-            initialTranslateY: initY
+            initialTranslateY: initY,
         })
     }
 
@@ -154,9 +225,9 @@ export default class Cropper extends Component {
                         width: this.state.onLoadBoundingRect.width,
                         height: this.state.onLoadBoundingRect.height
                     }}
-                />}
+                ><div ref={this.myRef} style={{color: 'red', width: "1px", height: "1px"}}/> </Rnd>}
 
-                {this.state.onLoadBoundingRect && <Rnd
+                {(this.state.onLoadBoundingRect && false) && <Rnd
                     lockAspectRatio={false}
                     style={innerDraggableStyle}
                     onDragStop={(e, d) => {

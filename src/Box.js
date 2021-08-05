@@ -557,6 +557,12 @@ class Box extends Component{
 			// 	this.setState({isCropModeActive: false});
 			// }
 		}
+
+		if (prevProps.isCropModeActive !== this.props.isCropModeActive && this.props.isCropModeActive === true) {
+			this.setState({
+				isCropModeActive: true
+			})
+		}
 	}
 
 	componentWillUnmount() {
