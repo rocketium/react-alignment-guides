@@ -18,26 +18,12 @@ export default class Cropper extends Component {
             centerSet: false
         }
         this.escFunction = this.escFunction.bind(this);
-        this.calculateNewObjectPosition = this.calculateNewObjectPosition.bind(this);
         this.myRef = React.createRef();
         this.calculateNewObjectPositionCenter = this.calculateNewObjectPositionCenter.bind(this);
     }
     escFunction(event) {
         if (event.keyCode === 27) {
-            // this.calculateNewObjectPosition();
             const scale = this.state.scale || this.props.zoomScale;
-            // const widthDiff = (this.state.width - this.state.initWidth) / 2;
-            // const heightDiff = (this.state.height - this.state.initHeight) / 2;
-
-            // if (widthDiff !== 0) {
-            //     const clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((widthDiff /  this.props.renderedResolution.width) * 100));
-            //     console.log('new x%: ', clientXPercentage, 'old x% ', this.state.clientXPercentage);
-            // }
-    
-            // if (heightDiff !== 0) {
-            //     const clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((heightDiff / this.props.renderedResolution.height ) * 100));   
-            //     console.log('new y%: ', clientYPercentage, 'old y% ', this.state.clientYPercentage);
-            // }
 
             this.calculateNewObjectPositionCenter();
 
@@ -98,35 +84,6 @@ export default class Cropper extends Component {
         console.log('center calculated new pos: ', clientXPercentage, clientYPercentage);
     }
 
-    calculateNewObjectPosition() {
-
-        const {initialTranslateX, translateX, initialTranslateY, translateY} = this.state;
-        const differenceInX =  translateX - initialTranslateX;
-        const differenceInY =  translateY - initialTranslateY;
-        const newScale = this.state.scale || this.props.zoomScale || 1;
-
-
-        let clientXPercentage = (this.props?.objectPosition?.horizontal || 0);
-        let clientYPercentage = (this.props?.objectPosition?.vertical || 0);
-
-        // if (differenceInX !== 0) {
-        //     clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
-        //     this.setState({
-        //         clientXPercentage
-        //     })
-        // }
-
-        // if (differenceInY !== 0) {
-        //     clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
-        //     this.setState({
-        //         clientYPercentage
-        //     })
-        // }
-
-        console.log('translate calculated new pos: ', clientXPercentage , clientYPercentage);
-
-    }
-
     calculateNewScale(e, direction, ref, delta, position) {
         const originalWidth = this.state.onLoadBoundingRect.width / this.props.zoomScale ;
         const newScale =  Math.abs(ref.offsetWidth / originalWidth);
@@ -137,35 +94,58 @@ export default class Cropper extends Component {
             height: ref.offsetHeight, 
             translateX: position.x, 
             translateY: position.y,
-        }, () => {
-            this.calculateNewObjectPosition();
         });
     }
 
     handleImageLoaded(e) {
         const boundingRect = e?.target?.getBoundingClientRect();
 
-        const newScale = this.state.scale || this.props.zoomScale || 1;
+        let newScale = this.state.scale || this.props.zoomScale || 1;
 
-        let initX = this.props.position.width/2 - boundingRect.width/2;
-        let initY = this.props.position.height/2 - boundingRect.height/2;
+        if (this.props.imageShape === 'fillImage') {
+            const box = this.props.boxes[this.props.identifier];
+            let fillScale = 1;
+            if (Math.abs(box.width - boundingRect.width) > Math.abs(box.height - boundingRect.height)) {
+                fillScale = box.width / boundingRect.width;
+            } else {
+                fillScale = box.height / boundingRect.height;
+            }
 
-        if (this.props.objectPosition) {
-            initX = initX + Math.round(((this.props.objectPosition?.horizontal || 0) * newScale * this.props.renderedResolution.width) / 100);
-            initY = initY + Math.round(((this.props.objectPosition?.vertical || 0) * newScale * this.props.renderedResolution.height) / 100);
+            // newScale = fillScale;
+            
+            let initX = this.props.position.width/2 - (boundingRect.width * fillScale)/2;
+            let initY = this.props.position.height/2 - (boundingRect.height * fillScale)/2;
+
+            this.setState({
+                onLoadBoundingRect: boundingRect,
+                width: boundingRect.width * fillScale,
+                height: boundingRect.height * fillScale, 
+                translateX: initX, 
+                translateY: initY,
+                initialTranslateX: initX,
+                initialTranslateY: initY,
+                scale: fillScale
+            })
+        } else {
+            let initX = this.props.position.width/2 - boundingRect.width/2;
+            let initY = this.props.position.height/2 - boundingRect.height/2;
+    
+            if (this.props.objectPosition) {
+                initX = initX + Math.round(((this.props.objectPosition?.horizontal || 0) * newScale * this.props.renderedResolution.width) / 100);
+                initY = initY + Math.round(((this.props.objectPosition?.vertical || 0) * newScale * this.props.renderedResolution.height) / 100);
+            }
+            
+            this.setState({
+                onLoadBoundingRect: boundingRect,
+                width: boundingRect.width,
+                height: boundingRect.height, 
+                translateX: initX, 
+                translateY: initY,
+                initialTranslateX: initX,
+                initialTranslateY: initY,
+            })
         }
-        
-        this.setState({
-            onLoadBoundingRect: boundingRect,
-            width: boundingRect.width,
-            height: boundingRect.height, 
-            initWidth: boundingRect.width,
-            initHeight:  boundingRect.height, 
-            translateX: initX, 
-            translateY: initY,
-            initialTranslateX: initX,
-            initialTranslateY: initY,
-        })
+
     }
 
 
@@ -191,17 +171,21 @@ export default class Cropper extends Component {
         const outerImageWidth = this.state.width || this?.rnd?.props?.default?.width;
         const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
 
+        let outerImageStyles = {"max-height": "100%", position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
 
-        const outerImageStyles = this.state.onLoadBoundingRect ? {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : 
-            {"max-height": "100%", position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
-        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : {transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
+        if (this.state.onLoadBoundingRect) {
+            outerImageStyles =  {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`}
+        }
+
+        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : 
+            {objectFit: this.props.imageShape === 'fillImage' ? 'cover' : 'contain', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
 
         return (
             <>
                 <img onLoad={this.handleImageLoaded} draggable="false" style={outerImageStyles} src={this.props.url} />
 
                 <div style={{ width: '100%', height: '100%', 'pointer-events': 'none', overflow: 'hidden'}}>
-                    <img onLoad={this.handleImageLoaded} draggable="false" style={innerImageStyles} src={this.props.url} />
+                    <img draggable="false" style={innerImageStyles} src={this.props.url} />
                 </div>
                 <div className={styles.cropper_border} />
 
@@ -212,18 +196,15 @@ export default class Cropper extends Component {
                         this.setState({
                             translateX: d.x, 
                             translateY: d.y, 
-                        }, () => {
-                            this.calculateNewObjectPosition();
-                        })
-                        
+                        })                       
                     }}
                     onResizeStop={(e, direction, ref, delta, position) => this.calculateNewScale(e, direction, ref, delta, position)}
                     style={draggableStyle}
                     default={{
                         x: this.state.translateX,
                         y: this.state.translateY,
-                        width: this.state.onLoadBoundingRect.width,
-                        height: this.state.onLoadBoundingRect.height
+                        width: this.state.width,
+                        height: this.state.height
                     }}
                 ><div ref={this.myRef} style={{color: 'red', width: "1px", height: "1px"}}/> </Rnd>}
 

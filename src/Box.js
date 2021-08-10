@@ -52,6 +52,7 @@ class Box extends Component{
 			this.setState({
 				isCropModeActive : true
 			})
+			this.props.onDoubleClickCropElement(this.props.identifier);
 		}
 	};
 
@@ -552,16 +553,16 @@ class Box extends Component{
 				document.addEventListener('keydown', this.shortcutHandler);
 				document.addEventListener('keyup', this.onShortcutKeyUp);
 			}
-
-			// if (prevProps.isSelected) {
-			// 	this.setState({isCropModeActive: false});
-			// }
 		}
 
 		if (prevProps.isCropModeActive !== this.props.isCropModeActive && this.props.isCropModeActive === true) {
 			this.setState({
 				isCropModeActive: true
 			})
+		} else if (prevProps.isCropModeActive !== this.props.isCropModeActive && prevProps.isCropModeActive === true) {
+			this.setState({
+				isCropModeActive: false
+			})			
 		}
 	}
 

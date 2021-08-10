@@ -976,6 +976,7 @@ class AlignmentGuides extends Component {
 			const url = boxes[box]?.metadata?.url;
 			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
 			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
+			const imageShape = boxes[box]?.metadata?.imageShape || 'fitImage';
 			let isCropModeActive = false;
 			if (url && this.props.cropActiveForElement) {
 				if (boxes[box]?.metadata?.captionIndex === this.props.cropActiveForElement)
@@ -1020,6 +1021,7 @@ class AlignmentGuides extends Component {
 				objectPosition={objectPosition}
 				renderedResolution={this.props.renderedResolution}
 				isCropModeActive={isCropModeActive}
+				imageShape={imageShape}
 			/>;
 		});
 
