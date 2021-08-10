@@ -56,6 +56,7 @@ class AlignmentGuides extends Component {
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
 		this.boxSelectByDrag  = this.boxSelectByDrag.bind(this);
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
+		this.addGuidelinesForSnapping = this.addGuidelinesForSnapping.bind(this);
 	}
 
 	componentDidMount() {
@@ -101,6 +102,9 @@ class AlignmentGuides extends Component {
 				active = activeBoxes[0];
 			}
 
+			// adding guidelines for snapping
+			this.addGuidelinesForSnapping(guides);
+
 			document.addEventListener('click', this.unSelectBox);
 			window.addEventListener('blur', this.unSelectBox);
 			document.addEventListener('keydown', this.setShiftKeyState);
@@ -141,7 +145,41 @@ class AlignmentGuides extends Component {
 				});
 			}
 		}
+
+		// adding user guides for snapping
+		if (
+			this.props.xFactor !== prevProps.xFactor ||
+			this.props.yFactor !== prevProps.yFactor ||
+			this.props.userXGuides !== prevProps.userXGuides ||
+			this.props.userYGuides !== prevProps.userYGuides
+		) {
+			const guides = this.state.guides
+			this.addGuidelinesForSnapping(guides)
+			this.setState({
+				guides,
+			})
+		}
 	}
+
+	addGuidelinesForSnapping(guides) {
+		const xFactor = this.props.xFactor || 1
+		const yFactor = this.props.yFactor || 1
+		const userXGuidesPos = this.props.userXGuides
+			? Object.keys(this.props.userXGuides).map((guideId) =>
+					Math.round(this.props.userXGuides[guideId] / xFactor)
+				)
+			: []
+		const userYGuidesPos = this.props.userYGuides
+			? Object.keys(this.props.userYGuides).map((guideId) =>
+					Math.round(this.props.userYGuides[guideId] / yFactor)
+				)
+			: []
+		guides.userGuides = {
+			x: userXGuidesPos,
+			y: userYGuidesPos,
+		}
+	}
+
 	setShiftKeyState(e) {
 		this.setState({
 			isShiftKeyActive: e.shiftKey
