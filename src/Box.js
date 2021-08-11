@@ -44,6 +44,25 @@ class Box extends Component{
 			isCropModeActive: false
 		};
 		this.handleDoubleClick = this.handleDoubleClick.bind(this);
+		this.endCropMode = this.endCropMode.bind(this);
+	}
+
+	endCropMode( data ) {
+		const {position, metadata} = this.props;
+		data.newBoxData = {
+			x: position.left + data.boxTranslateX,
+			y: position.top + data.boxTranslateY,
+			top: position.top + data.boxTranslateY,
+			left: position.left + data.boxTranslateX,
+			width: position.width,
+			height: position.height,
+			node: this.box.current,
+			metadata: metadata,
+			deltaX: data.boxTranslateX, //currentPosition.left - startingPosition.left,
+			deltaY: data.boxTranslateY, // currentPosition.top - startingPosition.top						
+		}
+		this.setState({ isCropModeActive: false });
+		this.props.updateBoxAfterCrop(data);
 	}
 
 	handleDoubleClick() {
@@ -630,10 +649,7 @@ class Box extends Component{
 					}
 				}}
 			>
-				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={data => {
-					this.setState({ isCropModeActive: false });
-					this.props.onCropEnd(data);
-				}} {...this.props} />}
+				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={this.endCropMode} {...this.props} />}
 
 				{!isCropModeActive && <>
 				{

@@ -30,6 +30,8 @@ export default class Cropper extends Component {
             this.calculateNewObjectPositionAndScale();
 
             this.props.endCropMode({
+                boxTranslateX: this.state.boxTranslateX || 0,
+                boxTranslateY: this.state.boxTranslateY || 0,
                 scale,
                 clientXPercentage: this.state.clientXPercentage ? this.state.clientXPercentage : this.props.objectPosition.horizontal,
                 clientYPercentage: this.state.clientYPercentage ? this.state.clientYPercentage : this.props.objectPosition.vertical
@@ -61,8 +63,8 @@ export default class Cropper extends Component {
 
         console.log('center moved by: (', initCenterRect.x - currentCenter.x, ",", initCenterRect.y - currentCenter.y, ")");
 
-        const differenceInX =  currentCenter.x - initCenterRect.x - this.state.boxTranslateX;
-        const differenceInY =  currentCenter.y - initCenterRect.y - this.state.boxTranslateY;
+        const differenceInX =  currentCenter.x - initCenterRect.x - (this.state.boxTranslateX || 0);
+        const differenceInY =  currentCenter.y - initCenterRect.y - (this.state.boxTranslateY || 0);
         const newScale = this.state.scale || this.props.zoomScale || 1;
 
         let clientXPercentage = 0;

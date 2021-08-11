@@ -56,6 +56,7 @@ class AlignmentGuides extends Component {
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
 		this.boxSelectByDrag  = this.boxSelectByDrag.bind(this);
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
+		this.updateBoxAfterCrop = this.updateBoxAfterCrop.bind(this);
 	}
 
 	componentDidMount() {
@@ -166,6 +167,24 @@ class AlignmentGuides extends Component {
 
 	setPreventShortcutEvents(val) {
 		this.setState({ preventShortcutEvents: val });
+	}
+
+	updateBoxAfterCrop(data) {
+		const boxes = Object.assign({}, this.state.boxes, {
+			[data.newBoxData.node.id]: Object.assign({}, this.state.boxes[data.newBoxData.node.id], {
+				x: data.newBoxData.x,
+				y: data.newBoxData.y,
+				left: data.newBoxData.left,
+				top: data.newBoxData.top,
+				width: data.newBoxData.width,
+				height: data.newBoxData.height
+			})
+		});
+		this.setState({
+			boxes
+		}, () => {
+			this.props.onCropEnd(data);
+		})
 	}
 
 	selectBox(e) {
@@ -1022,6 +1041,8 @@ class AlignmentGuides extends Component {
 				renderedResolution={this.props.renderedResolution}
 				isCropModeActive={isCropModeActive}
 				imageShape={imageShape}
+				metadata={boxes[box]?.metadata}
+				updateBoxAfterCrop={this.updateBoxAfterCrop}
 			/>;
 		});
 
