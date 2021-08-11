@@ -9,7 +9,7 @@ import { Rnd } from "react-rnd";
 export default class Cropper extends Component {
     constructor(props) {
         super(props);
-        this.handleImageLoaded = this.handleImageLoaded.bind(this);
+        this.onImageLoaded = this.onImageLoaded.bind(this);
         this.calculateNewScale = this.calculateNewScale.bind(this);
         this.state = {
             translateX : 0,
@@ -19,13 +19,15 @@ export default class Cropper extends Component {
         }
         this.escFunction = this.escFunction.bind(this);
         this.myRef = React.createRef();
-        this.calculateNewObjectPositionCenter = this.calculateNewObjectPositionCenter.bind(this);
+        this.initCenterRef = React.createRef();
+        this.calculateNewObjectPositionAndScale = this.calculateNewObjectPositionAndScale.bind(this);
     }
+    
     escFunction(event) {
         if (event.keyCode === 27) {
             const scale = this.state.scale || this.props.zoomScale;
 
-            this.calculateNewObjectPositionCenter();
+            this.calculateNewObjectPositionAndScale();
 
             this.props.endCropMode({
                 scale,
@@ -34,6 +36,7 @@ export default class Cropper extends Component {
             });
         }
     }
+    
     componentDidMount() {
         document.addEventListener("keydown", this.escFunction, false);
     }
@@ -43,30 +46,29 @@ export default class Cropper extends Component {
 
     componentDidUpdate(previousProps, previousState) {
         if (!previousState.centerSet) {
-            if (this.myRef && this.myRef.current) {
-                console.log('init Center Rect:', this.myRef.current.getBoundingClientRect())
+            if (this.initCenterRef && this.initCenterRef.current) {
                 this.setState({
-                    initCenterRect : this.myRef.current.getBoundingClientRect(),
+                    initCenterRect : this.initCenterRef.current.getBoundingClientRect(),
                     centerSet: true
-                })
+                })            
             }
         }
     }
 
-    calculateNewObjectPositionCenter() {
+    calculateNewObjectPositionAndScale() {
         const currentCenter = this.myRef.current.getBoundingClientRect();
         const {initCenterRect} = this.state;
 
         console.log('center moved by: (', initCenterRect.x - currentCenter.x, ",", initCenterRect.y - currentCenter.y, ")");
 
-        const differenceInX =  currentCenter.x - initCenterRect.x;
-        const differenceInY =  currentCenter.y - initCenterRect.y;
+        const differenceInX =  currentCenter.x - initCenterRect.x - this.state.boxTranslateX;
+        const differenceInY =  currentCenter.y - initCenterRect.y - this.state.boxTranslateY;
         const newScale = this.state.scale || this.props.zoomScale || 1;
 
         let clientXPercentage = 0;
 
         if (differenceInX !== 0) {
-            clientXPercentage = (this.props?.objectPosition?.horizontal || 0) + (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
+            clientXPercentage = (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
             this.setState({
                 clientXPercentage
             })
@@ -75,17 +77,15 @@ export default class Cropper extends Component {
         let clientYPercentage = 0;
 
         if (differenceInY !== 0) {
-            clientYPercentage = (this.props?.objectPosition?.vertical || 0) + (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
+            clientYPercentage = (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
             this.setState({
                 clientYPercentage
             })
         }
-
-        console.log('center calculated new pos: ', clientXPercentage, clientYPercentage);
     }
 
     calculateNewScale(e, direction, ref, delta, position) {
-        const originalWidth = this.state.onLoadBoundingRect.width / this.props.zoomScale ;
+        const originalWidth = this.state.onLoadBoundingRect.width;
         const newScale =  Math.abs(ref.offsetWidth / originalWidth);
 
         this.setState({
@@ -97,21 +97,20 @@ export default class Cropper extends Component {
         });
     }
 
-    handleImageLoaded(e) {
+    onImageLoaded(e) {
         const boundingRect = e?.target?.getBoundingClientRect();
 
         let newScale = this.state.scale || this.props.zoomScale || 1;
 
+        const box = this.props.boxes.find(boxItem => boxItem.identifier === this.props.identifier);
+
         if (this.props.imageShape === 'fillImage') {
-            const box = this.props.boxes[this.props.identifier];
             let fillScale = 1;
             if (Math.abs(box.width - boundingRect.width) > Math.abs(box.height - boundingRect.height)) {
                 fillScale = box.width / boundingRect.width;
             } else {
                 fillScale = box.height / boundingRect.height;
             }
-
-            // newScale = fillScale;
             
             let initX = this.props.position.width/2 - (boundingRect.width * fillScale)/2;
             let initY = this.props.position.height/2 - (boundingRect.height * fillScale)/2;
@@ -127,8 +126,8 @@ export default class Cropper extends Component {
                 scale: fillScale
             })
         } else {
-            let initX = this.props.position.width/2 - boundingRect.width/2;
-            let initY = this.props.position.height/2 - boundingRect.height/2;
+            let initX = this.props.position.width/2 - (boundingRect.width * newScale) / 2;
+            let initY = this.props.position.height/2 - (boundingRect.height * newScale) / 2;
     
             if (this.props.objectPosition) {
                 initX = initX + Math.round(((this.props.objectPosition?.horizontal || 0) * newScale * this.props.renderedResolution.width) / 100);
@@ -137,15 +136,14 @@ export default class Cropper extends Component {
             
             this.setState({
                 onLoadBoundingRect: boundingRect,
-                width: boundingRect.width,
-                height: boundingRect.height, 
+                width: boundingRect.width * newScale,
+                height: boundingRect.height * newScale, 
                 translateX: initX, 
                 translateY: initY,
                 initialTranslateX: initX,
                 initialTranslateY: initY,
             })
         }
-
     }
 
 
@@ -171,23 +169,36 @@ export default class Cropper extends Component {
         const outerImageWidth = this.state.width || this?.rnd?.props?.default?.width;
         const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
 
-        let outerImageStyles = {"max-height": "100%", position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`};
-
+        let outerImageStyles = {"max-height": "100%", position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        
         if (this.state.onLoadBoundingRect) {
             outerImageStyles =  {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`}
         }
 
-        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`} : 
+        const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX - (this.state.boxTranslateX || 0)}px, ${this.state.translateY - (this.state.boxTranslateY || 0)}px)`} : 
             {objectFit: this.props.imageShape === 'fillImage' ? 'cover' : 'contain', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
+
+        const cropperNotchesContainerStyles = {border: '4px solid #00000020', position: 'absolute', width: '100%', height: '100%', transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`}
 
         return (
             <>
-                <img onLoad={this.handleImageLoaded} draggable="false" style={outerImageStyles} src={this.props.url} />
+                <img onLoad={this.onImageLoaded} draggable="false" style={outerImageStyles} src={this.props.url} />
 
-                <div style={{ width: '100%', height: '100%', 'pointer-events': 'none', overflow: 'hidden'}}>
+                <div style={{ width: '100%', height: '100%', transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`, 'pointer-events': 'none', overflow: 'hidden', position: 'absolute'}}>
                     <img draggable="false" style={innerImageStyles} src={this.props.url} />
                 </div>
-                <div className={styles.cropper_border} />
+                <div className={styles.cropper_border}> <div ref={this.initCenterRef} style={{color: 'red', width: "1px", height: "1px"}}/>  </div>
+
+                <div style={cropperNotchesContainerStyles}>
+                    <img src={cornerNotch} className={styles.cropper_notch_lt} />
+                    <img src={cornerNotch} className={styles.cropper_notch_rt} />
+                    <img src={cornerNotch} className={styles.cropper_notch_rb} />
+                    <img src={cornerNotch} className={styles.cropper_notch_lb} />
+                    <img src={middleNotch} className={styles.cropper_notch_tc} />
+                    <img src={middleNotch} className={styles.cropper_notch_rc} />
+                    <img src={middleNotch} className={styles.cropper_notch_bc} />
+                    <img src={middleNotch} className={styles.cropper_notch_lc} />                    
+                </div>
 
                 {this.state.onLoadBoundingRect && <Rnd
                     ref={c => { this.rnd = c; }}
@@ -206,12 +217,21 @@ export default class Cropper extends Component {
                         width: this.state.width,
                         height: this.state.height
                     }}
-                ><div ref={this.myRef} style={{color: 'red', width: "1px", height: "1px"}}/> </Rnd>}
+                > <div ref={this.myRef} style={{color: 'red', width: "1px", height: "1px"}}/> </Rnd>}
 
-                {(this.state.onLoadBoundingRect && false) && <Rnd
+                {this.state.onLoadBoundingRect && <Rnd
                     lockAspectRatio={false}
                     style={innerDraggableStyle}
+                    onResizeStop={(e, direction, ref, delta, position) =>{
+                        // this.props.onResizeBox(delta, position);
+                        console.log(e, direction, ref, delta, position);
+                    }}
                     onDragStop={(e, d) => {
+                        this.setState({
+                            boxTranslateX: d.x,
+                            boxTranslateY: d.y
+                        })
+                        console.log(d);
                     }}
                     default={{
                         x: 0,
@@ -220,15 +240,6 @@ export default class Cropper extends Component {
                         height: '100%'
                     }}
                 />}
-
-                <img src={cornerNotch} className={styles.cropper_notch_lt} />
-                <img src={cornerNotch} className={styles.cropper_notch_rt} />
-                <img src={cornerNotch} className={styles.cropper_notch_rb} />
-                <img src={cornerNotch} className={styles.cropper_notch_lb} />
-                <img src={middleNotch} className={styles.cropper_notch_tc} />
-                <img src={middleNotch} className={styles.cropper_notch_rc} />
-                <img src={middleNotch} className={styles.cropper_notch_bc} />
-                <img src={middleNotch} className={styles.cropper_notch_lc} />
             </>
         )
     }
