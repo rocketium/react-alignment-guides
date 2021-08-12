@@ -32,6 +32,8 @@ export default class Cropper extends Component {
             this.props.endCropMode({
                 boxTranslateX: this.state.boxTranslateX || 0,
                 boxTranslateY: this.state.boxTranslateY || 0,
+                boxDeltaWidth: this.state.boxDeltaWidth || 0,
+                boxDeltaHeight: this.state.boxDeltaHeight || 0,
                 scale,
                 clientXPercentage: this.state.clientXPercentage ? this.state.clientXPercentage : this.props.objectPosition.horizontal,
                 clientYPercentage: this.state.clientYPercentage ? this.state.clientYPercentage : this.props.objectPosition.vertical
@@ -154,7 +156,7 @@ export default class Cropper extends Component {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "solid 1px #f00",
+            border: "solid 1px #1b47f3",
             background: "transparent"
         };
 
@@ -162,7 +164,7 @@ export default class Cropper extends Component {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "solid 1px #0f0",
+            border: "solid 1px #63636320",
             background: "transparent"
         }
 
@@ -180,13 +182,13 @@ export default class Cropper extends Component {
         const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX - (this.state.boxTranslateX || 0)}px, ${this.state.translateY - (this.state.boxTranslateY || 0)}px)`} : 
             {objectFit: this.props.imageShape === 'fillImage' ? 'cover' : 'contain', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
 
-        const cropperNotchesContainerStyles = {border: '4px solid #00000020', position: 'absolute', width: '100%', height: '100%', transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`}
+        const cropperNotchesContainerStyles = {border: '4px solid #00000020', position: 'absolute', width: `calc(100% + ${this.state.boxDeltaWidth || 0}px)`, height: `calc(100% + ${this.state.boxDeltaHeight || 0}px)`, transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`}
 
         return (
             <>
                 <img onLoad={this.onImageLoaded} draggable="false" style={outerImageStyles} src={this.props.url} />
 
-                <div style={{ width: '100%', height: '100%', transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`, 'pointer-events': 'none', overflow: 'hidden', position: 'absolute'}}>
+                <div style={{ width: `calc(100% + ${this.state.boxDeltaWidth || 0}px)`, height: `calc(100% + ${this.state.boxDeltaHeight || 0}px)`, transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`, 'pointer-events': 'none', overflow: 'hidden', position: 'absolute'}}>
                     <img draggable="false" style={innerImageStyles} src={this.props.url} />
                 </div>
                 <div className={styles.cropper_border}> <div ref={this.initCenterRef} style={{color: 'red', width: "1px", height: "1px"}}/>  </div>
@@ -224,9 +226,25 @@ export default class Cropper extends Component {
                 {this.state.onLoadBoundingRect && <Rnd
                     lockAspectRatio={false}
                     style={innerDraggableStyle}
+                    enableResizing={{
+                        top: false,
+                        right: false,
+                        bottom: false,
+                        left: false,
+                        topRight: false,
+                        bottomRight: false,
+                        bottomLeft: false,
+                        topLeft: false
+                    }}
                     onResizeStop={(e, direction, ref, delta, position) =>{
                         // this.props.onResizeBox(delta, position);
                         console.log(e, direction, ref, delta, position);
+                        this.setState({
+                            boxDeltaWidth: (this.state.boxDeltaWidth || 0) + delta.width,
+                            boxDeltaHeight: (this.state.boxDeltaHeight || 0) + delta.height,
+                            boxTranslateX: position.x,
+                            boxTranslateY: position.y
+                        })
                     }}
                     onDragStop={(e, d) => {
                         this.setState({

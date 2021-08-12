@@ -180,8 +180,17 @@ class AlignmentGuides extends Component {
 				height: data.newBoxData.height
 			})
 		});
+
+		const guides = Object.assign({}, this.state.guides, {
+			[data.newBoxData.node.id]: Object.assign({}, this.state.guides[data.newBoxData.node.id], {
+				x: calculateGuidePositions(boxes[data.newBoxData.node.id], 'x'),
+				y: calculateGuidePositions(boxes[data.newBoxData.node.id], 'y')
+			})
+		});
+
 		this.setState({
-			boxes
+			boxes,
+			guides
 		}, () => {
 			this.props.onCropEnd(data);
 		})
