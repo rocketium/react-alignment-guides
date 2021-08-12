@@ -60,18 +60,16 @@ export default class Cropper extends Component {
     }
 
     calculateNewObjectPositionAndScale() {
-        const currentCenter = this.myRef.current.getBoundingClientRect();
+        const currentCenter = this.myRef?.current?.getBoundingClientRect();
         const {initCenterRect} = this.state;
 
-        console.log('center moved by: (', initCenterRect.x - currentCenter.x, ",", initCenterRect.y - currentCenter.y, ")");
-
-        const differenceInX =  currentCenter.x - initCenterRect.x - (this.state.boxTranslateX || 0);
-        const differenceInY =  currentCenter.y - initCenterRect.y - (this.state.boxTranslateY || 0);
+        const differenceInX =  currentCenter?.x - initCenterRect?.x - (this.state.boxTranslateX || 0);
+        const differenceInY =  currentCenter?.y - initCenterRect?.y - (this.state.boxTranslateY || 0);
         const newScale = this.state.scale || this.props.zoomScale || 1;
 
         let clientXPercentage = 0;
 
-        if (differenceInX !== 0) {
+        if (!isNaN(differenceInX) && differenceInX !== 0) {
             clientXPercentage = (((differenceInX /  this.props.renderedResolution.width) * 100) / newScale);
             this.setState({
                 clientXPercentage
@@ -80,7 +78,7 @@ export default class Cropper extends Component {
 
         let clientYPercentage = 0;
 
-        if (differenceInY !== 0) {
+        if (!isNaN(differenceInY) && differenceInY !== 0) {
             clientYPercentage = (((differenceInY / this.props.renderedResolution.height ) * 100) / newScale);   
             this.setState({
                 clientYPercentage
