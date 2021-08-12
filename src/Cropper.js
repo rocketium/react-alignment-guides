@@ -164,7 +164,7 @@ export default class Cropper extends Component {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            border: "solid 1px #63636320",
+            border: "solid 1px #636363",
             background: "transparent"
         }
 
