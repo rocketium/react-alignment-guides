@@ -604,6 +604,9 @@ class Box extends Component{
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
+			const {isCropModeActive} = this.state;
+
+
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
 			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
@@ -615,7 +618,7 @@ class Box extends Component{
 				top: `${position.top}px`,
 				left: `${position.left}px`,
 				zIndex: position.zIndex ? position.zIndex : 98,
-				transform: `rotate(${rotateAngle}deg)`,
+				transform: isCropModeActive ? '' : `rotate(${rotateAngle}deg)`,
 				pointerEvents: this.props.isLayerLocked ? 'none' : '',
 			};
 
@@ -627,7 +630,6 @@ class Box extends Component{
 				boxStyles.pointerEvents = 'none';
 			}
 
-			const {isCropModeActive} = this.state;
 
 			return <div
 				className={boxClassNames}
