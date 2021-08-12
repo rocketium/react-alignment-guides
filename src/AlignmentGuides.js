@@ -356,7 +356,6 @@ class AlignmentGuides extends Component {
 				e.target &&
 				e.target.id.indexOf('box') === -1 &&
 				e.target.parentNode &&
-				e.target.parentNode.id &&
 				e.target.parentNode.id.indexOf('box') === -1
 			)
 		) {
