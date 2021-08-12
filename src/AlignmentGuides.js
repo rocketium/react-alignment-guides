@@ -175,8 +175,8 @@ class AlignmentGuides extends Component {
 				)
 			: []
 		guides.userGuides = {
-			x: userXGuidesPos,
-			y: userYGuidesPos,
+			x: userXGuidesPos.sort((x, y) => x - y),
+			y: userYGuidesPos.sort((x, y) => x - y),
 		}
 	}
 
