@@ -66,13 +66,18 @@ class Box extends Component{
 	}
 
 	handleDoubleClick() {
-		console.log('double clicked');
-		if (this.props.url) {
-			this.setState({
-				isCropModeActive : true
-			})
-			this.props.onDoubleClickCropElement(this.props.identifier);
+
+		if (this.props.dragDisabled) {
+			this.props.cropDisabledCallback();
+		} else {
+			if (this.props.url) {
+				this.setState({
+					isCropModeActive : true
+				})
+				this.props.onDoubleClickCropElement(this.props.identifier);
+			}
 		}
+
 	};
 
 	selectBox(e) {

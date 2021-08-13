@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Draggable from 'react-draggable'; // The default
+import ReactDOM from 'react-dom';
 import cornerNotch from './assets/cornerNotch.svg';
 import middleNotch from './assets/middleNotch.svg';
 import styles from './styles.scss';
@@ -21,31 +21,47 @@ export default class Cropper extends Component {
         this.myRef = React.createRef();
         this.initCenterRef = React.createRef();
         this.calculateNewObjectPositionAndScale = this.calculateNewObjectPositionAndScale.bind(this);
+        this.handleClickOutside = this.handleClickOutside.bind(this);
+        this.endCropModeAndSave = this.endCropModeAndSave.bind(this);
+    }
+
+    handleClickOutside(event)  {
+        const domNode = ReactDOM.findDOMNode(this);
+    
+        if (!domNode || !domNode.contains(event.target)) {
+            this.endCropModeAndSave();
+        }
     }
     
     escFunction(event) {
         if (event.keyCode === 27) {
-            const scale = this.state.scale || this.props.zoomScale;
-
-            this.calculateNewObjectPositionAndScale();
-
-            this.props.endCropMode({
-                boxTranslateX: this.state.boxTranslateX || 0,
-                boxTranslateY: this.state.boxTranslateY || 0,
-                boxDeltaWidth: this.state.boxDeltaWidth || 0,
-                boxDeltaHeight: this.state.boxDeltaHeight || 0,
-                scale,
-                clientXPercentage: this.state.clientXPercentage ? this.state.clientXPercentage : this.props.objectPosition.horizontal,
-                clientYPercentage: this.state.clientYPercentage ? this.state.clientYPercentage : this.props.objectPosition.vertical
-            });
+            this.endCropModeAndSave();
         }
+    }
+
+    endCropModeAndSave() {
+        const scale = this.state.scale || this.props.zoomScale;
+
+        this.calculateNewObjectPositionAndScale();
+
+        this.props.endCropMode({
+            boxTranslateX: this.state.boxTranslateX || 0,
+            boxTranslateY: this.state.boxTranslateY || 0,
+            boxDeltaWidth: this.state.boxDeltaWidth || 0,
+            boxDeltaHeight: this.state.boxDeltaHeight || 0,
+            scale,
+            clientXPercentage: this.state.clientXPercentage ? this.state.clientXPercentage : this.props.objectPosition.horizontal,
+            clientYPercentage: this.state.clientYPercentage ? this.state.clientYPercentage : this.props.objectPosition.vertical
+        });
     }
     
     componentDidMount() {
         document.addEventListener("keydown", this.escFunction, false);
+        document.addEventListener('click', this.handleClickOutside, true);
     }
     componentWillUnmount() {
         document.removeEventListener("keydown", this.escFunction, false);
+        document.removeEventListener('click', this.handleClickOutside, true);
     }
 
     componentDidUpdate(previousProps, previousState) {
@@ -183,7 +199,7 @@ export default class Cropper extends Component {
         const cropperNotchesContainerStyles = {border: '4px solid #00000020', position: 'absolute', width: `calc(100% + ${this.state.boxDeltaWidth || 0}px)`, height: `calc(100% + ${this.state.boxDeltaHeight || 0}px)`, transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`}
 
         return (
-            <>
+            <div id='cropper'>
                 <img onLoad={this.onImageLoaded} draggable="false" style={outerImageStyles} src={this.props.url} />
 
                 <div style={{ width: `calc(100% + ${this.state.boxDeltaWidth || 0}px)`, height: `calc(100% + ${this.state.boxDeltaHeight || 0}px)`, transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`, 'pointer-events': 'none', overflow: 'hidden', position: 'absolute'}}>
@@ -258,7 +274,7 @@ export default class Cropper extends Component {
                         height: '100%'
                     }}
                 />}
-            </>
+            </div>
         )
     }
 }
