@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import {
@@ -16,6 +17,8 @@ import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
 const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
+import Cropper from "./Cropper";
+
 class Box extends Component{
 	constructor(props) {
 		super(props);
@@ -37,13 +40,49 @@ class Box extends Component{
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
 		this.state = {
-			callKeyEnd: false
+			callKeyEnd: false,
+			isCropModeActive: false
 		};
+		this.handleDoubleClick = this.handleDoubleClick.bind(this);
+		this.endCropMode = this.endCropMode.bind(this);
 	}
+
+	endCropMode( data ) {
+		const {position, metadata} = this.props;
+		data.newBoxData = {
+			x: position.left + data.boxTranslateX,
+			y: position.top + data.boxTranslateY,
+			top: position.top + data.boxTranslateY,
+			left: position.left + data.boxTranslateX,
+			width: position.width + data.boxDeltaWidth,
+			height: position.height + data.boxDeltaHeight,
+			node: this.box.current,
+			metadata: metadata,
+			deltaX: data.boxTranslateX, //currentPosition.left - startingPosition.left,
+			deltaY: data.boxTranslateY, // currentPosition.top - startingPosition.top						
+		}
+		this.setState({ isCropModeActive: false });
+		this.props.updateBoxAfterCrop(data);
+	}
+
+	handleDoubleClick() {
+
+		if (this.props.dragDisabled) {
+			this.props.cropDisabledCallback();
+		} else {
+			if (this.props.url) {
+				this.setState({
+					isCropModeActive : true
+				})
+				this.props.onDoubleClickCropElement(this.props.identifier);
+			}
+		}
+
+	};
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (this.props.didDragOrResizeHappen && e.target.hasAttribute('identifier') ) {
+		if (this.props.didDragOrResizeHappen && e.currentTarget.hasAttribute('identifier') ) {
 			this.props.selectBox(e);
 		}
 		if (this.box && this.box.current) {
@@ -52,12 +91,12 @@ class Box extends Component{
 	}
 
 	hoverBox(e) {
-		if (e.target.hasAttribute('identifier'))
-			e.target.classList.add(this.props.toggleHover);
+		if (e.currentTarget.hasAttribute('identifier'))
+			e.currentTarget.classList.add(this.props.toggleHover);
 	}
 
 	unHoverBox(e) {
-		e.target.classList.remove(this.props.toggleHover);
+		e.currentTarget.classList.remove(this.props.toggleHover);
 	}
 
 	onDragStart(e) {
@@ -520,6 +559,7 @@ class Box extends Component{
 		}
 	}
 
+
 	componentDidMount() {
 		if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
 			document.addEventListener('keydown', this.shortcutHandler);
@@ -537,6 +577,16 @@ class Box extends Component{
 				document.addEventListener('keydown', this.shortcutHandler);
 				document.addEventListener('keyup', this.onShortcutKeyUp);
 			}
+		}
+
+		if (prevProps.isCropModeActive !== this.props.isCropModeActive && this.props.isCropModeActive === true) {
+			this.setState({
+				isCropModeActive: true
+			})
+		} else if (prevProps.isCropModeActive !== this.props.isCropModeActive && prevProps.isCropModeActive === true) {
+			this.setState({
+				isCropModeActive: false
+			})			
 		}
 	}
 
@@ -559,6 +609,9 @@ class Box extends Component{
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
+			const {isCropModeActive} = this.state;
+
+
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
 			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
@@ -570,7 +623,7 @@ class Box extends Component{
 				top: `${position.top}px`,
 				left: `${position.left}px`,
 				zIndex: position.zIndex ? position.zIndex : 98,
-				transform: `rotate(${rotateAngle}deg)`,
+				transform: isCropModeActive ? '' : `rotate(${rotateAngle}deg)`,
 				pointerEvents: this.props.isLayerLocked ? 'none' : '',
 			};
 
@@ -581,6 +634,7 @@ class Box extends Component{
 			if (position.type && position.type === 'group' && isShiftKeyActive) {
 				boxStyles.pointerEvents = 'none';
 			}
+
 
 			return <div
 				className={boxClassNames}
@@ -595,12 +649,16 @@ class Box extends Component{
 				style={boxStyles}
 				identifier={identifier}
 				tabIndex="0"
+				onDoubleClick={this.handleDoubleClick}
 				onFocus={() => {
 					if (this.props.preventShortcutEvents) {
 						this.props.setPreventShortcutEvents(false);
 					}
 				}}
 			>
+				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={this.endCropMode} {...this.props} />}
+
+				{!isCropModeActive && <>
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
@@ -649,6 +707,7 @@ class Box extends Component{
 						}) :
 						null
 				}
+				</>}
 			</div>;
 		}
 

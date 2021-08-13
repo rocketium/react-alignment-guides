@@ -56,6 +56,7 @@ class AlignmentGuides extends Component {
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
 		this.boxSelectByDrag  = this.boxSelectByDrag.bind(this);
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
+		this.updateBoxAfterCrop = this.updateBoxAfterCrop.bind(this);
 		this.addGuidelinesForSnapping = this.addGuidelinesForSnapping.bind(this);
 	}
 
@@ -82,6 +83,11 @@ class AlignmentGuides extends Component {
 				};
 				if (dimensions.active) {
 					activeBoxes.push(`box${index}`);
+				}
+
+				if (dimensions?.metadata?.url) {
+					const img = new Image();
+					img.src = dimensions.metadata.url;
 				}
 			});
 
@@ -199,6 +205,33 @@ class AlignmentGuides extends Component {
 
 	setPreventShortcutEvents(val) {
 		this.setState({ preventShortcutEvents: val });
+	}
+
+	updateBoxAfterCrop(data) {
+		const boxes = Object.assign({}, this.state.boxes, {
+			[data.newBoxData.node.id]: Object.assign({}, this.state.boxes[data.newBoxData.node.id], {
+				x: data.newBoxData.x,
+				y: data.newBoxData.y,
+				left: data.newBoxData.left,
+				top: data.newBoxData.top,
+				width: data.newBoxData.width,
+				height: data.newBoxData.height
+			})
+		});
+
+		const guides = Object.assign({}, this.state.guides, {
+			[data.newBoxData.node.id]: Object.assign({}, this.state.guides[data.newBoxData.node.id], {
+				x: calculateGuidePositions(boxes[data.newBoxData.node.id], 'x'),
+				y: calculateGuidePositions(boxes[data.newBoxData.node.id], 'y')
+			})
+		});
+
+		this.setState({
+			boxes,
+			guides
+		}, () => {
+			this.props.onCropEnd(data);
+		})
 	}
 
 	selectBox(e) {
@@ -1006,6 +1039,15 @@ class AlignmentGuides extends Component {
 			const identifier = boxes[box].identifier;  // option index for caption
 			const isLayerLocked = boxes[box].isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
+			const url = boxes[box]?.metadata?.url;
+			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
+			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
+			const imageShape = boxes[box]?.metadata?.imageShape || 'fitImage';
+			let isCropModeActive = false;
+			if (url && this.props.cropActiveForElement) {
+				if (boxes[box]?.metadata?.captionIndex === this.props.cropActiveForElement)
+					isCropModeActive = true
+			}
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -1040,6 +1082,14 @@ class AlignmentGuides extends Component {
 				toggleHover={this.props.toggleHover}
 				overRideStyles={this.props.overrideHover}
 				overRideSelected = {this.props.overrideSelected}
+				url={url}
+				zoomScale={zoomScale}
+				objectPosition={objectPosition}
+				renderedResolution={this.props.renderedResolution}
+				isCropModeActive={isCropModeActive}
+				imageShape={imageShape}
+				metadata={boxes[box]?.metadata}
+				updateBoxAfterCrop={this.updateBoxAfterCrop}
 			/>;
 		});
 
@@ -1131,8 +1181,9 @@ AlignmentGuides.propTypes = {
 	resize: PropTypes.bool,
 	rotate: PropTypes.bool,
 	resolution: PropTypes.object,
+	renderedResolution: PropTypes.object,
 	snap: PropTypes.bool,
-	style: PropTypes.object
+	style: PropTypes.object,
 };
 
 // Default values for props
