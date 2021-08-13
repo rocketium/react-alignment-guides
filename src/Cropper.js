@@ -40,6 +40,8 @@ export default class Cropper extends Component {
     }
 
     endCropModeAndSave() {
+        if (this.state.resizeStarted)
+            return;
         const scale = this.state.scale || this.props.zoomScale;
 
         this.calculateNewObjectPositionAndScale();
@@ -113,6 +115,12 @@ export default class Cropper extends Component {
             translateX: position.x, 
             translateY: position.y,
         });
+
+        setTimeout(() => {
+            this.setState({
+                resizeStarted: false
+            })
+        }, 100);
     }
 
     onImageLoaded(e) {
@@ -187,16 +195,17 @@ export default class Cropper extends Component {
         const outerImageWidth = this.state.width || this?.rnd?.props?.default?.width;
         const outerImageHeight = this.state.height || this?.rnd?.props?.default?.height;
 
-        let outerImageStyles = {"max-height": "100%", position: 'absolute', filter: 'brightness(0.6)', opacity: '0', transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`};
+        let outerImageStyles = {"max-height": "100%", position: 'absolute', filter: 'brightness(0.8)', opacity: '0', transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`};
         
         if (this.state.onLoadBoundingRect) {
-            outerImageStyles =  {position: 'absolute', filter: 'brightness(0.6)', opacity: '0.75', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`}
+            outerImageStyles =  {position: 'absolute', filter: 'brightness(0.8)', opacity: '0.35', 'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`}
         }
 
         const innerImageStyles = this.state.onLoadBoundingRect ? {'max-width': 'none', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX - (this.state.boxTranslateX || 0)}px, ${this.state.translateY - (this.state.boxTranslateY || 0)}px)`} : 
             {objectFit: this.props.imageShape === 'fillImage' ? 'cover' : 'contain', transform: `scale(${newScale}) translate(${this.state.translateX}px, ${this.state.translateY}px)`, opacity: '0'};
 
-        const cropperNotchesContainerStyles = {border: '4px solid #00000020', position: 'absolute', width: `calc(100% + ${this.state.boxDeltaWidth || 0}px)`, height: `calc(100% + ${this.state.boxDeltaHeight || 0}px)`, transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`}
+        const cropperNotchesContainerStyles = {border: '4px solid #00000020', position: 'absolute', width: `calc(100% + ${this.state.boxDeltaWidth || 0}px)`, height: `calc(100% + ${this.state.boxDeltaHeight || 0}px)`, transform: `translate(${this.state.boxTranslateX}px, ${this.state.boxTranslateY}px)`};
+        const zoomPanHandlesContainer = {position: 'absolute', width: outerImageWidth, height: outerImageHeight, transform: `translate(${this.state.translateX}px, ${this.state.translateY}px)`, pointerEvents:'none'};
 
         return (
             <div id='cropper'>
@@ -227,6 +236,11 @@ export default class Cropper extends Component {
                             translateY: d.y, 
                         })                       
                     }}
+                    onResizeStart={() => {
+                        this.setState({
+                            resizeStarted: true
+                        })
+                    }}
                     onResizeStop={(e, direction, ref, delta, position) => this.calculateNewScale(e, direction, ref, delta, position)}
                     style={draggableStyle}
                     default={{
@@ -236,6 +250,13 @@ export default class Cropper extends Component {
                         height: this.state.height
                     }}
                 > <div ref={this.myRef} style={{color: 'red', width: "1px", height: "1px"}}/> </Rnd>}
+
+                <div style={zoomPanHandlesContainer}>
+                    <div className={styles.resizeCorners} style={{position: 'absolute', top: '-5px', left: '-5px'}}></div>
+                    <div className={styles.resizeCorners} style={{position: 'absolute', top: '-5px', right: '-5px'}}></div>
+                    <div className={styles.resizeCorners} style={{position: 'absolute', bottom: '-5px', left: '-5px'}}></div>
+                    <div className={styles.resizeCorners} style={{position: 'absolute', bottom: '-5px', right: '-5px'}}></div>
+                </div>
 
                 {this.state.onLoadBoundingRect && <Rnd
                     lockAspectRatio={false}
@@ -251,8 +272,6 @@ export default class Cropper extends Component {
                         topLeft: false
                     }}
                     onResizeStop={(e, direction, ref, delta, position) =>{
-                        // this.props.onResizeBox(delta, position);
-                        console.log(e, direction, ref, delta, position);
                         this.setState({
                             boxDeltaWidth: (this.state.boxDeltaWidth || 0) + delta.width,
                             boxDeltaHeight: (this.state.boxDeltaHeight || 0) + delta.height,
