@@ -579,6 +579,16 @@ class Box extends Component{
 				document.addEventListener('keyup', this.onShortcutKeyUp);
 			}
 		}
+
+		if (prevProps.isCropModeActive !== this.props.isCropModeActive && this.props.isCropModeActive === true) {
+			this.setState({
+				isCropModeActive: true
+			})
+		} else if (prevProps.isCropModeActive !== this.props.isCropModeActive && prevProps.isCropModeActive === true) {
+			this.setState({
+				isCropModeActive: false
+			})			
+		}
 	}
 
 	componentWillUnmount() {
