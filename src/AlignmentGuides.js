@@ -1046,11 +1046,6 @@ class AlignmentGuides extends Component {
 			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
 			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
 			const imageShape = boxes[box]?.metadata?.imageShape || 'fitImage';
-			let isCropModeActive = false;
-			if (url && this.props.cropActiveForElement !== undefined) {
-				if (boxes[box]?.metadata?.captionIndex === this.props.cropActiveForElement)
-					isCropModeActive = true
-			}
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -1089,7 +1084,7 @@ class AlignmentGuides extends Component {
 				zoomScale={zoomScale}
 				objectPosition={objectPosition}
 				renderedResolution={this.props.renderedResolution}
-				isCropModeActive={isCropModeActive}
+				cropActiveForElement={this.props.cropActiveForElement}
 				imageShape={imageShape}
 				metadata={boxes[box]?.metadata}
 				updateBoxAfterCrop={this.updateBoxAfterCrop}
