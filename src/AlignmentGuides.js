@@ -226,12 +226,14 @@ class AlignmentGuides extends Component {
 			})
 		});
 
-		this.setState({
-			boxes,
-			guides
-		}, () => {
-			this.props.onCropEnd(data);
-		})
+		this.props.onCropEnd(data);
+
+		// this.setState({
+		// 	boxes,
+		// 	guides
+		// }, () => {
+			
+		// })
 	}
 
 	selectBox(e) {
@@ -1045,7 +1047,7 @@ class AlignmentGuides extends Component {
 			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
 			const imageShape = boxes[box]?.metadata?.imageShape || 'fitImage';
 			let isCropModeActive = false;
-			if (url && this.props.cropActiveForElement) {
+			if (url && this.props.cropActiveForElement !== undefined) {
 				if (boxes[box]?.metadata?.captionIndex === this.props.cropActiveForElement)
 					isCropModeActive = true
 			}
