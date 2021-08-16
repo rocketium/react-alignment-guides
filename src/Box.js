@@ -77,7 +77,6 @@ class Box extends Component{
 				this.props.onDoubleClickCropElement(this.props.identifier);
 			}
 		}
-
 	};
 
 	selectBox(e) {
@@ -91,6 +90,8 @@ class Box extends Component{
 	}
 
 	hoverBox(e) {
+		if (this.props.cropActiveForElement !== undefined)
+			return;
 		if (e.currentTarget.hasAttribute('identifier'))
 			e.currentTarget.classList.add(this.props.toggleHover);
 	}
@@ -596,7 +597,7 @@ class Box extends Component{
 	}
 	
 	render() {
-		const { areMultipleBoxesSelected, boxStyle, id, identifier, isSelected, isShiftKeyActive, position, resolution } = this.props;
+		const { areMultipleBoxesSelected, boxStyle, id, identifier, isSelected, isShiftKeyActive, position, resolution, cropActiveForElement} = this.props;
 		if (!isNaN(position.top) && !isNaN(position.left) && !isNaN(position.width) && !isNaN(position.height)) {
 			const boundingBox = this.props.getBoundingBoxElement();
 			const boundingBoxDimensions = boundingBox.current.getBoundingClientRect();
@@ -609,7 +610,7 @@ class Box extends Component{
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
-			const {isCropModeActive} = this.state;
+			const isCropModeActive = this.state.isCropModeActive || (cropActiveForElement === identifier);
 
 
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
@@ -658,7 +659,7 @@ class Box extends Component{
 			>
 				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={this.endCropMode} {...this.props} />}
 
-				{!isCropModeActive && <>
+				{(!isCropModeActive || cropActiveForElement === undefined) && <>
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
