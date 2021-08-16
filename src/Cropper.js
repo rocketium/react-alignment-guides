@@ -47,6 +47,7 @@ export default class Cropper extends Component {
         this.calculateNewObjectPositionAndScale();
 
         this.props.endCropMode({
+            isBoxUpdated: this.state.isBoxUpdated,
             boxTranslateX: this.state.boxTranslateX || 0,
             boxTranslateY: this.state.boxTranslateY || 0,
             boxDeltaWidth: this.state.boxDeltaWidth || 0,
@@ -276,15 +277,16 @@ export default class Cropper extends Component {
                             boxDeltaWidth: (this.state.boxDeltaWidth || 0) + delta.width,
                             boxDeltaHeight: (this.state.boxDeltaHeight || 0) + delta.height,
                             boxTranslateX: position.x,
-                            boxTranslateY: position.y
+                            boxTranslateY: position.y,
+                            isBoxUpdated: true
                         })
                     }}
                     onDragStop={(e, d) => {
                         this.setState({
                             boxTranslateX: d.x,
-                            boxTranslateY: d.y
+                            boxTranslateY: d.y,
+                            isBoxUpdated: true
                         })
-                        console.log(d);
                     }}
                     default={{
                         x: 0,
