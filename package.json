@@ -76,8 +76,6 @@
 		"dist"
 	],
 	"dependencies": {
-		"lodash.throttle": "^4.1.1",
-		"re-resizable": "^6.9.0",
-		"react-rnd": "^10.3.4"
+		"lodash.throttle": "^4.1.1"
 	}
 }

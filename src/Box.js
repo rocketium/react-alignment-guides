@@ -17,7 +17,6 @@ import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
 const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
-import Cropper from "./Cropper";
 
 class Box extends Component{
 	constructor(props) {
@@ -611,8 +610,7 @@ class Box extends Component{
 			}
 
 			const isCropModeActive = this.state.isCropModeActive || (cropActiveForElement === identifier);
-
-
+			
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
 			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
@@ -636,8 +634,10 @@ class Box extends Component{
 				boxStyles.pointerEvents = 'none';
 			}
 
+			if (cropActiveForElement !== undefined && !isCropModeActive)
+				return null;
 
-			return <div
+			return !isCropModeActive  ? <div
 				className={boxClassNames}
 				id={id}
 				onClick={this.selectBox}
@@ -657,9 +657,8 @@ class Box extends Component{
 					}
 				}}
 			>
-				{isCropModeActive && !areMultipleBoxesSelected && <Cropper endCropMode={this.endCropMode} {...this.props} />}
 
-				{(!isCropModeActive || cropActiveForElement === undefined) && <>
+				{<>
 				{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
@@ -709,7 +708,7 @@ class Box extends Component{
 						null
 				}
 				</>}
-			</div>;
+			</div> : null
 		}
 
 		return null;
