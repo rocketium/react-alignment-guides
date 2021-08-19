@@ -67,9 +67,7 @@ class Box extends Component{
 		if (this.props.dragDisabled) {
 			this.props.cropDisabledCallback();
 		} else {
-			if (this.props.url) {
-				this.props.onDoubleClickCropElement(this.props.identifier);
-			}
+			this.props.onDoubleClickCropElement(this.props.identifier);			
 		}
 	};
 
@@ -622,7 +620,7 @@ class Box extends Component{
 			if (cropActiveForElement !== undefined && !isCropModeActive)
 				return null;
 
-			return !isCropModeActive  ? <div
+			return <div
 				className={boxClassNames}
 				id={id}
 				onClick={this.selectBox}
@@ -693,7 +691,7 @@ class Box extends Component{
 						null
 				}
 				</>}
-			</div> : null
+			</div>
 		}
 
 		return null;
