@@ -39,8 +39,7 @@ class Box extends Component{
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
 		this.state = {
-			callKeyEnd: false,
-			isCropModeActive: false
+			callKeyEnd: false
 		};
 		this.handleDoubleClick = this.handleDoubleClick.bind(this);
 		this.endCropMode = this.endCropMode.bind(this);
@@ -60,7 +59,6 @@ class Box extends Component{
 			deltaX: data.boxTranslateX, //currentPosition.left - startingPosition.left,
 			deltaY: data.boxTranslateY, // currentPosition.top - startingPosition.top						
 		}
-		this.setState({ isCropModeActive: false });
 		this.props.updateBoxAfterCrop(data);
 	}
 
@@ -70,9 +68,6 @@ class Box extends Component{
 			this.props.cropDisabledCallback();
 		} else {
 			if (this.props.url) {
-				this.setState({
-					isCropModeActive : true
-				})
 				this.props.onDoubleClickCropElement(this.props.identifier);
 			}
 		}
@@ -578,16 +573,6 @@ class Box extends Component{
 				document.addEventListener('keyup', this.onShortcutKeyUp);
 			}
 		}
-
-		if (prevProps.isCropModeActive !== this.props.isCropModeActive && this.props.isCropModeActive === true) {
-			this.setState({
-				isCropModeActive: true
-			})
-		} else if (prevProps.isCropModeActive !== this.props.isCropModeActive && prevProps.isCropModeActive === true) {
-			this.setState({
-				isCropModeActive: false
-			})			
-		}
 	}
 
 	componentWillUnmount() {
@@ -609,7 +594,7 @@ class Box extends Component{
 				yFactor = resolution.height / boundingBoxDimensions.height;
 			}
 
-			const isCropModeActive = this.state.isCropModeActive || (cropActiveForElement === identifier);
+			const isCropModeActive = cropActiveForElement === identifier;
 			
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
 			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
