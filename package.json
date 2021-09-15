@@ -1,6 +1,6 @@
 {
 	"name": "react-alignment-guides",
-	"version": "1.0.0-rc.47",
+	"version": "1.0.1-rc.2",
 	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
 	"keywords": [
 		"drag",
@@ -76,6 +76,7 @@
 		"dist"
 	],
 	"dependencies": {
+		"lodash.debounce": "^4.0.8",
 		"lodash.throttle": "^4.1.1"
 	}
 }
