@@ -8,7 +8,6 @@ import {
 	proximityListener,
 } from './utils/helpers'
 import styles from './styles.scss';
-import debounce from 'lodash.debounce';
 let mousedown = false;
 let last_mousex = 0;
 let last_mousey = 0;
@@ -59,7 +58,6 @@ class AlignmentGuides extends Component {
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
 		this.updateBoxAfterCrop = this.updateBoxAfterCrop.bind(this);
 		this.addGuidelinesForSnapping = this.addGuidelinesForSnapping.bind(this);
-		this.debouncedUnSelectBox = debounce(this.unSelectBox, 300);
 	}
 
 	componentDidMount() {
@@ -113,10 +111,10 @@ class AlignmentGuides extends Component {
 			// adding guidelines for snapping
 			this.addGuidelinesForSnapping(guides);
 
-			document.addEventListener('click', this.debouncedUnSelectBox);
+			document.addEventListener('click', this.unSelectBox);
 			window.addEventListener('blur', this.unSelectBox);
 			document.addEventListener('keydown', this.setShiftKeyState);
-			document.addEventListener('keydown', this.debouncedUnSelectBox);
+			document.addEventListener('keydown', this.unSelectBox);
 			document.addEventListener('keyup', this.setShiftKeyState);
 			document.addEventListener('contextmenu', this.selectBox);
 
@@ -134,10 +132,10 @@ class AlignmentGuides extends Component {
 	}
 
 	componentWillUnmount() {
-		document.removeEventListener('click', this.debouncedUnSelectBox);
+		document.removeEventListener('click', this.unSelectBox);
 		window.removeEventListener('blur', this.unSelectBox);
 		document.removeEventListener('keydown', this.setShiftKeyState);
-		document.removeEventListener('keydown', this.debouncedUnSelectBox);
+		document.removeEventListener('keydown', this.unSelectBox);
 		document.removeEventListener('keyup', this.setShiftKeyState);
 		document.removeEventListener('contextmenu', this.selectBox);
 	}
@@ -375,6 +373,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
+		console.count('unselect called: ');
 		if (
 			this.didDragHappen &&
 			!(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))
