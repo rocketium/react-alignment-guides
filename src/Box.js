@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 import throttle from 'lodash.throttle';
 import {
@@ -127,7 +126,6 @@ class Box extends Component{
 			if (this.props.position.type) {
 				data.type = this.props.position.type;
 			}
-			this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 			this.props.onDragStart && this.props.onDragStart(e, data);
 
 			// Update the starting position
@@ -138,6 +136,7 @@ class Box extends Component{
 
 			const onDrag = (e) => {
 				e.stopPropagation();
+				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const boundingBox = this.props.getBoundingBoxElement();
 				if (!boundingBox.current) {
 					return;
@@ -184,7 +183,7 @@ class Box extends Component{
 
 			const onDragEnd = (e) => {
 				if (this.didDragHappen) {
-					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
+					this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					if (this.props.dragDisabled !== true) {
 						this.props.onDragEnd && this.props.onDragEnd(e, data);
 					}
@@ -375,10 +374,10 @@ class Box extends Component{
 			// used to increase or decrease deltaY accordingly
 			const sign = e.target.id === 'resize-br' || e.target.id === 'resize-tl' ? 1 : -1; 
 
-			this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
 			const onResize = (e) => {
+				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
 				const deltaX = clientX - startX;
 				const deltaY = e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
@@ -449,7 +448,7 @@ class Box extends Component{
 					this.box.current.style.zIndex = this.props.position?.zIndex ? this.props.position.zIndex : 98;
 				}
 				if (this.didResizeHappen) {
-					this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
+					this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					if (this.props.dragDisabled !== true) {
 						this.props.onResizeEnd && this.props.onResizeEnd(e, data);
 					}
