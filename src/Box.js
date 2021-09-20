@@ -23,6 +23,7 @@ class Box extends Component{
 		this.box = React.createRef();
 		this.coordinates = React.createRef();
 		this.height = React.createRef();
+		this.callSelectBox = false;
 		this.didDragHappen = false;
 		this.didResizeHappen = false;
 		this.selectBox = this.selectBox.bind(this);
@@ -72,7 +73,7 @@ class Box extends Component{
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (this.props.didDragOrResizeHappen && e.currentTarget.hasAttribute('identifier') ) {
+		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') ) {
 			this.props.selectBox(e);
 		}
 		if (this.box && this.box.current) {
@@ -133,6 +134,7 @@ class Box extends Component{
 
 			const deltaX = e.clientX - target.offsetLeft;
 			const deltaY = e.clientY - target.offsetTop;
+			this.callSelectBox = true;
 
 			const onDrag = (e) => {
 				e.stopPropagation();
@@ -184,6 +186,7 @@ class Box extends Component{
 			const onDragEnd = (e) => {
 				if (this.didDragHappen) {
 					this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
+					this.callSelectBox = false;
 					if (this.props.dragDisabled !== true) {
 						this.props.onDragEnd && this.props.onDragEnd(e, data);
 					}
@@ -373,6 +376,7 @@ class Box extends Component{
 			const ratio = rect.width / rect.height;
 			// used to increase or decrease deltaY accordingly
 			const sign = e.target.id === 'resize-br' || e.target.id === 'resize-tl' ? 1 : -1; 
+			this.callSelectBox = true;
 
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
@@ -448,6 +452,7 @@ class Box extends Component{
 					this.box.current.style.zIndex = this.props.position?.zIndex ? this.props.position.zIndex : 98;
 				}
 				if (this.didResizeHappen) {
+					this.callSelectBox = false;
 					this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					if (this.props.dragDisabled !== true) {
 						this.props.onResizeEnd && this.props.onResizeEnd(e, data);
