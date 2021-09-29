@@ -67,7 +67,7 @@ class Box extends Component{
 		if (this.props.dragDisabled) {
 			this.props.cropDisabledCallback();
 		} else {
-			this.props.onDoubleClickCropElement(this.props.identifier);			
+			this.props.onDoubleClickElement(this.props.identifier);			
 		}
 	};
 
@@ -331,6 +331,38 @@ class Box extends Component{
 		}
 	}
 
+	getMovingSides(currentResizeHandle) {
+		switch (currentResizeHandle) {
+			case 'resize-tl': {
+				return ['top', 'left'];
+			}
+			case 'resize-ct': {
+				return ['top'];
+			}
+			case 'resize-tr': {
+				return ['top', 'right'];
+			}
+			case 'resize-cl': {
+				return ['left'];
+			}
+			case 'resize-cr': {
+				return ['right'];
+			}
+			case 'resize-bl': {
+				return ['bottom', 'left'];
+			}
+			case 'resize-cb': {
+				return ['bottom'];
+			}
+			case 'resize-br': {
+				return ['bottom', 'right'];
+			}
+			default: {
+				return [];
+			}
+		}
+	}
+
 	onResizeStart(e) {
 		if (this.props.position.resize || this.props.position.resize === undefined) { // Allow resize only if resize property for the box is true or undefined
 			e.stopPropagation();
@@ -380,6 +412,7 @@ class Box extends Component{
 
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
+			const movingSides = this.getMovingSides(e.target && e.target.getAttribute('id'));
 			const onResize = (e) => {
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
@@ -407,7 +440,8 @@ class Box extends Component{
 					left: tempPosition.left,
 					top: tempPosition.top,
 					rotateAngle,
-					node: this.box.current
+					node: this.box.current,
+					movingSides
 				};
 
 				// if (rotateAngle !== 0) {

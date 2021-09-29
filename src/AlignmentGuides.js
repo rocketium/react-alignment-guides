@@ -589,6 +589,9 @@ class AlignmentGuides extends Component {
 
 
 				newData = Object.assign({}, newData, {
+					// calculating starting position: (newData.x - newData.deltaX) for snapped delta
+					deltaX: activeBox.x - (newData.x - newData.deltaX),
+					deltaY: activeBox.y - (newData.y - newData.deltaY),
 					...activeBox
 				});
 				
@@ -596,7 +599,11 @@ class AlignmentGuides extends Component {
 					boxes: newBoxes,
 					guides,
 					match,
-					activeBoxSnappedPosition: activeBox
+					activeBoxSnappedPosition: Object.assign({}, {
+						deltaX: activeBox.x - (newData.x - newData.deltaX),
+						deltaY: activeBox.y - (newData.y - newData.deltaY),
+						...activeBox
+					})
 				});
 			}
 			this.state.dragging && this.props.onDrag && this.props.onDrag(e, newData);
