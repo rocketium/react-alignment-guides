@@ -294,6 +294,11 @@ class AlignmentGuides extends Component {
 						active: 'box-ms',
 						activeBoxes,
 						boxes
+					}, () => {
+						this.startingPositions = {};
+						this.state.activeBoxes.forEach(box => {
+							this.startingPositions[box] = this.state.boxes[box];
+						});
 					});
 				}
 			} else {
@@ -353,6 +358,11 @@ class AlignmentGuides extends Component {
 					active: 'box-ms',
 					activeBoxes,
 					boxes
+				}, () => {
+					this.startingPositions = {};
+					this.state.activeBoxes.forEach(box => {
+						this.startingPositions[box] = this.state.boxes[box];
+					});
 				});
 			} else {
 				let { boxes } = this.state;
@@ -373,7 +383,7 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		console.count('unselect called: ');
+		// console.count('unselect called: ');
 		if (
 			this.didDragHappen &&
 			!(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))
@@ -445,6 +455,9 @@ class AlignmentGuides extends Component {
 			this.state.activeBoxes.forEach(box => {
 				this.startingPositions[box] = this.state.boxes[box];
 			});
+		} else {
+			this.startingPositions = {};
+			this.startingPositions[data.node.id] = Object.assign({}, this.state.boxes[data.node.id]);
 		}
 	}
 
@@ -452,12 +465,15 @@ class AlignmentGuides extends Component {
 		let newData;
 		if (this.state.dragging) {
 			newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata) {
+			if (this.state.boxes?.[this.state.active]?.metadata) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			if (data.type && data.type === 'group') {
 				newData.selections = this.state.activeBoxes.map(box => {
-					return Object.assign({}, this.state.boxes[box]);
+					return Object.assign({}, this.state.boxes[box], {
+						deltaX: data.deltaX,
+						deltaY: data.deltaY,
+					});
 				});
 			}
 
@@ -475,7 +491,9 @@ class AlignmentGuides extends Component {
 							x: this.startingPositions[box].x + data.deltaX,
 							y: this.startingPositions[box].y + data.deltaY,
 							left: this.startingPositions[box].left + data.deltaX,
-							top: this.startingPositions[box].top + data.deltaY
+							top: this.startingPositions[box].top + data.deltaY,
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
 						});
 					} else if (box === 'box-ms') {
 						boxes[box] = Object.assign({}, data);
@@ -505,7 +523,9 @@ class AlignmentGuides extends Component {
 					left: data.left,
 					top: data.top,
 					width: data.width,
-					height: data.height
+					height: data.height,
+					deltaX: data.deltaX,
+					deltaY: data.deltaY,
 				})
 			});
 
@@ -581,18 +601,19 @@ class AlignmentGuides extends Component {
 					});
 				});
 
-				const newBoxes = Object.assign({}, this.state.boxes, {
-					[this.state.active] : Object.assign({}, this.state.boxes[this.state.active], {
-						...activeBox
-					})
-				});
-
-
 				newData = Object.assign({}, newData, {
 					// calculating starting position: (newData.x - newData.deltaX) for snapped delta
 					deltaX: activeBox.x - (newData.x - newData.deltaX),
 					deltaY: activeBox.y - (newData.y - newData.deltaY),
 					...activeBox
+				});
+
+				const newBoxes = Object.assign({}, this.state.boxes, {
+					[this.state.active] : Object.assign({}, this.state.boxes[this.state.active], {
+						...activeBox,
+						deltaX: newData.deltaX,
+						deltaY: newData.deltaY,
+					})
 				});
 				
 				this.setState({
@@ -623,8 +644,11 @@ class AlignmentGuides extends Component {
 
 		if (data.type && data.type === 'group') {
 			newData.selections = this.state.activeBoxes.map(box => {
+				this.startingPositions[box] = this.state.boxes[box];
 				return Object.assign({}, this.state.boxes[box]);
 			});
+		} else {
+			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 
 		if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
@@ -695,7 +719,11 @@ class AlignmentGuides extends Component {
 								left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
 								top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
 								width: this.startingPositions[box].width + widthDiff,
-								height: this.startingPositions[box].height + heightDiff
+								height: this.startingPositions[box].height + heightDiff,
+								deltaW: widthDiff,
+								deltaH: heightDiff,
+								deltaX: boundingBoxPosition.x + xDiff,
+								deltaY: boundingBoxPosition.y + yDiff,
 							});
 						} else {
 							boxes[box] = Object.assign({}, this.state.boxes[box], {
@@ -704,7 +732,9 @@ class AlignmentGuides extends Component {
 								left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
 								top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
 								width: this.startingPositions[box].width + data.deltaW,
-								height: this.startingPositions[box].height + data.deltaH
+								height: this.startingPositions[box].height + data.deltaH,
+								deltaX: boundingBoxPosition.x + data.deltaX,
+								deltaY: boundingBoxPosition.y + data.deltaY,
 							});
 						}
 					} else if (box === 'box-ms') {
@@ -735,7 +765,7 @@ class AlignmentGuides extends Component {
 					left: data.left,
 					top: data.top,
 					width: data.width,
-					height: data.height
+					height: data.height,
 				})
 			});
 			guides = Object.assign({}, this.state.guides, {
@@ -811,6 +841,7 @@ class AlignmentGuides extends Component {
 		if (data.isLayerLocked) {
 			return;
 		}
+		// console.log('startingPositions', JSON.parse(JSON.stringify(this.startingPositions)));
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
@@ -829,7 +860,11 @@ class AlignmentGuides extends Component {
 							left: this.state.boxes[box].left + (data.changedValues.left || 0),
 							top: this.state.boxes[box].top + (data.changedValues.top || 0),
 							height: this.state.boxes[box].height + (data.changedValues.height || 0),
-							width: this.state.boxes[box].width + (data.changedValues.width || 0)
+							width: this.state.boxes[box].width + (data.changedValues.width || 0),
+							deltaX: this.state.boxes[box].x + (data.changedValues.x || 0) - (this.startingPositions?.[box]?.x || 0),
+							deltaY: this.state.boxes[box].y + (data.changedValues.y || 0) - (this.startingPositions?.[box]?.y || 0),
+							deltaW: this.state.boxes[box].width + (data.changedValues.width || 0) - (this.startingPositions?.[box]?.width || 0),
+							deltaH: this.state.boxes[box].height + (data.changedValues.height || 0) - (this.startingPositions?.[box]?.height || 0),
 						});
 					}  else if (box === 'box-ms') {
 						boxes[box] = Object.assign({}, data);
@@ -852,6 +887,12 @@ class AlignmentGuides extends Component {
 				return this.state.guides[guide];
 			});
 		} else {
+			newData = Object.assign({}, newData, {
+				deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
+				deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
+				deltaW: data.width - (this.startingPositions?.[data.node.id]?.width || 0),
+				deltaH: data.height - (this.startingPositions?.[data.node.id]?.height || 0),
+			});
 			boxes = Object.assign({}, this.state.boxes, {
 				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
 					x: data.x,
@@ -859,7 +900,11 @@ class AlignmentGuides extends Component {
 					left: data.left,
 					top: data.top,
 					width: data.width,
-					height: data.height
+					height: data.height,
+					deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
+					deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
+					deltaW: data.width - (this.startingPositions?.[data.node.id]?.width || 0),
+					deltaH: data.height - (this.startingPositions?.[data.node.id]?.height || 0),
 				})
 			});
 
@@ -887,20 +932,25 @@ class AlignmentGuides extends Component {
 	}
 
 	keyEndHandler(e, data) {
-		let newData = Object.assign({}, data);
+		let newData = Object.assign({}, data, {
+			deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
+			deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
+		});
 		if (this.state.boxes[this.state.active].metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
 		if (data.type && data.type === 'group') {
 			newData.selections = this.state.activeBoxes.map(box => {
+				this.startingPositions[box] = this.state.boxes[box];
 				return Object.assign({}, this.state.boxes[box]);
 			});
+		} else {
+			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 
 		this.props.onKeyEnd && this.props.onKeyEnd(e, newData);
 		
-
 		this.setState({
 			resizing: false,
 			dragging: false,

@@ -201,7 +201,7 @@ class Box extends Component{
 	}
 
 	shortcutHandler(e) {
-		if (this.props.preventShortcutEvents) {
+		if (this.props.preventShortcutEvents || !PREVENT_DEFAULT_KEYS.includes(e.key)) {
 			return;
 		}
 		const { areMultipleBoxesSelected } = this.props;
@@ -229,7 +229,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					width: position.width + DELTA
+					width: position.width + DELTA,
+					movingSides: ['bottom', 'right'], 
 				} : {
 					left: position.left + DELTA,
 					x: position.x + DELTA
@@ -245,7 +246,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					width: position.width - DELTA
+					width: position.width - DELTA,
+					movingSides: ['bottom', 'right'], 
 				} :  {
 					left: position.left - DELTA,
 					x: position.x - DELTA
@@ -261,7 +263,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					height: position.height - DELTA
+					height: position.height - DELTA,
+					movingSides: ['bottom', 'right'], 
 				} : {
 					top: position.top - DELTA,
 					y: position.y - DELTA
@@ -277,7 +280,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					height: position.height + DELTA
+					height: position.height + DELTA,
+					movingSides: ['bottom', 'right'], 
 				} : {
 					top: position.top + DELTA,
 					y: position.y + DELTA
@@ -295,7 +299,7 @@ class Box extends Component{
 
 
 			const data = Object.assign({}, position, newValues, {
-				changedValues // for group shortcut keys
+				changedValues, // for group shortcut keys
 			});
 			if (this.props.dragDisabled === true) {
 				if (typeof this.props.dragDisabledCallback === 'function') {
@@ -319,7 +323,9 @@ class Box extends Component{
 			let newValues = {};
 			if (this.box && this.box.current)
 				newValues.node = this.box.current
-			const data = Object.assign({}, position, newValues);
+			const data = Object.assign({}, position, newValues, {
+				movingSides: ['bottom', 'right'],
+			});
 			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control'];
 			if (this.props.dragDisabled === true) {
 				return;
