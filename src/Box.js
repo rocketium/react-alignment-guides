@@ -10,7 +10,9 @@ import {
 	getLength,
 	getNewCoordinates,
 	getNewStyle,
-	getOffsetCoordinates, centerToTopLeft,
+	getOffsetCoordinates,
+	centerToTopLeft,
+	getResizeCursorCSS,
 } from './utils/helpers';
 import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
@@ -676,7 +678,7 @@ class Box extends Component{
 								className={className}
 								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
 								id={`resize-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : '', cursor: getResizeCursorCSS(this.props.position?.rotateAngle, handle)}}
 							/>;
 						}) :
 						null
