@@ -651,6 +651,7 @@ class Box extends Component{
 					(this.props.didDragOrResizeHappen) ? <span
 							ref={this.coordinates}
 							className={styles.coordinates}
+							style={{transform: `rotate(-${this.props.position?.rotateAngle}deg)`}}
 						>
 						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
 					</span> :
@@ -660,7 +661,7 @@ class Box extends Component{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
 							className={`${styles.dimensions} `}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px' }}
+							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px', transform: `rotate(-${this.props.position?.rotateAngle}deg)` }}
 						>
 						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
 					</span> :
