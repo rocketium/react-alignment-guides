@@ -395,4 +395,30 @@ export const getMultipleSelectionCoordinates = (allBoxes, activeBoxes) => {
 	return { x, y, top: y, left: x, width, height };
 };
 
+export const getGroupCoordinates = (allBoxes, groupedBoxes) => {
+	let selectedBoxes = [];
+	for (let box in allBoxes) {
+		if (allBoxes.hasOwnProperty(box) && groupedBoxes.includes(allBoxes?.[box]?.metadata?.captionIndex)) {
+			selectedBoxes.push(allBoxes[box]);
+		}
+	}
+	if (selectedBoxes.length === 0) {
+		return {
+			x: 0,
+			y: 0,
+			top: 0,
+			left: 0,
+			width: 0,
+			height: 0
+		};
+	}
+
+
+	const x = selectedBoxes.reduce((min, b) => b.x < min ? b.x : min, selectedBoxes[0].x);
+	const y = selectedBoxes.reduce((min, b) => b.y < min ? b.y : min, selectedBoxes[0].y);
+	const width = selectedBoxes.reduce((max, b) => b.x + b.width > max ? b.x + b.width : max, (selectedBoxes[0].x + selectedBoxes[0].width)) - x;
+	const height = selectedBoxes.reduce((max, b) => b.y + b.height > max ? b.y + b.height : max, (selectedBoxes[0].y + selectedBoxes[0].height)) - y;
+
+	return { x, y, top: y, left: x, width, height };
+};
 export const getBoxMetadata = () => {};

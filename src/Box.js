@@ -73,7 +73,7 @@ class Box extends Component{
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') ) {
+		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') || ( this.callSelectBox && e.target.id.indexOf('box-ms') >= 0)) {
 			this.props.selectBox(e);
 		}
 		if (this.box && this.box.current) {
@@ -599,7 +599,7 @@ class Box extends Component{
 			const isCropModeActive = cropActiveForElement === identifier;
 			
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
-			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
+			boxClassNames = position.type === 'group' && this.props.isSelected ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
@@ -667,7 +667,7 @@ class Box extends Component{
 						null :null
 				}
 				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group' && isSelected) ?
 						RESIZE_CORNERS.map(handle => {
 							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
 							return <div
