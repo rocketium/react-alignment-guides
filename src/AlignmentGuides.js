@@ -6,8 +6,10 @@ import {
 	getMultipleSelectionCoordinates,
 	getOffsetCoordinates,
 	proximityListener,
+	getGroupCoordinates
 } from './utils/helpers'
 import styles from './styles.scss';
+import {GROUP_BOX_PREFIX} from './utils/constants';
 let mousedown = false;
 let last_mousex = 0;
 let last_mousey = 0;
@@ -32,7 +34,9 @@ class AlignmentGuides extends Component {
 			resizing: false,
 			rotating: false,
 			activeBoxSnappedPosition: {},
-			preventShortcutEvents: false
+			preventShortcutEvents: false,
+			activeCaptionGroupCaptions: [],
+			captionGroupsToIndexMap:{}
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
@@ -68,6 +72,7 @@ class AlignmentGuides extends Component {
 			const guides = {};
 			const activeBoxes = [];
 			let active = '';
+			const captionGroupsToIndexMap = {};
 
 			// Adding the guides for the bounding box to the guides object
 			guides.boundingBox = {
@@ -107,6 +112,29 @@ class AlignmentGuides extends Component {
 			} else if (activeBoxes.length === 1) {
 				active = activeBoxes[0];
 			}
+			// Checking if Groups are present and if the length of array of group > 0 then we create grouped boxes.
+			if (this.props?.groups?.length > 0) {
+				// for each group we are creating a new box starting with 'box-ms-'
+				this.props.groups.forEach((groupArray, index) => {
+					boxes[`${GROUP_BOX_PREFIX}${index}`] = getGroupCoordinates(boxes, groupArray);
+					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
+					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
+					const selections = [];
+					// Checking for all the boxes present inside that group and storing them in selections
+					for (let box in boxes) {
+						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
+							selections.push(boxes[box]);
+						}
+					}
+					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
+					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
+					// storing all the indexes inside a particular group to map it later if we need
+					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
+					// active = `box-ms-${index}`;
+				});
+				delete boxes['box-ms'];
+			}
 
 			// adding guidelines for snapping
 			this.addGuidelinesForSnapping(guides);
@@ -123,7 +151,8 @@ class AlignmentGuides extends Component {
 				boxes,
 				guides,
 				activeBoxes,
-				active
+				active,
+				captionGroupsToIndexMap,
 			});
 		}
 		if (this.props.isStylingPanelEnabled) {
@@ -141,6 +170,7 @@ class AlignmentGuides extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
+		const captionGroupsToIndexMap = {};
 		if (this.state.activeBoxes.length > 0) {
 			const activeBoxWithoutLock = this.state.activeBoxes.filter(activeBox => {
 				return !this.state.boxes[activeBox] || !this.state.boxes[activeBox].isLayerLocked;
@@ -148,6 +178,48 @@ class AlignmentGuides extends Component {
 			if (JSON.stringify(this.state.activeBoxes) !== JSON.stringify(activeBoxWithoutLock)) {
 				this.setState({
 					activeBoxes: activeBoxWithoutLock
+				});
+			}
+		}
+
+		if (this.props?.groups !== prevProps.groups) {
+			let {boxes} = this.state;
+			boxes = Object.fromEntries(
+				Object.entries(boxes)
+					.filter(([key]) => !key.startsWith(`${GROUP_BOX_PREFIX}`))
+			);
+			if (this.props?.groups?.length === 0) {
+				this.setState({
+					boxes
+				});
+			} else if (this.props?.groups?.length > 0) {
+				let active = this.state.active;
+				this.props?.groups?.forEach((groupArray, index) => {
+					boxes[`${GROUP_BOX_PREFIX}${index}`] = getGroupCoordinates(boxes, groupArray);
+					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
+					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
+					const selections = [];
+					for (let box in boxes) {
+						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
+							selections.push(boxes[box]);
+						}
+					}
+					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
+					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].groupedCaptions = groupArray;
+					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
+					// To check if we added new group, then we select it as active
+					if (this.props.groups?.length > prevProps.groups?.length) {
+						active = boxes[`${GROUP_BOX_PREFIX}${index}`];
+					}
+				});
+				delete boxes['box-ms'];
+				
+				this.setState({
+					boxes,
+					captionGroupsToIndexMap,
+					active
 				});
 			}
 		}
@@ -251,7 +323,7 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1)) {
+			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1) || ( e.target.id.indexOf(GROUP_BOX_PREFIX) >= 0 && this.props?.groups?.length > 0)) { // Here we are checking if the selected elements are greater than one or if any group is selected
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
 					if (e.unselect || !this.isDragHappening) {
@@ -269,6 +341,38 @@ class AlignmentGuides extends Component {
 					this.setState({
 						activeBoxes: [],
 						boxes
+					});
+				} else if (this.props?.groups?.length > 0 && e.target.id.includes(GROUP_BOX_PREFIX)) { // Checking if the selected box is a group and then according to the selected box, we update the selections
+					let { boxes, active} = this.state;
+					const selections = boxes[e.target.id]?.selections;
+					const tempActiveBoxes =[];
+					if (selections?.length > 1) {
+						selections?.forEach(select => {
+							const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === select.metadata.captionIndex);
+							tempActiveBoxes.push(currentBox);
+						});
+					}
+					boxes[e.target.id] = getMultipleSelectionCoordinates(boxes, active);
+					boxes[e.target.id].type = 'group';
+					boxes[e.target.id].zIndex = 12;
+					boxes[e.target.id].identifier = e.target.id;
+					if (boxes[e.target.id].width === 0 && boxes[e.target.id].height === 0) {
+						return;
+					}
+					if (selections?.length > 0) {
+						data = Object.assign({}, boxes[e.target.id], {
+							metadata: { type: 'group' },
+							selections,
+						});
+					}
+					boxes[e.target.id].metadata = { type: 'group' };
+					boxes[e.target.id].selections = selections;
+
+					this.setState({
+						active: active,
+						activeBoxes: [active],
+						boxes,
+						activeCaptionGroupCaptions: tempActiveBoxes
 					});
 				} else {
 					boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
@@ -373,7 +477,6 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		console.count('unselect called: ');
 		if (
 			this.didDragHappen &&
 			!(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))
@@ -422,13 +525,20 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[data.node.id].metadata) {
+		if (this.state.boxes[data.node.id].metadata && data.node.id.indexOf(GROUP_BOX_PREFIX) < 0) { // Just updating if the group is present then we skip metadata as we use to to update single captions
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
 		if (data.type && data.type === 'group') {
-			newData.selections = this.state.activeBoxes.map(box => {
-				return Object.assign({}, this.state.boxes[box]);
-			});
+			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
+				newData.selections = this.state.captionGroupsToIndexMap?.[data.node.id]?.map(index => {
+					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+					return Object.assign({}, this.state.boxes[currentBox]);
+				});
+			} else {
+				newData.selections = this.state.activeBoxes.map(box => {
+					return Object.assign({}, this.state.boxes[box]);
+				});
+			}
 		} else if (!e.shiftKey) {
 			this.setState({
 				activeBoxes: [
@@ -442,9 +552,16 @@ class AlignmentGuides extends Component {
 		// Update starting positions so we can use it to update when group resize happens
 		if (data.type && data.type === 'group') {
 			this.startingPositions = {};
-			this.state.activeBoxes.forEach(box => {
-				this.startingPositions[box] = this.state.boxes[box];
-			});
+			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				this.state.captionGroupsToIndexMap[data.node.id].forEach(index => {
+					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+					this.startingPositions[currentBox] = this.state.boxes[currentBox];
+				});
+			} else {
+				this.state.activeBoxes.forEach(box => {
+					this.startingPositions[box] = this.state.boxes[box];
+				});
+			}
 		}
 	}
 
@@ -452,13 +569,20 @@ class AlignmentGuides extends Component {
 		let newData;
 		if (this.state.dragging) {
 			newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata) {
+			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			if (data.type && data.type === 'group') {
-				newData.selections = this.state.activeBoxes.map(box => {
-					return Object.assign({}, this.state.boxes[box]);
-				});
+				if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Same here, so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
+					newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
+						const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+						return Object.assign({}, this.state.boxes[currentBox]);
+					});
+				} else {
+					newData.selections = this.state.activeBoxes.map(box => {
+						return Object.assign({}, this.state.boxes[box]);
+					});
+				}
 			}
 
 			// this.props.onDrag && this.props.onDrag(e, newData);
@@ -466,18 +590,32 @@ class AlignmentGuides extends Component {
 
 		let boxes = null;
 		let guides = null;
+		let hoverGroupedData = [];
+		if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Updating hoverdata for all the boxes inside the Group
+			this.state.captionGroupsToIndexMap[data.node.id].forEach(index => {
+				const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+				hoverGroupedData.push(currentBox)
+			});
+		}
 		if (data.type && data.type === 'group') {
 			boxes = {};
 			for (let box in this.state.boxes) {
 				if (this.state.boxes.hasOwnProperty(box)) {
-					if (this.state.activeBoxes.includes(box)) {
+					if (hoverGroupedData.includes(box)) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
 							x: this.startingPositions[box].x + data.deltaX,
 							y: this.startingPositions[box].y + data.deltaY,
 							left: this.startingPositions[box].left + data.deltaX,
 							top: this.startingPositions[box].top + data.deltaY
 						});
-					} else if (box === 'box-ms') {
+					} else if (this.state.activeBoxes.includes(box) && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+						boxes[box] = Object.assign({}, this.state.boxes[box], {
+							x: this.startingPositions[box].x + data?.deltaX ?? 0,
+							y: this.startingPositions[box].y + data?.deltaY ?? 0,
+							left: this.startingPositions[box].left + data?.deltaX ?? 0,
+							top: this.startingPositions[box].top + data?.deltaY ?? 0
+						});
+					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
 						delete boxes[box].deltaX;
 						delete boxes[box].deltaY;
@@ -488,11 +626,20 @@ class AlignmentGuides extends Component {
 			}
 
 			guides = Object.keys(this.state.guides).map(guide => {
-				if (this.state.activeBoxes.includes(guide)) {
-					return Object.assign({}, this.state.guides[guide], {
-						x: calculateGuidePositions(boxes[guide], 'x'),
-						y: calculateGuidePositions(boxes[guide], 'y')
-					})
+				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0 ) { // Chacking it for group inside activeCaptionGroupCaptions state instead of activeBoxes
+					if (this.state.activeCaptionGroupCaptions.includes(guide)) {
+						return Object.assign({}, this.state.guides[guide], {
+							x: calculateGuidePositions(boxes[guide], 'x'),
+							y: calculateGuidePositions(boxes[guide], 'y')
+						})
+					}
+				} else {
+					if (this.state.activeBoxes.includes(guide)) {
+						return Object.assign({}, this.state.guides[guide], {
+							x: calculateGuidePositions(boxes[guide], 'x'),
+							y: calculateGuidePositions(boxes[guide], 'y')
+						})
+					}
 				}
 
 				return this.state.guides[guide];
@@ -610,14 +757,21 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata) {
+		if (this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
 		if (data.type && data.type === 'group') {
-			newData.selections = this.state.activeBoxes.map(box => {
-				return Object.assign({}, this.state.boxes[box]);
-			});
+			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
+					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+					return Object.assign({}, this.state.boxes[currentBox]);
+				});
+			} else {
+				newData.selections = this.state.activeBoxes.map(box => {
+					return Object.assign({}, this.state.boxes[box]);
+				});
+			}
 		}
 
 		if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
@@ -638,23 +792,30 @@ class AlignmentGuides extends Component {
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
-
 		this.props.onResizeStart && this.props.onResizeStart(e, newData);
 
 		// Update starting positions so we can use it to update when group resize happens
 		if (data.type && data.type === 'group') {
 			this.startingPositions = {};
-			this.state.activeBoxes.forEach(box => {
-				this.startingPositions[box] = this.state.boxes[box];
-			});
-			this.startingPositions['box-ms'] = this.state.boxes['box-ms'];
+			if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				this.state.activeCaptionGroupCaptions.forEach(box => {
+					this.startingPositions[box] = this.state.boxes[box];
+				});
+				this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
+			} else {
+				this.state.activeBoxes.forEach(box => {
+					this.startingPositions[box] = this.state.boxes[box];
+				});
+				this.startingPositions['box-ms'] = this.state.boxes['box-ms'];
+			}
+			
 		}
 	}
 
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata) {
+			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
@@ -669,10 +830,41 @@ class AlignmentGuides extends Component {
 			const boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
 			for (let box in this.state.boxes) {
 				if (this.state.boxes.hasOwnProperty(box)) {
-					if (this.state.activeBoxes.includes(box)) {
+					if (this.state.activeCaptionGroupCaptions.includes(box)) {
 						// Adding bounding box's starting position
 						// This is because it's added only to the group's box and not the individual members of the group
-						if (this.startingPositions['box-ms']) {
+						 if (this.startingPositions[this.state.active] && this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
+							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions[this.state.active].width)) * Math.abs(this.startingPositions[box].width));
+							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions[this.state.active].height)) * Math.abs(this.startingPositions[box].height));
+
+							const initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions[this.state.active].x) / this.startingPositions[this.state.active].width;
+							const xDiff = data.deltaX + initialDeltaXPercentage * (data.deltaW);
+
+							const initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions[this.state.active].y) / this.startingPositions[this.state.active].height;
+							const yDiff = data.deltaY + initialDeltaYPercentage * (data.deltaH);
+
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
+								width: this.startingPositions[box].width + widthDiff,
+								height: this.startingPositions[box].height + heightDiff
+							});
+						} else {
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+								width: this.startingPositions[box].width + data.deltaW,
+								height: this.startingPositions[box].height + data.deltaH
+							});
+						}
+					} else if (this.state.activeBoxes.includes(box)) {
+						// Adding bounding box's starting position
+						// This is because it's added only to the group's box and not the individual members of the group
+						 if (this.startingPositions['box-ms']) {
 							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions['box-ms'].width)) * Math.abs(this.startingPositions[box].width));
 							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions['box-ms'].height)) * Math.abs(this.startingPositions[box].height));
 
@@ -700,26 +892,36 @@ class AlignmentGuides extends Component {
 								height: this.startingPositions[box].height + data.deltaH
 							});
 						}
-					} else if (box === 'box-ms') {
+					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
-						delete boxes[box].deltaX;
-						delete boxes[box].deltaY;
-						delete boxes[box].deltaW;
-						delete boxes[box].deltaH;
+						delete boxes[box]?.deltaX;
+						delete boxes[box]?.deltaY;
+						delete boxes[box]?.deltaW;
+						delete boxes[box]?.deltaH;
 					} else {
 						boxes[box] = this.state.boxes[box];
 					}
 				}
 			}
-
+			
 			guides = Object.keys(this.state.guides).map(guide => {
-				if (this.state.activeBoxes.includes(guide)) {
-					return Object.assign({}, this.state.guides[guide], {
-						x: calculateGuidePositions(boxes[guide], 'x'),
-						y: calculateGuidePositions(boxes[guide], 'y')
-					});
+				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+					if (this.state.activeCaptionGroupCaptions.includes(guide)) {
+						return Object.assign({}, this.state.guides[guide], {
+							x: calculateGuidePositions(boxes[guide], 'x'),
+							y: calculateGuidePositions(boxes[guide], 'y')
+						});
+					}
+				} else {
+					if (this.state.activeBoxes.includes(guide)) {
+						return Object.assign({}, this.state.guides[guide], {
+							x: calculateGuidePositions(boxes[guide], 'x'),
+							y: calculateGuidePositions(boxes[guide], 'y')
+						});
+					}
 				}
 			});
+			
 		} else {
 			boxes = Object.assign({}, this.state.boxes, {
 				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
@@ -748,14 +950,20 @@ class AlignmentGuides extends Component {
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata) {
+			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
 			if (data.type && data.type === 'group') {
-				newData.selections = this.state.activeBoxes.map(box => {
-					return Object.assign({}, this.state.boxes[box]);
-				});
+				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+					newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+						return Object.assign({}, this.state.boxes[box]);
+					});
+				} else {
+					newData.selections = this.state.activeBoxes.map(box => {
+						return Object.assign({}, this.state.boxes[box]);
+					});
+				}
 			}
 
 			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
@@ -805,8 +1013,13 @@ class AlignmentGuides extends Component {
 			return;
 		}
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[data.node.id].metadata) {
+		if (this.state.boxes[data.node.id].metadata && data.node.id.indexOf(GROUP_BOX_PREFIX) < 0) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
+		}
+
+		// for caption groups
+		if(data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			delete newData.metadata
 		}
 
 		let boxes = null;
@@ -815,7 +1028,7 @@ class AlignmentGuides extends Component {
 			boxes = {};
 			for (let box in this.state.boxes) {
 				if (this.state.boxes.hasOwnProperty(box)) {
-					if (this.state.activeBoxes.includes(box)) {
+					if (this.state.activeBoxes.includes(box) || (this.state.activeCaptionGroupCaptions.includes(box) && this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0)) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
 							x: this.state.boxes[box].x + (data.changedValues.x || 0),
 							y: this.state.boxes[box].y + (data.changedValues.y || 0),
@@ -824,7 +1037,7 @@ class AlignmentGuides extends Component {
 							height: this.state.boxes[box].height + (data.changedValues.height || 0),
 							width: this.state.boxes[box].width + (data.changedValues.width || 0)
 						});
-					}  else if (box === 'box-ms') {
+					}  else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
 						delete boxes[box].deltaX;
 						delete boxes[box].deltaY;
@@ -835,7 +1048,7 @@ class AlignmentGuides extends Component {
 			}
 
 			guides = Object.keys(this.state.guides).map(guide => {
-				if (this.state.activeBoxes.includes(guide)) {
+				if (this.state.activeBoxes.includes(guide) || this.state.activeCaptionGroupCaptions.includes(guide)) {
 					return Object.assign({}, this.state.guides[guide], {
 						x: calculateGuidePositions(boxes[guide], 'x'),
 						y: calculateGuidePositions(boxes[guide], 'y')
@@ -870,9 +1083,15 @@ class AlignmentGuides extends Component {
 			guidesActive: false
 		}, () => {
 			if (data.type && data.type === 'group') {
-				newData.selections = this.state.activeBoxes.map(box => {
-					return Object.assign({}, this.state.boxes[box]);
-				});
+				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+					newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+						return Object.assign({}, this.state.boxes[box]);
+					});
+				} else {
+					newData.selections = this.state.activeBoxes.map(box => {
+						return Object.assign({}, this.state.boxes[box]);
+					});
+				}
 			}
 	
 			this.props.onKeyUp && this.props.onKeyUp(e, newData);
@@ -885,10 +1104,20 @@ class AlignmentGuides extends Component {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
+		if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			delete newData.metadata;
+		}
+
 		if (data.type && data.type === 'group') {
-			newData.selections = this.state.activeBoxes.map(box => {
-				return Object.assign({}, this.state.boxes[box]);
-			});
+			if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+					return Object.assign({}, this.state.boxes[box]);
+				});
+			} else {
+				newData.selections = this.state.activeBoxes.map(box => {
+					return Object.assign({}, this.state.boxes[box]);
+				});
+			}
 		}
 
 		this.props.onKeyEnd && this.props.onKeyEnd(e, newData);
@@ -941,7 +1170,17 @@ class AlignmentGuides extends Component {
 					self.allowDragSelection = true;
 				}
 				// if drag is initiated outside box-ms box; allow dragSelection.
-				if (self.state.boxes && self.state.boxes['box-ms']) {
+				if (self.state.boxes && self.state.boxes[self.state.active] && self.state.active.indexOf(self.state.active) >= 0) { // Specific check for Active group box
+					if (tempE.x >= self.state.boxes[self.state.active].x &&
+						tempE.x <= self.state.boxes[self.state.active].x + self.state.boxes[self.state.active].width &&
+						tempE.y >= self.state.boxes[self.state.active].y &&
+						tempE.y <= self.state.boxes[self.state.active].y + self.state.boxes[self.state.active].height) {
+						self.allowDragSelection = false;
+					}
+					else {
+						self.allowDragSelection = true;
+					}
+				} else if (self.state.boxes && self.state.boxes['box-ms']) {
 					if (tempE.x >= self.state.boxes['box-ms'].x &&
 						tempE.x <= self.state.boxes['box-ms'].x + self.state.boxes['box-ms'].width &&
 						tempE.y >= self.state.boxes['box-ms'].y &&
@@ -1037,7 +1276,7 @@ class AlignmentGuides extends Component {
 
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
-		const areMultipleBoxesSelected = activeBoxes.length > 1;
+		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-'));
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = Object.keys(boxes).map(box => {
