@@ -186,8 +186,8 @@ class AlignmentGuides extends Component {
 			let {boxes} = this.state;
 			boxes = Object.fromEntries(
 				Object.entries(boxes)
-				  .filter(([key]) => !key.startsWith('${GROUP_BOX_PREFIX}'))
-			  )
+					.filter(([key]) => !key.startsWith(`${GROUP_BOX_PREFIX}`))
+			)
 			if (this.props?.groups?.length === 0) {
 				this.setState({
 					boxes
@@ -348,13 +348,14 @@ class AlignmentGuides extends Component {
 					const tempActiveBoxes =[];
 					if (selections?.length > 1) {
 						selections?.forEach(select => {
-							tempActiveBoxes.push(`box${select.metadata.captionIndex}`);
+							const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === select.metadata.captionIndex);
+							tempActiveBoxes.push(currentBox);
 						});
 					}
 					boxes[e.target.id] = getMultipleSelectionCoordinates(boxes, active);
 					boxes[e.target.id].type = 'group';
 					boxes[e.target.id].zIndex = 12;
-					boxes[e.target.id].identifier = 20;
+					boxes[e.target.id].identifier = e.target.id;
 					if (boxes[e.target.id].width === 0 && boxes[e.target.id].height === 0) {
 						return;
 					}
@@ -476,7 +477,6 @@ class AlignmentGuides extends Component {
 	}
 
 	unSelectBox(e) {
-		console.count('unselect called: ');
 		if (
 			this.didDragHappen &&
 			!(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))
@@ -530,7 +530,7 @@ class AlignmentGuides extends Component {
 		}
 		if (data.type && data.type === 'group') {
 			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
-				newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
+				newData.selections = this.state.captionGroupsToIndexMap?.[data.node.id]?.map(index => {
 					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 					return Object.assign({}, this.state.boxes[currentBox]);
 				});
@@ -610,10 +610,10 @@ class AlignmentGuides extends Component {
 						});
 					} else if (this.state.activeBoxes.includes(box) && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
-							x: this.startingPositions[box].x + data.deltaX,
-							y: this.startingPositions[box].y + data.deltaY,
-							left: this.startingPositions[box].left + data.deltaX,
-							top: this.startingPositions[box].top + data.deltaY
+							x: this.startingPositions[box].x + data?.deltaX,
+							y: this.startingPositions[box].y + data?.deltaY,
+							left: this.startingPositions[box].left + data?.deltaX,
+							top: this.startingPositions[box].top + data?.deltaY
 						});
 					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
@@ -792,7 +792,6 @@ class AlignmentGuides extends Component {
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
-
 		this.props.onResizeStart && this.props.onResizeStart(e, newData);
 
 		// Update starting positions so we can use it to update when group resize happens
@@ -895,10 +894,10 @@ class AlignmentGuides extends Component {
 						}
 					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
-						delete boxes[box].deltaX;
-						delete boxes[box].deltaY;
-						delete boxes[box].deltaW;
-						delete boxes[box].deltaH;
+						delete boxes[box]?.deltaX;
+						delete boxes[box]?.deltaY;
+						delete boxes[box]?.deltaW;
+						delete boxes[box]?.deltaH;
 					} else {
 						boxes[box] = this.state.boxes[box];
 					}
@@ -1277,7 +1276,7 @@ class AlignmentGuides extends Component {
 
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
-		const areMultipleBoxesSelected = activeBoxes.length > 1 || active.indexOf(GROUP_BOX_PREFIX) >= 0;
+		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].length >= 7);
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = Object.keys(boxes).map(box => {
