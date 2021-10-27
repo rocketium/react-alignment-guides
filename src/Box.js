@@ -68,8 +68,6 @@ class Box extends Component{
 
 		if (this.props.dragDisabled) {
 			this.props.cropDisabledCallback();
-		} else if (typeof this.props?.identifier !== 'number') {
-			this.props.onDoubleClickCropElement(this.props.identifier);	
 		} else {
 			this.props.onDoubleClickCropElement(this.props.identifier);			
 		}
