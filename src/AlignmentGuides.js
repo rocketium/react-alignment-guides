@@ -187,7 +187,7 @@ class AlignmentGuides extends Component {
 			boxes = Object.fromEntries(
 				Object.entries(boxes)
 					.filter(([key]) => !key.startsWith(`${GROUP_BOX_PREFIX}`))
-			)
+			);
 			if (this.props?.groups?.length === 0) {
 				this.setState({
 					boxes
@@ -610,10 +610,10 @@ class AlignmentGuides extends Component {
 						});
 					} else if (this.state.activeBoxes.includes(box) && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
-							x: this.startingPositions[box].x + data?.deltaX,
-							y: this.startingPositions[box].y + data?.deltaY,
-							left: this.startingPositions[box].left + data?.deltaX,
-							top: this.startingPositions[box].top + data?.deltaY
+							x: this.startingPositions[box].x + data?.deltaX ?? 0,
+							y: this.startingPositions[box].y + data?.deltaY ?? 0,
+							left: this.startingPositions[box].left + data?.deltaX ?? 0,
+							top: this.startingPositions[box].top + data?.deltaY ?? 0
 						});
 					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
@@ -1276,7 +1276,7 @@ class AlignmentGuides extends Component {
 
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
-		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].length >= 7);
+		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-'));
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = Object.keys(boxes).map(box => {
