@@ -10,7 +10,9 @@ import {
 	getLength,
 	getNewCoordinates,
 	getNewStyle,
-	getOffsetCoordinates, centerToTopLeft,
+	getOffsetCoordinates,
+	centerToTopLeft,
+	getResizeCursorCSS,
 } from './utils/helpers';
 import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
@@ -651,6 +653,7 @@ class Box extends Component{
 					(this.props.didDragOrResizeHappen) ? <span
 							ref={this.coordinates}
 							className={styles.coordinates}
+							style={{transform: `rotate(-${this.props.position?.rotateAngle}deg)`}}
 						>
 						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
 					</span> :
@@ -660,7 +663,7 @@ class Box extends Component{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
 							className={`${styles.dimensions} `}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px' }}
+							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px', transform: `rotate(-${this.props.position?.rotateAngle}deg)` }}
 						>
 						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
 					</span> :
@@ -675,7 +678,7 @@ class Box extends Component{
 								className={className}
 								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
 								id={`resize-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : '', cursor: getResizeCursorCSS(this.props.position?.rotateAngle, handle)}}
 							/>;
 						}) :
 						null

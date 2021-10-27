@@ -396,3 +396,23 @@ export const getMultipleSelectionCoordinates = (allBoxes, activeBoxes) => {
 };
 
 export const getBoxMetadata = () => {};
+
+const getResizeSVGCursor = (angle) => {
+	return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 32 32" ><path d="M 16,5 L 12,10 L 14.5,10 L 14.5,22 L 12,22 L 16,27 L 20,22 L 17.5,22 L 17.5,10 L 20, 10 L 16,5 Z" stroke-linejoin="round" stroke-width="1.2" fill="black" stroke="white" style="transform:rotate(${angle}deg);transform-origin: 16px 16px"></path></svg>`;
+}
+
+export const getResizeCursorCSS = (degree, handle) => {
+	let angle = degree;
+
+	if (handle === 'cr' || handle === 'cl') {
+		angle += 90;
+	} else if (handle === 'tr' || handle === 'bl') {
+		angle += 45;
+	} else if (handle === 'br' || handle === 'tl') {
+		angle -= 45;
+	}
+
+	const cursor = getResizeSVGCursor(angle);
+
+	return `url('${cursor}') 16 16, auto`;
+}
