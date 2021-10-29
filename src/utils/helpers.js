@@ -395,4 +395,50 @@ export const getMultipleSelectionCoordinates = (allBoxes, activeBoxes) => {
 	return { x, y, top: y, left: x, width, height };
 };
 
+export const getGroupCoordinates = (allBoxes, groupedBoxes) => {
+	let selectedBoxes = [];
+	for (let box in allBoxes) {
+		if (allBoxes.hasOwnProperty(box) && groupedBoxes.includes(allBoxes?.[box]?.metadata?.captionIndex)) {
+			selectedBoxes.push(allBoxes[box]);
+		}
+	}
+	if (selectedBoxes.length === 0) {
+		return {
+			x: 0,
+			y: 0,
+			top: 0,
+			left: 0,
+			width: 0,
+			height: 0
+		};
+	}
+
+
+	const x = selectedBoxes.reduce((min, b) => b.x < min ? b.x : min, selectedBoxes[0].x);
+	const y = selectedBoxes.reduce((min, b) => b.y < min ? b.y : min, selectedBoxes[0].y);
+	const width = selectedBoxes.reduce((max, b) => b.x + b.width > max ? b.x + b.width : max, (selectedBoxes[0].x + selectedBoxes[0].width)) - x;
+	const height = selectedBoxes.reduce((max, b) => b.y + b.height > max ? b.y + b.height : max, (selectedBoxes[0].y + selectedBoxes[0].height)) - y;
+
+	return { x, y, top: y, left: x, width, height };
+};
 export const getBoxMetadata = () => {};
+
+const getResizeSVGCursor = (angle) => {
+	return `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="32px" height="32px" viewBox="0 0 32 32" ><path d="M 16,5 L 12,10 L 14.5,10 L 14.5,22 L 12,22 L 16,27 L 20,22 L 17.5,22 L 17.5,10 L 20, 10 L 16,5 Z" stroke-linejoin="round" stroke-width="1.2" fill="black" stroke="white" style="transform:rotate(${angle}deg);transform-origin: 16px 16px"></path></svg>`;
+}
+
+export const getResizeCursorCSS = (degree, handle) => {
+	let angle = degree;
+
+	if (handle === 'cr' || handle === 'cl') {
+		angle += 90;
+	} else if (handle === 'tr' || handle === 'bl') {
+		angle += 45;
+	} else if (handle === 'br' || handle === 'tl') {
+		angle -= 45;
+	}
+
+	const cursor = getResizeSVGCursor(angle);
+
+	return `url('${cursor}') 16 16, auto`;
+}

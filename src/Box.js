@@ -10,7 +10,9 @@ import {
 	getLength,
 	getNewCoordinates,
 	getNewStyle,
-	getOffsetCoordinates, centerToTopLeft,
+	getOffsetCoordinates,
+	centerToTopLeft,
+	getResizeCursorCSS,
 } from './utils/helpers';
 import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
@@ -73,7 +75,7 @@ class Box extends Component{
 
 	selectBox(e) {
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
-		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') ) {
+		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') || ( this.callSelectBox && e.target.id.indexOf('box-ms') >= 0)) {
 			this.props.selectBox(e);
 		}
 		if (this.box && this.box.current) {
@@ -639,7 +641,7 @@ class Box extends Component{
 			const isCropModeActive = cropActiveForElement === identifier;
 			
 			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
-			boxClassNames = position.type === 'group' ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
+			boxClassNames = position.type === 'group' && this.props.isSelected ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const boxStyles = {
@@ -691,6 +693,7 @@ class Box extends Component{
 					(this.props.didDragOrResizeHappen) ? <span
 							ref={this.coordinates}
 							className={styles.coordinates}
+							style={{transform: `rotate(-${this.props.position?.rotateAngle}deg)`}}
 						>
 						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
 					</span> :
@@ -700,14 +703,14 @@ class Box extends Component{
 					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
 					(this.props.didDragOrResizeHappen) ? <span
 							className={`${styles.dimensions} `}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px' }}
+							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px', transform: `rotate(-${this.props.position?.rotateAngle}deg)` }}
 						>
 						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
 					</span> :
 						null :null
 				}
 				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group' && isSelected) ?
 						RESIZE_CORNERS.map(handle => {
 							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
 							return <div
@@ -715,7 +718,7 @@ class Box extends Component{
 								className={className}
 								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
 								id={`resize-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
+								style={{pointerEvents: this.props.isLayerLocked ? 'none' : '', cursor: getResizeCursorCSS(this.props.position?.rotateAngle, handle)}}
 							/>;
 						}) :
 						null
