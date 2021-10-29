@@ -882,7 +882,11 @@ class AlignmentGuides extends Component {
 								left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
 								top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
 								width: this.startingPositions[box].width + widthDiff,
-								height: this.startingPositions[box].height + heightDiff
+								height: this.startingPositions[box].height + heightDiff,
+								deltaW: widthDiff,
+								deltaH: heightDiff,
+								deltaX: boundingBoxPosition.x + xDiff,
+								deltaY: boundingBoxPosition.y + yDiff,
 							});
 						} else {
 							boxes[box] = Object.assign({}, this.state.boxes[box], {
