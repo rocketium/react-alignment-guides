@@ -634,7 +634,9 @@ class AlignmentGuides extends Component {
 							x: this.startingPositions[box].x + data?.deltaX ?? 0,
 							y: this.startingPositions[box].y + data?.deltaY ?? 0,
 							left: this.startingPositions[box].left + data?.deltaX ?? 0,
-							top: this.startingPositions[box].top + data?.deltaY ?? 0
+							top: this.startingPositions[box].top + data?.deltaY ?? 0,
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
 						});
 					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
@@ -793,13 +795,16 @@ class AlignmentGuides extends Component {
 		}
 
 		if (data.type && data.type === 'group') {
+			this.startingPositions = {};
 			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
 					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+					this.startingPositions[currentBox] = Object.assign({}, this.state.boxes[currentBox]);
 					return Object.assign({}, this.state.boxes[currentBox]);
 				});
 			} else {
 				newData.selections = this.state.activeBoxes.map(box => {
+					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			}
@@ -998,15 +1003,20 @@ class AlignmentGuides extends Component {
 			}
 
 			if (data.type && data.type === 'group') {
+				this.startingPositions = {};
 				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
 					newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+						this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 						return Object.assign({}, this.state.boxes[box]);
 					});
 				} else {
 					newData.selections = this.state.activeBoxes.map(box => {
+						this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 						return Object.assign({}, this.state.boxes[box]);
 					});
 				}
+			} else {
+				this.startingPositions[this.state.active] = Object.assign({}, this.state.boxes[this.state.active]);
 			}
 
 			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
@@ -1170,16 +1180,20 @@ class AlignmentGuides extends Component {
 		}
 
 		if (data.type && data.type === 'group') {
+			this.startingPositions = {};
 			if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			} else {
 				newData.selections = this.state.activeBoxes.map(box => {
+					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			}
 		} else {
+			this.startingPositions = {};
 			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 
