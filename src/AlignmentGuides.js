@@ -1058,6 +1058,8 @@ class AlignmentGuides extends Component {
 		if (this.state.boxes[this.state.active].metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
+		this.startingPositions = {};
+		this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		this.props.onRotateEnd && this.props.onRotateEnd(e, newData);
 	}
 
