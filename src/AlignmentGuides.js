@@ -491,6 +491,15 @@ class AlignmentGuides extends Component {
 		if (this.props.isDragging || (e.type === 'keydown' && (e.shiftKey || e.altKey || e.ctrlKey || e.metaKey || e.keyCode === 13))) {
 			return;
 		}
+
+		// prevent de-selection on pressing custom keycodes (configured as props)
+		if (
+			e.type === 'keydown' &&
+			Array.isArray(this.props.preventDeselectionKeyCodes) &&
+			this.props.preventDeselectionKeyCodes.includes(e.keyCode)
+		) {
+			return;
+		}
 				
 		if (
 			(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc')) ||
