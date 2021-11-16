@@ -582,7 +582,7 @@ class AlignmentGuides extends Component {
 		let newData;
 		if (this.state.dragging) {
 			newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			if (data.type && data.type === 'group') {
@@ -855,7 +855,7 @@ class AlignmentGuides extends Component {
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
@@ -1000,7 +1000,7 @@ class AlignmentGuides extends Component {
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
@@ -1057,7 +1057,7 @@ class AlignmentGuides extends Component {
 
 	rotateEndHandler(e, data) {
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[this.state.active].metadata) {
+		if (this.state.boxes?.[this.state.active]?.metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 		this.startingPositions = {};
@@ -1175,7 +1175,7 @@ class AlignmentGuides extends Component {
 			deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
 			deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
 		});
-		if (this.state.boxes[this.state.active].metadata) {
+		if (this.state.boxes?.[this.state.active]?.metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
