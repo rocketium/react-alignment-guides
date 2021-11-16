@@ -582,7 +582,7 @@ class AlignmentGuides extends Component {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			if (data.type && data.type === 'group') {
-				if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Same here, so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
+				if (data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Same here, so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
 					newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
 						const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 						return Object.assign({}, this.state.boxes[currentBox]);
@@ -600,7 +600,7 @@ class AlignmentGuides extends Component {
 		let boxes = null;
 		let guides = null;
 		let hoverGroupedData = [];
-		if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Updating hoverdata for all the boxes inside the Group
+		if (data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Updating hoverdata for all the boxes inside the Group
 			this.state.captionGroupsToIndexMap[data.node.id].forEach(index => {
 				const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 				hoverGroupedData.push(currentBox)
@@ -771,7 +771,7 @@ class AlignmentGuides extends Component {
 		}
 
 		if (data.type && data.type === 'group') {
-			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			if (data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
 					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 					return Object.assign({}, this.state.boxes[currentBox]);
@@ -824,7 +824,7 @@ class AlignmentGuides extends Component {
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes && this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
@@ -959,7 +959,7 @@ class AlignmentGuides extends Component {
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes && this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
@@ -1011,7 +1011,7 @@ class AlignmentGuides extends Component {
 
 	rotateEndHandler(e, data) {
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[this.state.active].metadata) {
+		if (this.state.boxes && this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 		this.props.onRotateEnd && this.props.onRotateEnd(e, newData);
