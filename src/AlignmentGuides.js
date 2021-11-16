@@ -846,7 +846,9 @@ class AlignmentGuides extends Component {
 				});
 				this.startingPositions['box-ms'] = this.state.boxes['box-ms'];
 			}
-			
+		} else {
+			this.startingPositions = {};
+			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 	}
 
@@ -871,7 +873,7 @@ class AlignmentGuides extends Component {
 					if (this.state.activeCaptionGroupCaptions.includes(box)) {
 						// Adding bounding box's starting position
 						// This is because it's added only to the group's box and not the individual members of the group
-						 if (this.startingPositions[this.state.active] && this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
+						if (this.startingPositions[this.state.active] && this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
 							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions[this.state.active].width)) * Math.abs(this.startingPositions[box].width));
 							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions[this.state.active].height)) * Math.abs(this.startingPositions[box].height));
 
