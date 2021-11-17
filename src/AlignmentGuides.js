@@ -311,7 +311,7 @@ class AlignmentGuides extends Component {
 	selectBox(e) {
 		const boundingBox = this.getBoundingBoxElement();
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
-		if (e.target && e.target.id.indexOf('box') >= 0) {
+		if (e.target && e.target.id?.indexOf('box') >= 0) {
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
@@ -323,7 +323,7 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1) || ( e.target.id.indexOf(GROUP_BOX_PREFIX) >= 0 && this.props?.groups?.length > 0)) { // Here we are checking if the selected elements are greater than one or if any group is selected
+			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1) || ( e.target?.id?.indexOf(GROUP_BOX_PREFIX) >= 0 && this.props?.groups?.length > 0)) { // Here we are checking if the selected elements are greater than one or if any group is selected
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
 					if (e.unselect || !this.isDragHappening) {
@@ -398,6 +398,11 @@ class AlignmentGuides extends Component {
 						active: 'box-ms',
 						activeBoxes,
 						boxes
+					}, () => {
+						this.startingPositions = {};
+						this.state.activeBoxes.forEach(box => {
+							this.startingPositions[box] = this.state.boxes[box];
+						});
 					});
 				}
 			} else {
@@ -415,7 +420,7 @@ class AlignmentGuides extends Component {
 				return this.props.onSecondaryClick && this.props.onSecondaryClick(e, data);
 			}
 			this.props.onSelect && this.props.onSelect(e, data);
-		} else if (e.target && e.target.parentNode && e.target.parentNode.id.indexOf('box') >= 0) {
+		} else if (e.target?.parentNode?.id?.indexOf('box') >= 0) {
 			if (e.target.parentNode.id === '' || e.target.parentNode.id.startsWith('box-ms')) {
 				return;
 			}
@@ -457,6 +462,11 @@ class AlignmentGuides extends Component {
 					active: 'box-ms',
 					activeBoxes,
 					boxes
+				}, () => {
+					this.startingPositions = {};
+					this.state.activeBoxes.forEach(box => {
+						this.startingPositions[box] = this.state.boxes[box];
+					});
 				});
 			} else {
 				let { boxes } = this.state;
@@ -506,7 +516,7 @@ class AlignmentGuides extends Component {
 			e.target === window ||
 			(
 				e.target &&
-				e.target.id.indexOf('box') === -1 &&
+				e.target.id?.indexOf('box') === -1 &&
 				e.target.parentNode &&
 				e.target.parentNode.id?.indexOf('box') === -1
 			)
@@ -534,11 +544,11 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[data.node.id].metadata && data.node.id.indexOf(GROUP_BOX_PREFIX) < 0) { // Just updating if the group is present then we skip metadata as we use to to update single captions
+		if (this.state.boxes?.[data.node.id]?.metadata && data.node?.id?.indexOf(GROUP_BOX_PREFIX) < 0) { // Just updating if the group is present then we skip metadata as we use to to update single captions
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
 		if (data.type && data.type === 'group') {
-			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
+			if (data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) { // so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
 				newData.selections = this.state.captionGroupsToIndexMap?.[data.node.id]?.map(index => {
 					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 					return Object.assign({}, this.state.boxes[currentBox]);
@@ -561,7 +571,7 @@ class AlignmentGuides extends Component {
 		// Update starting positions so we can use it to update when group resize happens
 		if (data.type && data.type === 'group') {
 			this.startingPositions = {};
-			if (data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			if (data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				this.state.captionGroupsToIndexMap[data.node.id].forEach(index => {
 					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 					this.startingPositions[currentBox] = this.state.boxes[currentBox];
@@ -571,6 +581,9 @@ class AlignmentGuides extends Component {
 					this.startingPositions[box] = this.state.boxes[box];
 				});
 			}
+		} else {
+			this.startingPositions = {};
+			this.startingPositions[data.node.id] = Object.assign({}, this.state.boxes[data.node.id]);
 		}
 	}
 
@@ -578,18 +591,24 @@ class AlignmentGuides extends Component {
 		let newData;
 		if (this.state.dragging) {
 			newData = Object.assign({}, data);
-			if (this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			if (data.type && data.type === 'group') {
-				if (data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Same here, so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
+				if (data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) { // Same here, so here we don't have all the boxes in activeBoxes for group so now we store it in captionGroupsToIndexMap and we traverse it
 					newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
 						const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
-						return Object.assign({}, this.state.boxes[currentBox]);
+						return Object.assign({}, this.state.boxes[currentBox], {
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
+						});
 					});
 				} else {
 					newData.selections = this.state.activeBoxes.map(box => {
-						return Object.assign({}, this.state.boxes[box]);
+						return Object.assign({}, this.state.boxes[box], {
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
+						});
 					});
 				}
 			}
@@ -600,7 +619,7 @@ class AlignmentGuides extends Component {
 		let boxes = null;
 		let guides = null;
 		let hoverGroupedData = [];
-		if (data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) { // Updating hoverdata for all the boxes inside the Group
+		if (data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) { // Updating hoverdata for all the boxes inside the Group
 			this.state.captionGroupsToIndexMap[data.node.id].forEach(index => {
 				const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
 				hoverGroupedData.push(currentBox)
@@ -615,16 +634,20 @@ class AlignmentGuides extends Component {
 							x: this.startingPositions[box].x + data.deltaX,
 							y: this.startingPositions[box].y + data.deltaY,
 							left: this.startingPositions[box].left + data.deltaX,
-							top: this.startingPositions[box].top + data.deltaY
+							top: this.startingPositions[box].top + data.deltaY,
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
 						});
-					} else if (this.state.activeBoxes.includes(box) && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+					} else if (this.state.activeBoxes?.includes(box) && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
 							x: this.startingPositions[box].x + data?.deltaX ?? 0,
 							y: this.startingPositions[box].y + data?.deltaY ?? 0,
 							left: this.startingPositions[box].left + data?.deltaX ?? 0,
-							top: this.startingPositions[box].top + data?.deltaY ?? 0
+							top: this.startingPositions[box].top + data?.deltaY ?? 0,
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
 						});
-					} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
+					} else if (box === 'box-ms' || box?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
 						delete boxes[box].deltaX;
 						delete boxes[box].deltaY;
@@ -635,7 +658,7 @@ class AlignmentGuides extends Component {
 			}
 
 			guides = Object.keys(this.state.guides).map(guide => {
-				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0 ) { // Chacking it for group inside activeCaptionGroupCaptions state instead of activeBoxes
+				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0 ) { // Chacking it for group inside activeCaptionGroupCaptions state instead of activeBoxes
 					if (this.state.activeCaptionGroupCaptions.includes(guide)) {
 						return Object.assign({}, this.state.guides[guide], {
 							x: calculateGuidePositions(boxes[guide], 'x'),
@@ -661,7 +684,9 @@ class AlignmentGuides extends Component {
 					left: data.left,
 					top: data.top,
 					width: data.width,
-					height: data.height
+					height: data.height,
+					deltaX: data.deltaX,
+					deltaY: data.deltaY,
 				})
 			});
 
@@ -737,22 +762,30 @@ class AlignmentGuides extends Component {
 					});
 				});
 
-				const newBoxes = Object.assign({}, this.state.boxes, {
-					[this.state.active] : Object.assign({}, this.state.boxes[this.state.active], {
-						...activeBox
-					})
+				newData = Object.assign({}, newData, {
+					// calculating starting position: (newData.x - newData.deltaX) for snapped delta
+					deltaX: activeBox.x - (newData.x - newData.deltaX),
+					deltaY: activeBox.y - (newData.y - newData.deltaY),
+					...activeBox
 				});
 
-
-				newData = Object.assign({}, newData, {
-					...activeBox
+				const newBoxes = Object.assign({}, this.state.boxes, {
+					[this.state.active] : Object.assign({}, this.state.boxes[this.state.active], {
+						...activeBox,
+						deltaX: newData.deltaX,
+						deltaY: newData.deltaY,
+					})
 				});
 				
 				this.setState({
 					boxes: newBoxes,
 					guides,
 					match,
-					activeBoxSnappedPosition: activeBox
+					activeBoxSnappedPosition: Object.assign({}, {
+						deltaX: activeBox.x - (newData.x - newData.deltaX),
+						deltaY: activeBox.y - (newData.y - newData.deltaY),
+						...activeBox
+					})
 				});
 			}
 			this.state.dragging && this.props.onDrag && this.props.onDrag(e, newData);
@@ -766,21 +799,26 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if (this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+		if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
 		if (data.type && data.type === 'group') {
-			if (data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			this.startingPositions = {};
+			if (data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				newData.selections = this.state.captionGroupsToIndexMap[data.node.id].map(index => {
 					const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === index);
+					this.startingPositions[currentBox] = Object.assign({}, this.state.boxes[currentBox]);
 					return Object.assign({}, this.state.boxes[currentBox]);
 				});
 			} else {
 				newData.selections = this.state.activeBoxes.map(box => {
+					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			}
+		} else {
+			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 
 		if (this.props.snap && this.state.active && this.state.guides && data.type !== 'group') {
@@ -806,7 +844,7 @@ class AlignmentGuides extends Component {
 		// Update starting positions so we can use it to update when group resize happens
 		if (data.type && data.type === 'group') {
 			this.startingPositions = {};
-			if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				this.state.activeCaptionGroupCaptions.forEach(box => {
 					this.startingPositions[box] = this.state.boxes[box];
 				});
@@ -817,14 +855,16 @@ class AlignmentGuides extends Component {
 				});
 				this.startingPositions['box-ms'] = this.state.boxes['box-ms'];
 			}
-			
+		} else {
+			this.startingPositions = {};
+			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 	}
 
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes && this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
@@ -836,87 +876,95 @@ class AlignmentGuides extends Component {
 		if (data.type && data.type === 'group') {
 			boxes = {};
 			const boundingBox = this.getBoundingBoxElement();
-			if (boundingBox && boundingBox.current) {
-				const boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
-				for (let box in this.state.boxes) {
-					if (this.state.boxes.hasOwnProperty(box)) {
-						if (this.state.activeCaptionGroupCaptions.includes(box)) {
-							// Adding bounding box's starting position
-							// This is because it's added only to the group's box and not the individual members of the group
-							 if (this.startingPositions[this.state.active] && this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
-								const widthDiff = ((data.deltaW / Math.abs(this.startingPositions[this.state.active].width)) * Math.abs(this.startingPositions[box].width));
-								const heightDiff = ((data.deltaH / Math.abs(this.startingPositions[this.state.active].height)) * Math.abs(this.startingPositions[box].height));
-	
-								const initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions[this.state.active].x) / this.startingPositions[this.state.active].width;
-								const xDiff = data.deltaX + initialDeltaXPercentage * (data.deltaW);
-	
-								const initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions[this.state.active].y) / this.startingPositions[this.state.active].height;
-								const yDiff = data.deltaY + initialDeltaYPercentage * (data.deltaH);
-	
-								boxes[box] = Object.assign({}, this.state.boxes[box], {
-									x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
-									y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
-									left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
-									top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
-									width: this.startingPositions[box].width + widthDiff,
-									height: this.startingPositions[box].height + heightDiff
-								});
-							} else {
-								boxes[box] = Object.assign({}, this.state.boxes[box], {
-									x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
-									y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
-									left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
-									top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
-									width: this.startingPositions[box].width + data.deltaW,
-									height: this.startingPositions[box].height + data.deltaH
-								});
-							}
-						} else if (this.state.activeBoxes.includes(box)) {
-							// Adding bounding box's starting position
-							// This is because it's added only to the group's box and not the individual members of the group
-							 if (this.startingPositions['box-ms']) {
-								const widthDiff = ((data.deltaW / Math.abs(this.startingPositions['box-ms'].width)) * Math.abs(this.startingPositions[box].width));
-								const heightDiff = ((data.deltaH / Math.abs(this.startingPositions['box-ms'].height)) * Math.abs(this.startingPositions[box].height));
-	
-								const initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions['box-ms'].x) / this.startingPositions['box-ms'].width;
-								const xDiff = data.deltaX + initialDeltaXPercentage * (data.deltaW);
-	
-								const initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions['box-ms'].y) / this.startingPositions['box-ms'].height;
-								const yDiff = data.deltaY + initialDeltaYPercentage * (data.deltaH);
-	
-								boxes[box] = Object.assign({}, this.state.boxes[box], {
-									x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
-									y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
-									left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
-									top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
-									width: this.startingPositions[box].width + widthDiff,
-									height: this.startingPositions[box].height + heightDiff
-								});
-							} else {
-								boxes[box] = Object.assign({}, this.state.boxes[box], {
-									x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
-									y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
-									left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
-									top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
-									width: this.startingPositions[box].width + data.deltaW,
-									height: this.startingPositions[box].height + data.deltaH
-								});
-							}
-						} else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
-							boxes[box] = Object.assign({}, data);
-							delete boxes[box]?.deltaX;
-							delete boxes[box]?.deltaY;
-							delete boxes[box]?.deltaW;
-							delete boxes[box]?.deltaH;
+			const boundingBoxPosition = getOffsetCoordinates(boundingBox.current);
+			for (let box in this.state.boxes) {
+				if (this.state.boxes.hasOwnProperty(box)) {
+					if (this.state.activeCaptionGroupCaptions.includes(box)) {
+						// Adding bounding box's starting position
+						// This is because it's added only to the group's box and not the individual members of the group
+						if (this.startingPositions[this.state.active] && this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
+							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions[this.state.active].width)) * Math.abs(this.startingPositions[box].width));
+							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions[this.state.active].height)) * Math.abs(this.startingPositions[box].height));
+
+							const initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions[this.state.active].x) / this.startingPositions[this.state.active].width;
+							const xDiff = data.deltaX + initialDeltaXPercentage * (data.deltaW);
+
+							const initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions[this.state.active].y) / this.startingPositions[this.state.active].height;
+							const yDiff = data.deltaY + initialDeltaYPercentage * (data.deltaH);
+
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
+								width: this.startingPositions[box].width + widthDiff,
+								height: this.startingPositions[box].height + heightDiff,
+								deltaW: widthDiff,
+								deltaH: heightDiff,
+								deltaX: boundingBoxPosition.x + xDiff,
+								deltaY: boundingBoxPosition.y + yDiff,
+							});
 						} else {
-							boxes[box] = this.state.boxes[box];
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+								width: this.startingPositions[box].width + data.deltaW,
+								height: this.startingPositions[box].height + data.deltaH
+							});
 						}
+					} else if (this.state.activeBoxes.includes(box)) {
+						// Adding bounding box's starting position
+						// This is because it's added only to the group's box and not the individual members of the group
+						 if (this.startingPositions['box-ms']) {
+							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions['box-ms'].width)) * Math.abs(this.startingPositions[box].width));
+							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions['box-ms'].height)) * Math.abs(this.startingPositions[box].height));
+
+							const initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions['box-ms'].x) / this.startingPositions['box-ms'].width;
+							const xDiff = data.deltaX + initialDeltaXPercentage * (data.deltaW);
+
+							const initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions['box-ms'].y) / this.startingPositions['box-ms'].height;
+							const yDiff = data.deltaY + initialDeltaYPercentage * (data.deltaH);
+
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
+								width: this.startingPositions[box].width + widthDiff,
+								height: this.startingPositions[box].height + heightDiff,
+								deltaW: widthDiff,
+								deltaH: heightDiff,
+								deltaX: boundingBoxPosition.x + xDiff,
+								deltaY: boundingBoxPosition.y + yDiff,
+							});
+						} else {
+							boxes[box] = Object.assign({}, this.state.boxes[box], {
+								x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+								y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+								left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+								top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+								width: this.startingPositions[box].width + data.deltaW,
+								height: this.startingPositions[box].height + data.deltaH,
+								deltaX: boundingBoxPosition.x + data.deltaX,
+								deltaY: boundingBoxPosition.y + data.deltaY,
+							});
+						}
+					} else if (box === 'box-ms' || box?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+						boxes[box] = Object.assign({}, data);
+						delete boxes[box]?.deltaX;
+						delete boxes[box]?.deltaY;
+						delete boxes[box]?.deltaW;
+						delete boxes[box]?.deltaH;
+					} else {
+						boxes[box] = this.state.boxes[box];
 					}
 				}
 			}
 			
 			guides = Object.keys(this.state.guides).map(guide => {
-				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 					if (this.state.activeCaptionGroupCaptions.includes(guide)) {
 						return Object.assign({}, this.state.guides[guide], {
 							x: calculateGuidePositions(boxes[guide], 'x'),
@@ -941,7 +989,7 @@ class AlignmentGuides extends Component {
 					left: data.left,
 					top: data.top,
 					width: data.width,
-					height: data.height
+					height: data.height,
 				})
 			});
 			guides = Object.assign({}, this.state.guides, {
@@ -961,20 +1009,25 @@ class AlignmentGuides extends Component {
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes && this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata && this.state.active.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
-			if (data.type && data.type === 'group' && this.state.boxes) {
-				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			if (data.type && data.type === 'group') {
+				this.startingPositions = {};
+				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 					newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+						this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 						return Object.assign({}, this.state.boxes[box]);
 					});
 				} else {
 					newData.selections = this.state.activeBoxes.map(box => {
+						this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 						return Object.assign({}, this.state.boxes[box]);
 					});
 				}
+			} else {
+				this.startingPositions[this.state.active] = Object.assign({}, this.state.boxes[this.state.active]);
 			}
 
 			this.props.onResizeEnd && this.props.onResizeEnd(e, newData);
@@ -1013,9 +1066,11 @@ class AlignmentGuides extends Component {
 
 	rotateEndHandler(e, data) {
 		let newData = Object.assign({}, data);
-		if (this.state.boxes && this.state.boxes[this.state.active] && this.state.boxes[this.state.active].metadata) {
+		if (this.state.boxes?.[this.state.active]?.metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
+		this.startingPositions = {};
+		this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		this.props.onRotateEnd && this.props.onRotateEnd(e, newData);
 	}
 
@@ -1023,13 +1078,14 @@ class AlignmentGuides extends Component {
 		if (data.isLayerLocked) {
 			return;
 		}
+		// console.log('startingPositions', JSON.parse(JSON.stringify(this.startingPositions)));
 		let newData = Object.assign({}, data);
-		if (data.node && data.node.id && this.state.boxes[data.node.id].metadata && data.node.id.indexOf(GROUP_BOX_PREFIX) < 0) {
+		if (this.state.boxes?.[data.node.id]?.metadata && data.node?.id?.indexOf(GROUP_BOX_PREFIX) < 0) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
 
 		// for caption groups
-		if(data.node && data.node.id && data.node.id.indexOf(GROUP_BOX_PREFIX) >= 0) {
+		if(data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 			delete newData.metadata
 		}
 
@@ -1039,16 +1095,20 @@ class AlignmentGuides extends Component {
 			boxes = {};
 			for (let box in this.state.boxes) {
 				if (this.state.boxes.hasOwnProperty(box)) {
-					if (this.state.activeBoxes.includes(box) || (this.state.activeCaptionGroupCaptions.includes(box) && this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0)) {
+					if (this.state.activeBoxes.includes(box) || (this.state.activeCaptionGroupCaptions.includes(box) && this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0)) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
 							x: this.state.boxes[box].x + (data.changedValues.x || 0),
 							y: this.state.boxes[box].y + (data.changedValues.y || 0),
 							left: this.state.boxes[box].left + (data.changedValues.left || 0),
 							top: this.state.boxes[box].top + (data.changedValues.top || 0),
 							height: this.state.boxes[box].height + (data.changedValues.height || 0),
-							width: this.state.boxes[box].width + (data.changedValues.width || 0)
+							width: this.state.boxes[box].width + (data.changedValues.width || 0),
+							deltaX: this.state.boxes[box].x + (data.changedValues.x || 0) - (this.startingPositions?.[box]?.x || 0),
+							deltaY: this.state.boxes[box].y + (data.changedValues.y || 0) - (this.startingPositions?.[box]?.y || 0),
+							deltaW: this.state.boxes[box].width + (data.changedValues.width || 0) - (this.startingPositions?.[box]?.width || 0),
+							deltaH: this.state.boxes[box].height + (data.changedValues.height || 0) - (this.startingPositions?.[box]?.height || 0),
 						});
-					}  else if (box === 'box-ms' || box.indexOf(GROUP_BOX_PREFIX) >= 0) {
+					}  else if (box === 'box-ms' || box?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 						boxes[box] = Object.assign({}, data);
 						delete boxes[box].deltaX;
 						delete boxes[box].deltaY;
@@ -1069,25 +1129,33 @@ class AlignmentGuides extends Component {
 				return this.state.guides[guide];
 			});
 		} else {
-			if (data.node && data.node.id) {
-				boxes = Object.assign({}, this.state.boxes, {
-					[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
-						x: data.x,
-						y: data.y,
-						left: data.left,
-						top: data.top,
-						width: data.width,
-						height: data.height
-					})
-				});
-	
-				guides = Object.assign({}, this.state.guides, {
-					[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
-						x: calculateGuidePositions(boxes[data.node.id], 'x'),
-						y: calculateGuidePositions(boxes[data.node.id], 'y')
-					})
-				});
-			}
+			newData = Object.assign({}, newData, {
+				deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
+				deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
+				deltaW: data.width - (this.startingPositions?.[data.node.id]?.width || 0),
+				deltaH: data.height - (this.startingPositions?.[data.node.id]?.height || 0),
+			});
+			boxes = Object.assign({}, this.state.boxes, {
+				[data.node.id]: Object.assign({}, this.state.boxes[data.node.id], {
+					x: data.x,
+					y: data.y,
+					left: data.left,
+					top: data.top,
+					width: data.width,
+					height: data.height,
+					deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
+					deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
+					deltaW: data.width - (this.startingPositions?.[data.node.id]?.width || 0),
+					deltaH: data.height - (this.startingPositions?.[data.node.id]?.height || 0),
+				})
+			});
+
+			guides = Object.assign({}, this.state.guides, {
+				[data.node.id]: Object.assign({}, this.state.guides[data.node.id], {
+					x: calculateGuidePositions(boxes[data.node.id], 'x'),
+					y: calculateGuidePositions(boxes[data.node.id], 'y')
+				})
+			});
 		}
 
 		this.setState({
@@ -1096,7 +1164,7 @@ class AlignmentGuides extends Component {
 			guidesActive: false
 		}, () => {
 			if (data.type && data.type === 'group') {
-				if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 					newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
 						return Object.assign({}, this.state.boxes[box]);
 					});
@@ -1112,30 +1180,38 @@ class AlignmentGuides extends Component {
 	}
 
 	keyEndHandler(e, data) {
-		let newData = Object.assign({}, data);
-		if (this.state.boxes[this.state.active].metadata) {
+		let newData = Object.assign({}, data, {
+			deltaX: data.x - (this.startingPositions?.[data.node.id]?.x || 0),
+			deltaY: data.y - (this.startingPositions?.[data.node.id]?.y || 0),
+		});
+		if (this.state.boxes?.[this.state.active]?.metadata) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
-		if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+		if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 			delete newData.metadata;
 		}
 
 		if (data.type && data.type === 'group') {
-			if (this.state.active.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			this.startingPositions = {};
+			if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
+					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			} else {
 				newData.selections = this.state.activeBoxes.map(box => {
+					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			}
+		} else {
+			this.startingPositions = {};
+			this.startingPositions[this.state.active] = this.state.boxes[this.state.active];
 		}
 
 		this.props.onKeyEnd && this.props.onKeyEnd(e, newData);
 		
-
 		this.setState({
 			resizing: false,
 			dragging: false,
@@ -1183,7 +1259,7 @@ class AlignmentGuides extends Component {
 					self.allowDragSelection = true;
 				}
 				// if drag is initiated outside box-ms box; allow dragSelection.
-				if (self.state.boxes && self.state.boxes[self.state.active] && self.state.active.indexOf(self.state.active) >= 0) { // Specific check for Active group box
+				if (self.state.boxes && self.state.boxes[self.state.active] && self.state.active?.indexOf(self.state.active) >= 0) { // Specific check for Active group box
 					if (tempE.x >= self.state.boxes[self.state.active].x &&
 						tempE.x <= self.state.boxes[self.state.active].x + self.state.boxes[self.state.active].width &&
 						tempE.y >= self.state.boxes[self.state.active].y &&

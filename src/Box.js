@@ -69,7 +69,7 @@ class Box extends Component{
 		if (this.props.dragDisabled) {
 			this.props.cropDisabledCallback();
 		} else {
-			this.props.onDoubleClickCropElement(this.props.identifier);			
+			this.props.onDoubleClickElement(this.props.identifier);			
 		}
 	};
 
@@ -203,7 +203,7 @@ class Box extends Component{
 	}
 
 	shortcutHandler(e) {
-		if (this.props.preventShortcutEvents) {
+		if (this.props.preventShortcutEvents || !PREVENT_DEFAULT_KEYS.includes(e.key)) {
 			return;
 		}
 		const { areMultipleBoxesSelected } = this.props;
@@ -231,7 +231,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					width: position.width + DELTA
+					width: position.width + DELTA,
+					movingSides: ['bottom', 'right'], 
 				} : {
 					left: position.left + DELTA,
 					x: position.x + DELTA
@@ -247,7 +248,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					width: position.width - DELTA
+					width: position.width - DELTA,
+					movingSides: ['bottom', 'right'], 
 				} :  {
 					left: position.left - DELTA,
 					x: position.x - DELTA
@@ -263,7 +265,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					height: position.height - DELTA
+					height: position.height - DELTA,
+					movingSides: ['bottom', 'right'], 
 				} : {
 					top: position.top - DELTA,
 					y: position.y - DELTA
@@ -279,7 +282,8 @@ class Box extends Component{
 					this.setState({ callKeyEnd: true });
 				}
 				newValues = e.ctrlKey || e.metaKey ? {
-					height: position.height + DELTA
+					height: position.height + DELTA,
+					movingSides: ['bottom', 'right'], 
 				} : {
 					top: position.top + DELTA,
 					y: position.y + DELTA
@@ -297,7 +301,7 @@ class Box extends Component{
 
 
 			const data = Object.assign({}, position, newValues, {
-				changedValues // for group shortcut keys
+				changedValues, // for group shortcut keys
 			});
 			if (this.props.dragDisabled === true) {
 				if (typeof this.props.dragDisabledCallback === 'function') {
@@ -321,7 +325,9 @@ class Box extends Component{
 			let newValues = {};
 			if (this.box && this.box.current)
 				newValues.node = this.box.current
-			const data = Object.assign({}, position, newValues);
+			const data = Object.assign({}, position, newValues, {
+				movingSides: ['bottom', 'right'],
+			});
 			const keysAllowed = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Meta', 'Control'];
 			if (this.props.dragDisabled === true) {
 				return;
@@ -329,6 +335,38 @@ class Box extends Component{
 			if (keysAllowed.includes(e.key) && this.state.callKeyEnd) {
 				this.props.onKeyEnd && this.props.onKeyEnd(e, data);
 				this.setState({ callKeyEnd: false });
+			}
+		}
+	}
+
+	getMovingSides(currentResizeHandle) {
+		switch (currentResizeHandle) {
+			case 'resize-tl': {
+				return ['top', 'left'];
+			}
+			case 'resize-ct': {
+				return ['top'];
+			}
+			case 'resize-tr': {
+				return ['top', 'right'];
+			}
+			case 'resize-cl': {
+				return ['left'];
+			}
+			case 'resize-cr': {
+				return ['right'];
+			}
+			case 'resize-bl': {
+				return ['bottom', 'left'];
+			}
+			case 'resize-cb': {
+				return ['bottom'];
+			}
+			case 'resize-br': {
+				return ['bottom', 'right'];
+			}
+			default: {
+				return [];
 			}
 		}
 	}
@@ -382,6 +420,7 @@ class Box extends Component{
 
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
+			const movingSides = this.getMovingSides(e.target && e.target.getAttribute('id'));
 			const onResize = (e) => {
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
@@ -409,7 +448,8 @@ class Box extends Component{
 					left: tempPosition.left,
 					top: tempPosition.top,
 					rotateAngle,
-					node: this.box.current
+					node: this.box.current,
+					movingSides
 				};
 
 				// if (rotateAngle !== 0) {
