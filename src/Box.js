@@ -372,13 +372,13 @@ class Box extends Component{
 	}
 
 	onResizeStart(e) {
-		if (this.props.position.resize || this.props.position.resize === undefined) { // Allow resize only if resize property for the box is true or undefined
+		const boundingBox = this.props.getBoundingBoxElement();
+		if (this.props.position.resize || this.props.position.resize === undefined && this.box.current && boundingBox && boundingBox.current) { // Allow resize only if resize property for the box is true or undefined
 			e.stopPropagation();
 			if (this.box?.current?.style) {
 				this.box.current.style.zIndex = 99;
 			}
 			const { target, clientX: startX, clientY: startY } = e;
-			const boundingBox = this.props.getBoundingBoxElement();
 			const { position } = this.props;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
 			const startingDimensions = getOffsetCoordinates(this.box.current);
