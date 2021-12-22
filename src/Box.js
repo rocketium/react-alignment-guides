@@ -371,6 +371,16 @@ class Box extends Component{
 		}
 	}
 
+	isCentreNode(id) {
+		switch (id) {
+			case 'resize-ct':
+			case 'resize-cl':
+			case 'resize-cr':
+			case 'resize-cb': return true;
+			default: return false;
+		}
+	}
+
 	onResizeStart(e) {
 		const boundingBox = this.props.getBoundingBoxElement();
 		if (this.props.position.resize || this.props.position.resize === undefined && this.box.current && boundingBox && boundingBox.current) { // Allow resize only if resize property for the box is true or undefined
@@ -421,11 +431,14 @@ class Box extends Component{
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
 			const movingSides = this.getMovingSides(e.target && e.target.getAttribute('id'));
+			const resizeHandleId = e.target && e.target.getAttribute('id');
+
 			const onResize = (e) => {
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
+				const isAspectRatioMaintained = e.shiftKey || this.isCentreNode(resizeHandleId) ? false : true;
 				const deltaX = clientX - startX;
-				const deltaY = e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+				const deltaY = isAspectRatioMaintained ? sign * deltaX / ratio : clientY - startY;
 
 				const alpha = Math.atan2(deltaY, deltaX);
 				const deltaL = getLength(deltaX, deltaY);
