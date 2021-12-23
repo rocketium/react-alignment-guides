@@ -323,7 +323,7 @@ class AlignmentGuides extends Component {
 				node: e.target,
 				metadata: this.state.boxes[e.target.id].metadata
 			};
-			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1) || ( e.target?.id?.indexOf(GROUP_BOX_PREFIX) >= 0 && this.props?.groups?.length > 0)) { // Here we are checking if the selected elements are greater than one or if any group is selected
+			if (e.shiftKey || e.metaKey || e.ctrlKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1) || ( e.target?.id?.indexOf(GROUP_BOX_PREFIX) >= 0 && this.props?.groups?.length > 0)) { // Here we are checking if the selected elements are greater than one or if any group is selected
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.id)) {
 					if (e.unselect || !this.isDragHappening) {
@@ -435,7 +435,7 @@ class AlignmentGuides extends Component {
 				node: e.target.parentNode,
 				metadata: this.state.boxes[e.target.parentNode.id].metadata
 			};
-			if (e.shiftKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1)) {
+			if (e.shiftKey || e.metaKey || e.ctrlKey || (e.type === 'contextmenu' && this.state.activeBoxes.length > 1)) {
 				let { activeBoxes, boxes } = this.state;
 				if (activeBoxes.includes(e.target.parentNode.id)) {
 					activeBoxes = activeBoxes.filter(activeBox => activeBox !== e.target.parentNode.id);
@@ -558,7 +558,7 @@ class AlignmentGuides extends Component {
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			}
-		} else if (!e.shiftKey) {
+		} else if (!(e.shiftKey || e.metaKey || e.ctrlKey)) {
 			this.setState({
 				activeBoxes: [
 					e.target.parentNode.id
