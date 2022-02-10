@@ -56,7 +56,7 @@
 		"eslint-plugin-react": "^7.19.0",
 		"eslint-plugin-standard": "^4.0.1",
 		"gh-pages": "^2.2.0",
-		"node-sass": "^4.13.1",
+		"node-sass": "^7.0.0",
 		"postcss-inline-svg": "^4.1.0",
 		"postcss-svgo": "^4.0.2",
 		"react": "^16.13.1",
