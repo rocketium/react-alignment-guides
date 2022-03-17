@@ -431,7 +431,6 @@ class Box extends Component{
 				const { clientX, clientY } = e;
 				const deltaX = clientX - startX;
 				const deltaY = !e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
-				// shiftKey is for maintaining aspect ratio, but now we have reversed it's functionality
 
 				const alpha = Math.atan2(deltaY, deltaX);
 				const deltaL = getLength(deltaX, deltaY);
