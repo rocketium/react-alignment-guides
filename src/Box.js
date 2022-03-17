@@ -430,7 +430,8 @@ class Box extends Component{
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
 				const deltaX = clientX - startX;
-				const deltaY = e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+				const deltaY = !e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+				// shiftKey is for maintaining aspect ratio, but now we have reversed it's functionality
 
 				const alpha = Math.atan2(deltaY, deltaX);
 				const deltaL = getLength(deltaX, deltaY);
