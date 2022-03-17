@@ -421,6 +421,11 @@ class Box extends Component{
 			this.props.onResizeStart && this.props.onResizeStart(e, data);
 			const startingPosition = Object.assign({}, data);
 			const movingSides = this.getMovingSides(e.target && e.target.getAttribute('id'));
+
+			let movingSidesObj = {};
+			movingSides.forEach(side => movingSidesObj[side] = true);
+			const resizeAroundCenter = e.altKey;
+
 			const onResize = (e) => {
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
@@ -432,13 +437,23 @@ class Box extends Component{
 
 				// const { minWidth, minHeight } = this.props;
 				const beta = alpha - degToRadian(rotateAngle);
-				const deltaW = deltaL * Math.cos(beta);
-				const deltaH = deltaL * Math.sin(beta);
+				let deltaW = deltaL * Math.cos(beta);
+				let deltaH = deltaL * Math.sin(beta);
 
 				const type = target.id.replace('resize-', '');
 
+				if (resizeAroundCenter) {
+					if (movingSidesObj.right || movingSidesObj.left) deltaW = deltaW * 2;
+					if (movingSidesObj.top || movingSidesObj.bottom) deltaH = deltaH * 2;
+				}
+
 				const { position: { cx, cy }, size: { width, height } } = getNewStyle(type, rect, deltaW, deltaH, 10, 10); // Use a better way to set minWidth and minHeight
 				const tempPosition = centerToTopLeft({ cx, cy, width, height, rotateAngle });
+
+				if (resizeAroundCenter) {
+					if (movingSidesObj.right || movingSidesObj.left) tempPosition.left = tempPosition.left - (deltaW / 2);
+					if (movingSidesObj.top || movingSidesObj.bottom) tempPosition.top = tempPosition.top - (deltaH / 2);
+				}
 
 				data = {
 					width: tempPosition.width,
@@ -452,18 +467,6 @@ class Box extends Component{
 					movingSides
 				};
 
-				// if (rotateAngle !== 0) {
-				// 	data = {
-				// 		width: tempPosition.width,
-				// 		height: tempPosition.height,
-				// 		x: tempPosition.left,
-				// 		y: tempPosition.top,
-				// 		left: tempPosition.left,
-				// 		top: tempPosition.top,
-				// 		rotateAngle,
-				// 		node: this.box.current
-				// 	};
-				// }
 				this.didResizeHappen = true;
 				// Calculate the restrictions if resize goes out of bounds
 				const currentPosition = this.props.boundToParent ?
