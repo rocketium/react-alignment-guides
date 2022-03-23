@@ -313,6 +313,7 @@ class AlignmentGuides extends Component {
 		const boundingBoxPosition = boundingBox.current.getBoundingClientRect().toJSON();
 		if (e.target && e.target.id?.indexOf('box') >= 0) {
 			const boxDimensions = e.target.getBoundingClientRect().toJSON();
+			console.log('this.state.boxes[e.target.id].metadata', this.state.boxes[e.target.id].metadata);
 			let data = {
 				x: boxDimensions.x - boundingBoxPosition.x,
 				y: boxDimensions.y - boundingBoxPosition.y,
@@ -1362,8 +1363,8 @@ class AlignmentGuides extends Component {
 		})
 	}
 	// drag select handler
-
 	render() {
+		console.log('dragToggleHoverBgStyle', this.props.dragToggleHoverBgStyle);
 		const { active, boxes, activeBoxes, guides } = this.state;
 		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-'));
 
@@ -1411,6 +1412,7 @@ class AlignmentGuides extends Component {
 				setPreventShortcutEvents={this.setPreventShortcutEvents}
 				toggleHover={this.props.toggleHover}
 				overRideStyles={this.props.overrideHover}
+				dragToggleHoverBgStyle={this.props.dragToggleHoverBgStyle}
 				overRideSelected = {this.props.overrideSelected}
 				url={url}
 				zoomScale={zoomScale}

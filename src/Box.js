@@ -40,11 +40,14 @@ class Box extends Component{
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+		this.handleDoubleClick = this.handleDoubleClick.bind(this);
+		this.endCropMode = this.endCropMode.bind(this);
+		this.dragHoverBoxNew = this.dragHoverBoxNew.bind(this);
+		this.unDragHoverBoxNew = this.unDragHoverBoxNew.bind(this);
+		this.onDropboxNew = this.onDropboxNew.bind(this);
 		this.state = {
 			callKeyEnd: false
 		};
-		this.handleDoubleClick = this.handleDoubleClick.bind(this);
-		this.endCropMode = this.endCropMode.bind(this);
 	}
 
 	endCropMode( data ) {
@@ -74,6 +77,7 @@ class Box extends Component{
 	};
 
 	selectBox(e) {
+		console.log('e', e);
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
 		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') || ( this.callSelectBox && e.target.id.indexOf('box-ms') >= 0)) {
 			this.props.selectBox(e);
@@ -92,6 +96,24 @@ class Box extends Component{
 
 	unHoverBox(e) {
 		e.currentTarget.classList.remove(this.props.toggleHover);
+	}
+
+	dragHoverBoxNew(e) {
+		if (this.props.cropActiveForElement !== undefined)
+			return;
+
+		if (e.currentTarget.hasAttribute('identifier'))
+			e.currentTarget.classList.add(this.props.dragToggleHoverBgStyle);
+	}
+
+	onDropboxNew() {
+		if (this.props.onDragOver) {
+			this.props.onDragOver(this.props.metadata?.captionIndex || null);
+		}
+	}
+
+	unDragHoverBoxNew(e) {
+		e.currentTarget.classList.remove(this.props.dragToggleHoverBgStyle);
 	}
 
 	onDragStart(e) {
@@ -678,6 +700,9 @@ class Box extends Component{
 				onKeyUp={areMultipleBoxesSelected ? null : this.onShortcutKeyUp} // remove event from div when multiple boxes are selected
 				onMouseOver={this.hoverBox}
 				onMouseOut={this.unHoverBox}
+				onDragOver={this.dragHoverBoxNew}
+				onDragLeave={this.unDragHoverBoxNew}
+				onDrop={this.onDropboxNew}
 				ref={this.box}
 				style={boxStyles}
 				identifier={identifier}
