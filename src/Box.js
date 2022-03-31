@@ -108,7 +108,7 @@ class Box extends Component{
 
 	onDropboxNew() {
 		if (this.props.onDragOver) {
-			this.props.onDragOver(this.props.metadata?.captionIndex || null);
+			this.props.onDragOver(Number.isInteger(this.props.metadata?.captionIndex) ?  this.props.metadata?.captionIndex : null);
 		}
 	}
 
