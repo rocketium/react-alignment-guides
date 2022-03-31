@@ -42,9 +42,9 @@ class Box extends Component{
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
 		this.handleDoubleClick = this.handleDoubleClick.bind(this);
 		this.endCropMode = this.endCropMode.bind(this);
-		this.dragHoverBoxNew = this.dragHoverBoxNew.bind(this);
-		this.unDragHoverBoxNew = this.unDragHoverBoxNew.bind(this);
-		this.onDropboxNew = this.onDropboxNew.bind(this);
+		this.dragOverBox = this.dragOverBox.bind(this);
+		this.unDragOverBox = this.unDragOverBox.bind(this);
+		this.onDropElementBox = this.onDropElementBox.bind(this);
 		this.state = {
 			callKeyEnd: false
 		};
@@ -77,7 +77,6 @@ class Box extends Component{
 	};
 
 	selectBox(e) {
-		console.log('e', e);
 		// To make sure AlignmentGuides' selectBox method is not called at the end of drag or resize.
 		if (this.callSelectBox && e.currentTarget.hasAttribute('identifier') || ( this.callSelectBox && e.target.id.indexOf('box-ms') >= 0)) {
 			this.props.selectBox(e);
@@ -98,7 +97,7 @@ class Box extends Component{
 		e.currentTarget.classList.remove(this.props.toggleHover);
 	}
 
-	dragHoverBoxNew(e) {
+	dragOverBox(e) {
 		if (this.props.cropActiveForElement !== undefined)
 			return;
 
@@ -106,13 +105,13 @@ class Box extends Component{
 			e.currentTarget.classList.add(this.props.dragToggleHoverBgStyle);
 	}
 
-	onDropboxNew() {
+	onDropElementBox() {
 		if (this.props.onDragOver) {
 			this.props.onDragOver(Number.isInteger(this.props.metadata?.captionIndex) ?  this.props.metadata?.captionIndex : null);
 		}
 	}
 
-	unDragHoverBoxNew(e) {
+	unDragOverBox(e) {
 		e.currentTarget.classList.remove(this.props.dragToggleHoverBgStyle);
 	}
 
@@ -700,9 +699,9 @@ class Box extends Component{
 				onKeyUp={areMultipleBoxesSelected ? null : this.onShortcutKeyUp} // remove event from div when multiple boxes are selected
 				onMouseOver={this.hoverBox}
 				onMouseOut={this.unHoverBox}
-				onDragOver={this.dragHoverBoxNew}
-				onDragLeave={this.unDragHoverBoxNew}
-				onDrop={this.onDropboxNew}
+				onDragOver={this.dragOverBox}
+				onDragLeave={this.unDragOverBox}
+				onDrop={this.onDropElementBox}
 				ref={this.box}
 				style={boxStyles}
 				identifier={identifier}
