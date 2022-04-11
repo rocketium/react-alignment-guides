@@ -429,8 +429,17 @@ class Box extends Component{
 			const onResize = (e) => {
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
-				const deltaX = clientX - startX;
-				const deltaY = !e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+
+				let deltaX = clientX - startX;
+				let deltaY = clientY - startY; //!e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+
+				if ((movingSidesObj.right || movingSidesObj.left) &&
+					(movingSidesObj.top || movingSidesObj.bottom)
+				) {
+					if (e.shiftKey && !e.ctrlKey) {
+						deltaY = sign * deltaX / ratio;
+					}
+				}
 
 				const alpha = Math.atan2(deltaY, deltaX);
 				const deltaL = getLength(deltaX, deltaY);
