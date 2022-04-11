@@ -457,7 +457,7 @@ class Box extends Component{
 				if ((movingSidesObj.right || movingSidesObj.left) &&
 					(movingSidesObj.top || movingSidesObj.bottom)
 				) {
-					if (e.shiftKey && !e.ctrlKey) {
+					if (!e.shiftKey && !e.ctrlKey) {
 						deltaY = sign * deltaX / ratio;
 					}
 				}
