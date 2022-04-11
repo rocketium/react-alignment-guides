@@ -40,11 +40,14 @@ class Box extends Component{
 		this.onResizeStart = this.onResizeStart.bind(this);
 		this.onRotateStart = this.onRotateStart.bind(this);
 		this.getCoordinatesWrapperWidth = this.getCoordinatesWrapperWidth.bind(this);
+		this.handleDoubleClick = this.handleDoubleClick.bind(this);
+		this.endCropMode = this.endCropMode.bind(this);
+		this.dragOverBox = this.dragOverBox.bind(this);
+		this.unDragOverBox = this.unDragOverBox.bind(this);
+		this.onDropElementBox = this.onDropElementBox.bind(this);
 		this.state = {
 			callKeyEnd: false
 		};
-		this.handleDoubleClick = this.handleDoubleClick.bind(this);
-		this.endCropMode = this.endCropMode.bind(this);
 	}
 
 	endCropMode( data ) {
@@ -92,6 +95,24 @@ class Box extends Component{
 
 	unHoverBox(e) {
 		e.currentTarget.classList.remove(this.props.toggleHover);
+	}
+
+	dragOverBox(e) {
+		if (this.props.cropActiveForElement !== undefined)
+			return;
+
+		if (e.currentTarget.hasAttribute('identifier'))
+			e.currentTarget.classList.add(this.props.dragToggleHoverBgStyle);
+	}
+
+	onDropElementBox() {
+		if (this.props.onDragOver) {
+			this.props.onDragOver(Number.isInteger(this.props.metadata?.captionIndex) ?  this.props.metadata?.captionIndex : null);
+		}
+	}
+
+	unDragOverBox(e) {
+		e.currentTarget.classList.remove(this.props.dragToggleHoverBgStyle);
 	}
 
 	onDragStart(e) {
@@ -687,6 +708,9 @@ class Box extends Component{
 				onKeyUp={areMultipleBoxesSelected ? null : this.onShortcutKeyUp} // remove event from div when multiple boxes are selected
 				onMouseOver={this.hoverBox}
 				onMouseOut={this.unHoverBox}
+				onDragOver={this.dragOverBox}
+				onDragLeave={this.unDragOverBox}
+				onDrop={this.onDropElementBox}
 				ref={this.box}
 				style={boxStyles}
 				identifier={identifier}
