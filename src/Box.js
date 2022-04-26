@@ -450,15 +450,15 @@ class Box extends Component{
 			const onResize = (e) => {
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
+
 				let deltaX = clientX - startX;
 				let deltaY = clientY - startY; //!e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
-				if (movingSidesObj.right || movingSidesObj.left) {
+
+				if ((movingSidesObj.right || movingSidesObj.left) &&
+					(movingSidesObj.top || movingSidesObj.bottom)
+				) {
 					if (!e.shiftKey && !e.ctrlKey) {
-						deltaY = (sign * deltaX) / ratio
-					}
-				} else if (movingSidesObj.top || movingSidesObj.bottom) {
-					if (!e.shiftKey && !e.ctrlKey) {
-						deltaX = sign * deltaY * ratio
+						deltaY = sign * deltaX / ratio;
 					}
 				}
 
