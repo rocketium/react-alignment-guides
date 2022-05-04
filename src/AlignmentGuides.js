@@ -172,7 +172,6 @@ class AlignmentGuides extends Component {
 	}
 
 	componentDidUpdate(prevProps, prevState) {
-		console.log('kaaam');
 		const captionGroupsToIndexMap = {};
 		if (this.state.activeBoxes.length > 0) {
 			const activeBoxWithoutLock = this.state.activeBoxes.filter(activeBox => {
