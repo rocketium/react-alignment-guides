@@ -442,3 +442,13 @@ export const getResizeCursorCSS = (handle, degree = 0) => {
 
 	return `url('${cursor}') 16 16, auto`;
 }
+export const checkGroupChildElementsLocked = (captions) => {
+	let isLocked = true;
+	captions?.forEach(caption => {
+		if (!caption.isLayerLocked) {
+			isLocked = false;
+			return isLocked;
+		}
+	});
+	return isLocked;
+}
