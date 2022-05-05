@@ -6,7 +6,8 @@ import {
 	getMultipleSelectionCoordinates,
 	getOffsetCoordinates,
 	proximityListener,
-	getGroupCoordinates
+	getGroupCoordinates,
+	checkGroupChildElementsLocked
 } from './utils/helpers'
 import styles from './styles.scss';
 import {GROUP_BOX_PREFIX} from './utils/constants';
@@ -129,6 +130,7 @@ class AlignmentGuides extends Component {
 					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
 					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
 					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].isLayerLocked = checkGroupChildElementsLocked(selections);
 					// storing all the indexes inside a particular group to map it later if we need
 					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
 					// active = `box-ms-${index}`;
@@ -208,6 +210,7 @@ class AlignmentGuides extends Component {
 					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
 					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
 					boxes[`${GROUP_BOX_PREFIX}${index}`].groupedCaptions = groupArray;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].isLayerLocked = checkGroupChildElementsLocked(selections);
 					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
 					// To check if we added new group, then we select it as active
 					if (this.props.groups?.length > prevProps.groups?.length) {
