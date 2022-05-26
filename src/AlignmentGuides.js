@@ -82,7 +82,10 @@ class AlignmentGuides extends Component {
 			};
 
 			this.props.boxes.forEach((dimensions, index) => {
-				boxes[`box${index}`] = dimensions;
+				boxes[`box${index}`] = Object.assign({}, dimensions, {
+					isHeightZero: !isNaN(Number(dimensions?.height)) ? Math.round(dimensions?.height) <= 0 : undefined,
+					isWidthZero: !isNaN(Number(dimensions?.width)) ? Math.round(dimensions?.width) <= 0 : undefined,
+				});
 				guides[`box${index}`] = {
 					x: calculateGuidePositions(dimensions, 'x'),
 					y: calculateGuidePositions(dimensions, 'y')

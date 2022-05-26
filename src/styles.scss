@@ -417,3 +417,28 @@
     align-items: center;
     justify-content: center;
 }
+
+.hideBorders {
+	outline: 1px solid transparent !important;
+	box-shadow: 0 0 0 1px transparent !important;
+
+	& {
+		.zeroDimensionBox {
+			pointer-events: none;
+		}
+		
+		.zeroDimensionBoxSelected {
+			outline: 1px solid #1b47f3;
+			box-shadow: 0 0 0 1px #1b47f3;
+		}
+	}
+
+	&:hover {
+		outline: 1px solid transparent !important;
+		box-shadow: 0 0 0 1px transparent !important;
+		.zeroDimensionBox {
+			outline: 1px solid #1b47f3;
+			box-shadow: 0 0 0 1px #1b47f3;
+		}
+	}
+}
