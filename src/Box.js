@@ -461,8 +461,8 @@ class Box extends Component{
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
 
-				let deltaX = clientX - startX;
-				let deltaY = clientY - startY; //!e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+				let deltaX = this.props.position?.isWidthZero ? 0 : clientX - startX;
+				let deltaY = this.props.position?.isHeightZero ? 0 : clientY - startY; //!e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
 
 				if ((movingSidesObj.right || movingSidesObj.left) &&
 					(movingSidesObj.top || movingSidesObj.bottom)
@@ -796,14 +796,16 @@ class Box extends Component{
 									} else if (handle.includes('l')) {
 										visibleHandle = 'cl';
 									}
-									additionalStyles.bottom = 0;
+									// additionalStyles.bottom = 0;
+									additionalStyles.top = 0;
 								} else if (position.isWidthZero) {
 									if (handle.includes('t')) {
 										visibleHandle = 'ct';
 									} else if (handle.includes('b')) {
 										visibleHandle = 'cb';
 									}
-									additionalStyles.right = 0;
+									// additionalStyles.right = 0;
+									additionalStyles.left = 0;
 								}
 								const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
 								return <div
