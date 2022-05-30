@@ -14,9 +14,11 @@ import {
 	centerToTopLeft,
 	getResizeCursorCSS,
 } from './utils/helpers';
-import { RESIZE_CORNERS, ROTATE_HANDLES } from './utils/constants';
+import { RESIZE_CORNERS, RESIZE_CORNERS_FOR_NO_HEIGHT, RESIZE_CORNERS_FOR_NO_WIDTH, RESIZE_SIDES, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
+const DEFAULT_SIZE = 10;
+const DIMENSION_ZERO_OFFSET = -12.5;
 const PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
 
 class Box extends Component{
@@ -45,6 +47,7 @@ class Box extends Component{
 		this.dragOverBox = this.dragOverBox.bind(this);
 		this.unDragOverBox = this.unDragOverBox.bind(this);
 		this.onDropElementBox = this.onDropElementBox.bind(this);
+		this.filterControls = this.filterControls.bind(this);
 		this.state = {
 			callKeyEnd: false
 		};
@@ -243,7 +246,14 @@ class Box extends Component{
 			}
 			const { position } = this.props;
 
-			const DELTA = e.shiftKey ? 10 : 1;
+			let DELTA = e.shiftKey ? 10 : 1;
+
+			if ((e.ctrlKey || e.metaKey) && position?.isWidthZero && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
+				DELTA = 0;
+			} else if ((e.ctrlKey || e.metaKey) && position?.isHeightZero && (e.key === 'ArrowBottom' || e.key === 'ArrowTop')) {
+				DELTA = 0;
+			}
+
 			let newValues = {};
 			let changedValues = {};
 
@@ -451,13 +461,13 @@ class Box extends Component{
 				!this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(true);
 				const { clientX, clientY } = e;
 
-				let deltaX = clientX - startX;
-				let deltaY = clientY - startY; //!e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
+				let deltaX = this.props.position?.isWidthZero ? 0 : clientX - startX;
+				let deltaY = this.props.position?.isHeightZero ? 0 : clientY - startY; //!e.shiftKey && !e.ctrlKey ? sign * deltaX / ratio : clientY - startY;
 
 				if ((movingSidesObj.right || movingSidesObj.left) &&
 					(movingSidesObj.top || movingSidesObj.bottom)
 				) {
-					if (!e.shiftKey && !e.ctrlKey) {
+					if (!e.shiftKey && !e.ctrlKey && ( !this.props.position?.isWidthZero && !this.props.position?.isHeightZero )) {
 						deltaY = sign * deltaX / ratio;
 					}
 				}
@@ -477,7 +487,7 @@ class Box extends Component{
 					if (movingSidesObj.top || movingSidesObj.bottom) deltaH = deltaH * 2;
 				}
 
-				const { position: { cx, cy }, size: { width, height } } = getNewStyle(type, rect, deltaW, deltaH, 10, 10); // Use a better way to set minWidth and minHeight
+				const { position: { cx, cy }, size: { width, height } } = getNewStyle(type, rect, deltaW, deltaH, this.props.position?.isWidthZero ? 0 : 10, this.props.position?.isHeightZero ? 0 : 10); // Use a better way to set minWidth and minHeight
 				const tempPosition = centerToTopLeft({ cx, cy, width, height, rotateAngle });
 
 				if (resizeAroundCenter) {
@@ -486,8 +496,8 @@ class Box extends Component{
 				}
 
 				data = {
-					width: tempPosition.width,
-					height: tempPosition.height,
+					width: this.props.position?.isWidthZero ? 0 : tempPosition.width,
+					height: this.props.position?.isHeightZero ? 0 : tempPosition.height,
 					x: tempPosition.left,
 					y: tempPosition.top,
 					left: tempPosition.left,
@@ -631,6 +641,14 @@ class Box extends Component{
 		}
 	}
 
+	filterControls(control, index) {
+		if (this.props.position?.isHeightZero) {
+			return RESIZE_CORNERS_FOR_NO_HEIGHT.includes(control);
+		} else if (this.props.position?.isWidthZero) {
+			return RESIZE_CORNERS_FOR_NO_WIDTH.includes(control);
+		}
+		return true;
+	}
 
 	componentDidMount() {
 		if (this.props.areMultipleBoxesSelected && this.props.isSelected) {
@@ -673,7 +691,12 @@ class Box extends Component{
 
 			const isCropModeActive = cropActiveForElement === identifier;
 			
-			let boxClassNames = isSelected ? `${this.props.overRideStyles ? this.props.overRideStyles: styles.box} ${this.props.overRideSelected ? this.props.overRideSelected : styles.selected}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
+			let boxClassNames = `
+				${(position.isWidthZero || position.isHeightZero) ? styles.hideBorders : ''}
+				${
+					isSelected ? `${this.props.overRideSelected ? this.props.overRideSelected : styles.selected} ${this.props.overRideStyles ? this.props.overRideStyles: styles.box}` : `${this.props.overRideStyles? this.props.overRideStyles : styles.box}`
+				}
+			`
 			boxClassNames = position.type === 'group' && this.props.isSelected ? `${boxClassNames} ${this.props.overRideSelected}` : boxClassNames;
 			boxClassNames = isSelected && areMultipleBoxesSelected && position.type !== 'group' ? `${boxClassNames} ${styles.groupElement}` : boxClassNames;
 			const rotateAngle = position.rotateAngle ? position.rotateAngle : 0;
@@ -684,9 +707,17 @@ class Box extends Component{
 				top: `${position.top}px`,
 				left: `${position.left}px`,
 				zIndex: position.zIndex ? position.zIndex : 98,
-				transform: isCropModeActive ? '' : `rotate(${rotateAngle}deg)`,
+				transform: isCropModeActive ? '' : `translate(${position.isWidthZero ? -5 : 0}px, ${position.isHeightZero ? -5 : 0}px) rotate(${rotateAngle}deg)`,
 				pointerEvents: this.props.isLayerLocked ? 'none' : '',
 			};
+
+			if (position.isWidthZero || position.isHeightZero) {
+				boxStyles.display = 'flex';
+				boxStyles.justifyContent = 'center';
+				boxStyles.alignItems = 'center';
+				boxStyles.width = `${position.isWidthZero ? DEFAULT_SIZE : position.width}px`;
+				boxStyles.height = `${position.isHeightZero ? DEFAULT_SIZE : position.height}px`;
+			}
 
 			// if (isSelected) {
 			// 	boxStyles.zIndex = 99;
@@ -722,57 +753,96 @@ class Box extends Component{
 					}
 				}}
 			>
-
+				{(position.isWidthZero || position.isHeightZero) && <div 
+				className={`${isSelected ? styles.zeroDimensionBoxSelected : ''} ${styles.zeroDimensionBox}`}
+				style={{
+					width: `${position.isWidthZero ? 0 : position.width}px`,
+					height: `${position.isHeightZero ? 0 : position.height}px`,
+					top: `${position.top}px`,
+					left: `${position.left}px`,
+					zIndex: position.zIndex ? position.zIndex : 98,
+					pointerEvents: 'none',
+				}}></div>}
 				{<>
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-					(this.props.didDragOrResizeHappen) ? <span
-							ref={this.coordinates}
-							className={styles.coordinates}
-							style={{transform: `rotate(-${this.props.position?.rotateAngle}deg)`}}
-						>
-						{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
-					</span> :
-						null :null
-				}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
-					(this.props.didDragOrResizeHappen) ? <span
-							className={`${styles.dimensions} `}
-							style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px', transform: `rotate(-${this.props.position?.rotateAngle}deg)` }}
-						>
-						<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
-					</span> :
-						null :null
-				}
-				{
-					(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group' && isSelected) ?
-						RESIZE_CORNERS.map(handle => {
-							const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
-							return <div
-								key={handle}
-								className={className}
-								onMouseDown={this.props.resize ? this.onResizeStart : null} // If this.props.resize is false then remove the mouseDown event handler for resize
-								id={`resize-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : '', cursor: getResizeCursorCSS(handle, this.props.position?.rotateAngle)}}
-							/>;
-						}) :
-						null
-				}
-				{
-					isSelected && !areMultipleBoxesSelected ?
-						ROTATE_HANDLES.map(handle => {
-							const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
-							return <div
-								key={handle}
-								className={className}
-								onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
-								id={`rotate-${handle}`}
-								style={{pointerEvents: this.props.isLayerLocked ? 'none' : ''}}
-							/>;
-						}) :
-						null
-				}
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+						(this.props.didDragOrResizeHappen) ? <span
+								ref={this.coordinates}
+								className={styles.coordinates}
+								style={{transform: `rotate(-${this.props.position?.rotateAngle}deg)`}}
+							>
+							{`${Math.round(position.x * xFactor)}, ${Math.round(position.y * yFactor)}`}
+						</span> :
+							null :null
+					}
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+						(this.props.didDragOrResizeHappen) ? <span
+								className={`${styles.dimensions} `}
+								style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px', transform: `rotate(-${this.props.position?.rotateAngle}deg)` }}
+							>
+							<div className={`${styles.dimensions_style}`}>{`${Math.round(position.width * xFactor)} x ${Math.round(position.height * yFactor)}`}</div>
+						</span> :
+							null :null
+					}
+					{
+						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group' && isSelected) ?
+							RESIZE_CORNERS.filter(this.filterControls).map(handle => {
+								let visibleHandle = handle;
+								const additionalStyles = {};
+								if (position.isHeightZero) {
+									if (handle.includes('r')) {
+										visibleHandle = 'cr';
+									} else if (handle.includes('l')) {
+										visibleHandle = 'cl';
+									}
+									// additionalStyles.bottom = 0;
+									additionalStyles.top = 0;
+								} else if (position.isWidthZero) {
+									if (handle.includes('t')) {
+										visibleHandle = 'ct';
+									} else if (handle.includes('b')) {
+										visibleHandle = 'cb';
+									}
+									// additionalStyles.right = 0;
+									additionalStyles.left = 0;
+								}
+								const className = `${styles.resizeCorners} ${styles[`resize-${handle}`]} ` + `${dashedCentreNodes ? styles[`stretchable-resize-${handle}`] : null}`;
+								return <div
+									key={handle}
+									className={className}
+									onMouseDown={
+										(
+											(!position.isHeightZero  && !position.isWidthZero) ||
+											!RESIZE_SIDES.includes(handle)
+										) && this.props.resize ? this.onResizeStart : null
+									} // If this.props.resize is false then remove the mouseDown event handler for resize
+									id={`resize-${handle}`}
+									style={{
+										...additionalStyles,
+										pointerEvents: this.props.isLayerLocked ? 'none' : '', 
+										cursor: getResizeCursorCSS(visibleHandle, this.props.position?.rotateAngle)
+									}}
+								/>;
+							}) :
+							null
+					}
+					{
+						isSelected && !areMultipleBoxesSelected ?
+							ROTATE_HANDLES.filter(this.filterControls).map(handle => {
+								const className = `${styles.rotateHandle} ${styles[`rotate-${handle}`]}`;
+								return <div
+									key={handle}
+									className={className}
+									onMouseDown={this.props.rotate ? this.onRotateStart : null} // If this.props.rotate is false then remove the mouseDown event handler for rotate
+									id={`rotate-${handle}`}
+									style={{
+										pointerEvents: this.props.isLayerLocked ? 'none' : '',
+									}}
+								/>;
+							}) :
+							null
+					}
 				</>}
 			</div>
 		}
