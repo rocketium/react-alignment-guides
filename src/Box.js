@@ -765,7 +765,7 @@ class Box extends Component{
 				}}></div>}
 				{<>
 					{
-						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+						(isSelected && !areMultipleBoxesSelected) || (isSelected &&  position.type && position.type === 'group') ?
 						(this.props.didDragOrResizeHappen) ? <span
 								ref={this.coordinates}
 								className={styles.coordinates}
@@ -776,7 +776,7 @@ class Box extends Component{
 							null :null
 					}
 					{
-						(isSelected && !areMultipleBoxesSelected) || (position.type && position.type === 'group') ?
+						(isSelected && !areMultipleBoxesSelected) || (isSelected && position.type && position.type === 'group') ?
 						(this.props.didDragOrResizeHappen) ? <span
 								className={`${styles.dimensions} `}
 								style={{ width: `${position.width}px`, top: `${position.height + 10}px`, minWidth:'66px', transform: `rotate(-${this.props.position?.rotateAngle}deg)` }}
