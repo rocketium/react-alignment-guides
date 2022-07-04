@@ -748,8 +748,8 @@ class AlignmentGuides extends Component {
 				const activeBox = {
 					left: this.state.boxes[this.state.active].left,
 					top: this.state.boxes[this.state.active].top,
-					x: this.state.boxes[this.state.active].x,
-					y: this.state.boxes[this.state.active].y
+					x: this.state.boxes[this.state.active]?.x || 0,
+					y: this.state.boxes[this.state.active]?.y || 0,
 				}
 
 				Object.keys(guides).map(box => {
@@ -770,8 +770,8 @@ class AlignmentGuides extends Component {
 
 				newData = Object.assign({}, newData, {
 					// calculating starting position: (newData.x - newData.deltaX) for snapped delta
-					deltaX: activeBox.x - (newData.x - newData.deltaX),
-					deltaY: activeBox.y - (newData.y - newData.deltaY),
+					deltaX: activeBox?.x - (newData?.x - newData?.deltaX) || 0,
+					deltaY: activeBox?.y - (newData?.y - newData?.deltaY) || 0,
 					...activeBox
 				});
 
@@ -788,8 +788,8 @@ class AlignmentGuides extends Component {
 					guides,
 					match,
 					activeBoxSnappedPosition: Object.assign({}, {
-						deltaX: activeBox.x - (newData.x - newData.deltaX),
-						deltaY: activeBox.y - (newData.y - newData.deltaY),
+						deltaX: activeBox?.x - (newData?.x - newData.deltaX),
+						deltaY: activeBox?.y - (newData?.y - newData.deltaY),
 						...activeBox
 					})
 				});
