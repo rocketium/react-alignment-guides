@@ -351,35 +351,88 @@ class AlignmentGuides extends Component {
 				} else if (this.props?.groups?.length > 0 && e.target.id.includes(GROUP_BOX_PREFIX)) { // Checking if the selected box is a group and then according to the selected box, we update the selections
 					let { boxes, active} = this.state;
 					const selections = boxes[e.target.id]?.selections;
-					const tempActiveBoxes =[];
-					if (selections?.length > 1) {
-						selections?.forEach(select => {
-							const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === select.metadata.captionIndex);
-							tempActiveBoxes.push(currentBox);
-						});
-					}
-					boxes[e.target.id] = getMultipleSelectionCoordinates(boxes, active);
-					boxes[e.target.id].type = 'group';
-					boxes[e.target.id].zIndex = 12;
-					boxes[e.target.id].identifier = e.target.id;
-					if (boxes[e.target.id].width === 0 && boxes[e.target.id].height === 0) {
-						return;
-					}
-					if (selections?.length > 0) {
-						data = Object.assign({}, boxes[e.target.id], {
-							metadata: { type: 'group' },
-							selections,
-						});
-					}
-					boxes[e.target.id].metadata = { type: 'group' };
-					boxes[e.target.id].selections = selections;
+					console.log('active and selections', this.state.active, this.state.activeBoxes, this.state.activeCaptionGroupCaptions, e.target, boxes[e.target.id]?.selections);
 
-					this.setState({
-						active: active,
-						activeBoxes: [active],
-						boxes,
-						activeCaptionGroupCaptions: tempActiveBoxes
-					});
+
+					// testing if shift pressed and selecting 2 groups together. How it works. 
+					if (this.state.activeCaptionGroupCaptions.length > 1 && this.state.isShiftKeyActive) {
+						
+						// first take all the previous selected data. 
+						// store all the selections in an array, then add more.
+						let allCaptionsForMultipleSelections = [...this.state.activeCaptionGroupCaptions];
+						console.log('step 0',  boxes[e.target.id]?.selections);
+						boxes[e.target.id]?.selections?.forEach(selection => {
+							allCaptionsForMultipleSelections.push(`box${selection.identifier}`); // pushing new boxes into the array, that gives all of the data we need. 
+						});
+						console.log('step 1', allCaptionsForMultipleSelections);
+
+						// create new temp box to store both of the groups together
+
+						boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, allCaptionsForMultipleSelections);
+						boxes['box-ms'].type = 'group';
+						boxes['box-ms'].zIndex = 12;
+						if (boxes['box-ms'].width === 0 && boxes['box-ms'].height === 0) {
+							return;
+						}
+						const selections = [];
+						for (let box in boxes) {
+							if (boxes.hasOwnProperty(box) && allCaptionsForMultipleSelections.includes(box)) {
+								selections.push(boxes[box]);
+							}
+						}
+						if (selections.length > 1) {
+							data = Object.assign({}, boxes['box-ms'], {
+								metadata: { type: 'group' },
+								selections
+							});
+						}
+
+						console.log('step 2', boxes['box-ms'], data);
+						boxes['box-ms'] = data; // new temp box.
+						console.log('step 3', boxes['box-ms']);
+						this.setState({
+							boxes,
+							active: 'box-ms',
+							activeBoxes: ['box-ms'],
+							activeCaptionGroupCaptions: allCaptionsForMultipleSelections
+						});
+						console.log('step 4', this.state.boxes, this.state.active, this.state.activeBoxes);
+					} else {
+						const tempActiveBoxes =[];
+						if (selections?.length > 1) {
+							selections?.forEach(select => {
+								const currentBox = Object.keys(this.state.boxes).find(key => this.state.boxes[key].identifier === select.metadata.captionIndex);
+								tempActiveBoxes.push(currentBox);
+							});
+						}
+						boxes[e.target.id] = getMultipleSelectionCoordinates(boxes, active);
+						boxes[e.target.id].type = 'group';
+						boxes[e.target.id].zIndex = 12;
+						boxes[e.target.id].identifier = e.target.id;
+						if (boxes[e.target.id].width === 0 && boxes[e.target.id].height === 0) {
+							return;
+						}
+						if (selections?.length > 0) {
+							data = Object.assign({}, boxes[e.target.id], {
+								metadata: { type: 'group' },
+								selections,
+							});
+						}
+						boxes[e.target.id].metadata = { type: 'group' };
+						boxes[e.target.id].selections = selections;
+
+						this.setState({
+							...this.state,
+							active: active,
+							activeBoxes: [active],
+							boxes,
+							activeCaptionGroupCaptions: tempActiveBoxes
+						});
+					}
+
+
+
+					
 				} else {
 					boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 					boxes['box-ms'].type = 'group';
@@ -501,6 +554,10 @@ class AlignmentGuides extends Component {
 		}
 
 		if (this.props.isEscUnselectActive && (e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))) {
+			this.setState({
+				...this.state,
+				activeBoxes: []
+			})
 			return;
 		}
 		
