@@ -58,6 +58,8 @@ class AlignmentGuides extends Component {
 		this.setPreventShortcutEvents = this.setPreventShortcutEvents.bind(this);
 		this.startingPositions = null;
 		this.didDragOrResizeHappen = false;
+		this.didResizeHappen = false;
+		this.didRotateHappen = false;
 		this.mouseDragHandler = this.mouseDragHandler.bind(this);
 		this.boxSelectByDrag  = this.boxSelectByDrag.bind(this);
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
@@ -553,6 +555,12 @@ class AlignmentGuides extends Component {
 			return;
 		}
 
+		if (this.didResizeHappen || this.didRotateHappen) {
+			this.didResizeHappen = false;
+			this.didRotateHappen = false;
+			return;
+		}
+
 		if (this.props.isEscUnselectActive && (e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Esc'))) {
 			this.setState({
 				...this.state,
@@ -898,6 +906,7 @@ class AlignmentGuides extends Component {
 			active: data.node.id,
 			resizing: true
 		});
+		this.didResizeHappen = true;
 		let newData = Object.assign({}, data);
 		if (this.state.boxes[data.node.id].metadata) {
 			newData.metadata = this.state.boxes[data.node.id].metadata;
@@ -1107,6 +1116,7 @@ class AlignmentGuides extends Component {
 			active: data.node.id,
 			rotating: true
 		});
+		this.didRotateHappen = true;
 		this.props.onRotateStart && this.props.onRotateStart(e, data);
 	}
 
