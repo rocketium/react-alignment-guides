@@ -353,7 +353,6 @@ class AlignmentGuides extends Component {
 				} else if (this.props?.groups?.length > 0 && e.target.id.includes(GROUP_BOX_PREFIX)) { // Checking if the selected box is a group and then according to the selected box, we update the selections
 					let { boxes, active} = this.state;
 					const selections = boxes[e.target.id]?.selections;
-					console.log('active and selections', this.state.active, this.state.activeBoxes, this.state.activeCaptionGroupCaptions, e.target, boxes[e.target.id]?.selections);
 
 
 					// testing if shift pressed and selecting 2 groups together. How it works. 
@@ -362,11 +361,9 @@ class AlignmentGuides extends Component {
 						// first take all the previous selected data. 
 						// store all the selections in an array, then add more.
 						let allCaptionsForMultipleSelections = [...this.state.activeCaptionGroupCaptions];
-						console.log('step 0',  boxes[e.target.id]?.selections);
 						boxes[e.target.id]?.selections?.forEach(selection => {
 							allCaptionsForMultipleSelections.push(`box${selection.identifier}`); // pushing new boxes into the array, that gives all of the data we need. 
 						});
-						console.log('step 1', allCaptionsForMultipleSelections);
 
 						// create new temp box to store both of the groups together
 
@@ -388,17 +385,13 @@ class AlignmentGuides extends Component {
 								selections
 							});
 						}
-
-						console.log('step 2', boxes['box-ms'], data);
 						boxes['box-ms'] = data; // new temp box.
-						console.log('step 3', boxes['box-ms']);
 						this.setState({
 							boxes,
 							active: 'box-ms',
 							activeBoxes: ['box-ms'],
 							activeCaptionGroupCaptions: allCaptionsForMultipleSelections
 						});
-						console.log('step 4', this.state.boxes, this.state.active, this.state.activeBoxes);
 					} else {
 						const tempActiveBoxes =[];
 						if (selections?.length > 1) {
