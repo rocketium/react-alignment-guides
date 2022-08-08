@@ -909,7 +909,7 @@ class AlignmentGuides extends Component {
 		// Update starting positions so we can use it to update when group resize happens
 		if (data.type && data.type === 'group') {
 			this.startingPositions = {};
-			if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+			if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0 || (this.state.activeCaptionGroupCaptions.length > 0 && this.state.active === 'box-ms')) {
 				this.state.activeCaptionGroupCaptions.forEach(box => {
 					this.startingPositions[box] = this.state.boxes[box];
 				});
@@ -929,10 +929,9 @@ class AlignmentGuides extends Component {
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0 && (this.state.activeCaptionGroupCaptions.length < 0 && this.state.active !== 'box-ms')) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
-
 			this.props.onResize && this.props.onResize(e, newData);
 		}
 
@@ -947,7 +946,7 @@ class AlignmentGuides extends Component {
 					if (this.state.activeCaptionGroupCaptions.includes(box)) {
 						// Adding bounding box's starting position
 						// This is because it's added only to the group's box and not the individual members of the group
-						if (this.startingPositions[this.state.active] && this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
+						if ((this.startingPositions[this.state.active] && this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) || (this.state.activeCaptionGroupCaptions.length > 0 && this.state.active === 'box-ms')) { // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
 							const widthDiff = ((data.deltaW / Math.abs(this.startingPositions[this.state.active].width)) * Math.abs(this.startingPositions[box].width));
 							const heightDiff = ((data.deltaH / Math.abs(this.startingPositions[this.state.active].height)) * Math.abs(this.startingPositions[box].height));
 
@@ -1029,7 +1028,7 @@ class AlignmentGuides extends Component {
 			}
 			
 			guides = Object.keys(this.state.guides).map(guide => {
-				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0 || (this.state.activeCaptionGroupCaptions.length > 0 && this.state.active === 'box-ms')) {
 					if (this.state.activeCaptionGroupCaptions.includes(guide)) {
 						return Object.assign({}, this.state.guides[guide], {
 							x: calculateGuidePositions(boxes[guide], 'x'),
@@ -1074,13 +1073,13 @@ class AlignmentGuides extends Component {
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0 && (this.state.activeCaptionGroupCaptions.length < 0 && this.state.active !== 'box-ms')) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
 			if (data.type && data.type === 'group') {
 				this.startingPositions = {};
-				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+				if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0 || (this.state.activeCaptionGroupCaptions.length > 0 && this.state.active === 'box-ms')) {
 					newData.selections = this.state.activeCaptionGroupCaptions.map(box => {
 						this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
 						return Object.assign({}, this.state.boxes[box]);
@@ -1429,7 +1428,8 @@ class AlignmentGuides extends Component {
 	// drag select handler
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
-		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-'));
+		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-')) || this.state.activeCaptionGroupCaptions.length > 1;
+
 
 		// Create the draggable boxes from the position data
 		const draggableBoxes = Object.keys(boxes).map(box => {
