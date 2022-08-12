@@ -412,8 +412,6 @@ export const getGroupCoordinates = (allBoxes, groupedBoxes) => {
 			height: 0
 		};
 	}
-
-
 	const x = selectedBoxes.reduce((min, b) => b.x < min ? b.x : min, selectedBoxes[0].x);
 	const y = selectedBoxes.reduce((min, b) => b.y < min ? b.y : min, selectedBoxes[0].y);
 	const width = selectedBoxes.reduce((max, b) => b.x + b.width > max ? b.x + b.width : max, (selectedBoxes[0].x + selectedBoxes[0].width)) - x;
