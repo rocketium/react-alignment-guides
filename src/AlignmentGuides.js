@@ -65,7 +65,7 @@ class AlignmentGuides extends Component {
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
 		this.updateBoxAfterCrop = this.updateBoxAfterCrop.bind(this);
 		this.addGuidelinesForSnapping = this.addGuidelinesForSnapping.bind(this);
-		this.getReorderedGroupBoxes = this.getReorderedGroupBoxes.bind(this);
+		this.getReorderedBoxes = this.getReorderedBoxes.bind(this);
 	}
 
 	componentDidMount() {
@@ -268,7 +268,7 @@ class AlignmentGuides extends Component {
 	}
 
 	// keeping the z-index of group box with the last element in group
-	getReorderedGroupBoxes(boxes, captionGroupsToIndexMap) {
+	getReorderedBoxes(boxes, captionGroupsToIndexMap) {
 		const selectionBoxesWithHigherIndex = {};
 
 		const reversedKeys = Object.keys(boxes).reverse();
@@ -1411,10 +1411,10 @@ class AlignmentGuides extends Component {
 		const { active, boxes, activeBoxes, guides } = this.state;
 		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-'));
 
-		const reorderedGroupBoxes = this.getReorderedGroupBoxes(boxes, this.state.captionGroupsToIndexMap);
+		const reorderedBoxes = this.getReorderedBoxes(boxes, this.state.captionGroupsToIndexMap);
 
 		// Create the draggable boxes from the position data
-		const draggableBoxes = reorderedGroupBoxes.map(box => {
+		const draggableBoxes = reorderedBoxes.map(box => {
 			const position = box;
 			const id = box.id;
 			const identifier = box.identifier;  // option index for caption
