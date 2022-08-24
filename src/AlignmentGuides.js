@@ -103,6 +103,41 @@ class AlignmentGuides extends Component {
 				}
 			});
 
+			// Checking if Groups are present and if the length of array of group > 0 then we create grouped boxes.
+			if (this.props?.groups?.length > 0) {
+				// for each group we are creating a new box starting with 'box-ms-'
+				this.props.groups.forEach((groupArray, index) => {
+					boxes[`${GROUP_BOX_PREFIX}${index}`] = getGroupCoordinates(boxes, groupArray);
+					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
+					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
+					const selections = [];
+					let allElementsInsideGroupAreSelected = true;
+					// Checking for all the boxes present inside that group and storing them in selections
+					for (let box in boxes) {
+						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
+							selections.push(boxes[box]);
+							if (boxes[box].active !== true) {
+								allElementsInsideGroupAreSelected = false;
+							}
+						}
+					}
+					if (allElementsInsideGroupAreSelected) {
+						selections.map(sel => {
+							activeBoxes.splice(sel);
+						});
+						activeBoxes.push(`${GROUP_BOX_PREFIX}${index}`);
+					}
+					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
+					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].isLayerLocked = checkGroupChildElementsLocked(selections);
+					// storing all the indexes inside a particular group to map it later if we need
+					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
+					// active = `box-ms-${index}`;
+				});
+				delete boxes['box-ms'];
+			}
+
 			if (activeBoxes.length > 1) {
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
@@ -119,31 +154,6 @@ class AlignmentGuides extends Component {
 			} else if (activeBoxes.length === 1) {
 				active = activeBoxes[0];
 			}
-			// Checking if Groups are present and if the length of array of group > 0 then we create grouped boxes.
-			if (this.props?.groups?.length > 0) {
-				// for each group we are creating a new box starting with 'box-ms-'
-				this.props.groups.forEach((groupArray, index) => {
-					boxes[`${GROUP_BOX_PREFIX}${index}`] = getGroupCoordinates(boxes, groupArray);
-					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
-					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
-					const selections = [];
-					// Checking for all the boxes present inside that group and storing them in selections
-					for (let box in boxes) {
-						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
-							selections.push(boxes[box]);
-						}
-					}
-					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
-					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
-					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
-					boxes[`${GROUP_BOX_PREFIX}${index}`].isLayerLocked = checkGroupChildElementsLocked(selections);
-					// storing all the indexes inside a particular group to map it later if we need
-					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
-					// active = `box-ms-${index}`;
-				});
-				delete boxes['box-ms'];
-			}
-
 			// adding guidelines for snapping
 			this.addGuidelinesForSnapping(guides);
 

@@ -1856,7 +1856,52 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           if (dimensions.active) {
             activeBoxes.push("box".concat(index));
           }
-        });
+
+          if (dimensions !== null && dimensions !== void 0 && (_dimensions$metadata = dimensions.metadata) !== null && _dimensions$metadata !== void 0 && _dimensions$metadata.url) {
+            var img = new Image();
+            img.src = dimensions.metadata.url;
+          }
+        }); // Checking if Groups are present and if the length of array of group > 0 then we create grouped boxes.
+
+        if (((_this$props = this.props) === null || _this$props === void 0 ? void 0 : (_this$props$groups = _this$props.groups) === null || _this$props$groups === void 0 ? void 0 : _this$props$groups.length) > 0) {
+          // for each group we are creating a new box starting with 'box-ms-'
+          this.props.groups.forEach(function (groupArray, index) {
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)] = getGroupCoordinates(boxes, groupArray);
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].type = 'group';
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].zIndex = 12;
+            var selections = [];
+            var allElementsInsideGroupAreSelected = true; // Checking for all the boxes present inside that group and storing them in selections
+
+            for (var box in boxes) {
+              var _boxes$box, _boxes$box$metadata;
+
+              if (boxes.hasOwnProperty(box) && groupArray.includes(boxes === null || boxes === void 0 ? void 0 : (_boxes$box = boxes[box]) === null || _boxes$box === void 0 ? void 0 : (_boxes$box$metadata = _boxes$box.metadata) === null || _boxes$box$metadata === void 0 ? void 0 : _boxes$box$metadata.captionIndex)) {
+                selections.push(boxes[box]);
+
+                if (boxes[box].active !== true) {
+                  allElementsInsideGroupAreSelected = false;
+                }
+              }
+            }
+
+            if (allElementsInsideGroupAreSelected) {
+              selections.map(function (sel) {
+                activeBoxes.splice(sel);
+              });
+              activeBoxes.push("".concat(GROUP_BOX_PREFIX).concat(index));
+            }
+
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].metadata = {
+              type: 'group'
+            };
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].selections = selections;
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].identifier = "".concat(GROUP_BOX_PREFIX).concat(index);
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].isLayerLocked = checkGroupChildElementsLocked(selections); // storing all the indexes inside a particular group to map it later if we need
+
+            captionGroupsToIndexMap["".concat(GROUP_BOX_PREFIX).concat(index)] = groupArray; // active = `box-ms-${index}`;
+          });
+          delete boxes['box-ms'];
+        }
 
         if (activeBoxes.length > 1) {
           boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
@@ -1874,8 +1919,10 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           active = 'box-ms';
         } else if (activeBoxes.length === 1) {
           active = activeBoxes[0];
-        }
+        } // adding guidelines for snapping
 
+
+        this.addGuidelinesForSnapping(guides);
         document.addEventListener('click', this.unSelectBox);
         window.addEventListener('blur', this.unSelectBox);
         document.addEventListener('keydown', this.setShiftKeyState);
@@ -1898,6 +1945,143 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       document.removeEventListener('keydown', this.setShiftKeyState);
       document.removeEventListener('keydown', this.unSelectBox);
       document.removeEventListener('keyup', this.setShiftKeyState);
+      document.removeEventListener('contextmenu', this.selectBox);
+    }
+  }, {
+    key: "componentDidUpdate",
+    value: function componentDidUpdate(prevProps, prevState) {
+      var _this2 = this,
+          _this$props2;
+
+      var captionGroupsToIndexMap = {};
+
+      if (this.state.activeBoxes.length > 0) {
+        var activeBoxWithoutLock = this.state.activeBoxes.filter(function (activeBox) {
+          return !_this2.state.boxes[activeBox] || !_this2.state.boxes[activeBox].isLayerLocked;
+        });
+
+        if (JSON.stringify(this.state.activeBoxes) !== JSON.stringify(activeBoxWithoutLock)) {
+          this.setState({
+            activeBoxes: activeBoxWithoutLock
+          });
+        }
+      }
+
+      if (((_this$props2 = this.props) === null || _this$props2 === void 0 ? void 0 : _this$props2.groups) !== prevProps.groups) {
+        var _this$props3, _this$props3$groups, _this$props4, _this$props4$groups;
+
+        var boxes = this.state.boxes;
+        boxes = Object.fromEntries(Object.entries(boxes).filter(function (_ref) {
+          var _ref2 = _slicedToArray(_ref, 1),
+              key = _ref2[0];
+
+          return !key.startsWith("".concat(GROUP_BOX_PREFIX));
+        }));
+
+        if (((_this$props3 = this.props) === null || _this$props3 === void 0 ? void 0 : (_this$props3$groups = _this$props3.groups) === null || _this$props3$groups === void 0 ? void 0 : _this$props3$groups.length) === 0) {
+          this.setState({
+            boxes: boxes
+          });
+        } else if (((_this$props4 = this.props) === null || _this$props4 === void 0 ? void 0 : (_this$props4$groups = _this$props4.groups) === null || _this$props4$groups === void 0 ? void 0 : _this$props4$groups.length) > 0) {
+          var _this$props5, _this$props5$groups;
+
+          var active = this.state.active;
+          (_this$props5 = this.props) === null || _this$props5 === void 0 ? void 0 : (_this$props5$groups = _this$props5.groups) === null || _this$props5$groups === void 0 ? void 0 : _this$props5$groups.forEach(function (groupArray, index) {
+            var _this2$props$groups, _prevProps$groups;
+
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)] = getGroupCoordinates(boxes, groupArray);
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].type = 'group';
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].zIndex = 12;
+            var selections = [];
+
+            for (var box in boxes) {
+              var _boxes, _boxes$box2, _boxes$box2$metadata;
+
+              if (boxes.hasOwnProperty(box) && groupArray.includes((_boxes = boxes) === null || _boxes === void 0 ? void 0 : (_boxes$box2 = _boxes[box]) === null || _boxes$box2 === void 0 ? void 0 : (_boxes$box2$metadata = _boxes$box2.metadata) === null || _boxes$box2$metadata === void 0 ? void 0 : _boxes$box2$metadata.captionIndex)) {
+                selections.push(boxes[box]);
+              }
+            }
+
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].metadata = {
+              type: 'group'
+            };
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].selections = selections;
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].identifier = "".concat(GROUP_BOX_PREFIX).concat(index);
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].groupedCaptions = groupArray;
+            boxes["".concat(GROUP_BOX_PREFIX).concat(index)].isLayerLocked = checkGroupChildElementsLocked(selections);
+            captionGroupsToIndexMap["".concat(GROUP_BOX_PREFIX).concat(index)] = groupArray; // To check if we added new group, then we select it as active
+
+            if (((_this2$props$groups = _this2.props.groups) === null || _this2$props$groups === void 0 ? void 0 : _this2$props$groups.length) > ((_prevProps$groups = prevProps.groups) === null || _prevProps$groups === void 0 ? void 0 : _prevProps$groups.length)) {
+              active = boxes["".concat(GROUP_BOX_PREFIX).concat(index)];
+            }
+          });
+          delete boxes['box-ms'];
+          this.setState({
+            boxes: boxes,
+            captionGroupsToIndexMap: captionGroupsToIndexMap,
+            active: active
+          });
+        }
+      } // adding user guides for snapping
+
+
+      if (this.props.xFactor !== prevProps.xFactor || this.props.yFactor !== prevProps.yFactor || this.props.userXGuides !== prevProps.userXGuides || this.props.userYGuides !== prevProps.userYGuides) {
+        var guides = this.state.guides;
+        this.addGuidelinesForSnapping(guides);
+        this.setState({
+          guides: guides
+        });
+      }
+    }
+  }, {
+    key: "addGuidelinesForSnapping",
+    value: function addGuidelinesForSnapping(guides) {
+      var _this3 = this;
+
+      var xFactor = this.props.xFactor || 1;
+      var yFactor = this.props.yFactor || 1;
+      var userXGuidesPos = this.props.userXGuides ? Object.keys(this.props.userXGuides).map(function (guideId) {
+        return Math.round(_this3.props.userXGuides[guideId] / xFactor);
+      }) : [];
+      var userYGuidesPos = this.props.userYGuides ? Object.keys(this.props.userYGuides).map(function (guideId) {
+        return Math.round(_this3.props.userYGuides[guideId] / yFactor);
+      }) : [];
+      guides.userGuides = {
+        x: userXGuidesPos.sort(function (x, y) {
+          return x - y;
+        }),
+        y: userYGuidesPos.sort(function (x, y) {
+          return x - y;
+        })
+      };
+    } // keeping the z-index of group box with the last element in group
+
+  }, {
+    key: "getReorderedBoxes",
+    value: function getReorderedBoxes(boxes, captionGroupsToIndexMap) {
+      var selectionBoxesWithHigherIndex = {};
+      var reversedKeys = Object.keys(boxes).reverse();
+      Object.keys(captionGroupsToIndexMap).forEach(function (group) {
+        for (var i = 0; i < reversedKeys.length; i++) {
+          if (captionGroupsToIndexMap[group].includes(boxes[reversedKeys[i]].identifier)) {
+            selectionBoxesWithHigherIndex[reversedKeys[i]] = group;
+            break;
+          }
+        }
+      });
+      var reorderedBoxes = [];
+      Object.keys(boxes).forEach(function (key) {
+        if (!key.startsWith(GROUP_BOX_PREFIX)) {
+          reorderedBoxes.push(boxes[key]);
+          reorderedBoxes[reorderedBoxes.length - 1].id = key;
+        }
+
+        if (selectionBoxesWithHigherIndex[key]) {
+          reorderedBoxes.push(boxes[selectionBoxesWithHigherIndex[key]]);
+          reorderedBoxes[reorderedBoxes.length - 1].id = selectionBoxesWithHigherIndex[key];
+        }
+      });
+      return reorderedBoxes;
     }
   }, {
     key: "setShiftKeyState",
@@ -2022,9 +2206,9 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           _boxes2['box-ms'].zIndex = 12;
           var _selections = [];
 
-          for (var _box in _boxes2) {
-            if (_boxes2.hasOwnProperty(_box) && _activeBoxes2.includes(_box)) {
-              _selections.push(_boxes2[_box]);
+          for (var _box in _boxes5) {
+            if (_boxes5.hasOwnProperty(_box) && _activeBoxes2.includes(_box)) {
+              _selections2.push(_boxes5[_box]);
             }
           }
 
@@ -2340,20 +2524,84 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
             if (this.state.activeBoxes.includes(box)) {
               // Adding bounding box's starting position
               // This is because it's added only to the group's box and not the individual members of the group
-              boxes[box] = Object.assign({}, this.state.boxes[box], {
-                x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
-                y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
-                left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
-                top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
-                width: this.startingPositions[box].width + data.deltaW,
-                height: this.startingPositions[box].height + data.deltaH
-              });
-            } else if (box === 'box-ms') {
+              if (this.startingPositions[this.state.active] && ((_this$state$active6 = this.state.active) === null || _this$state$active6 === void 0 ? void 0 : _this$state$active6.indexOf(GROUP_BOX_PREFIX)) >= 0) {
+                // condition for group, instead of activeBoxes will use the correct inside boxes to resize them
+                var widthDiff = data.deltaW / Math.abs(this.startingPositions[this.state.active].width) * Math.abs(this.startingPositions[box].width);
+                var heightDiff = data.deltaH / Math.abs(this.startingPositions[this.state.active].height) * Math.abs(this.startingPositions[box].height);
+                var initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions[this.state.active].x) / this.startingPositions[this.state.active].width;
+                var xDiff = data.deltaX + initialDeltaXPercentage * data.deltaW;
+                var initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions[this.state.active].y) / this.startingPositions[this.state.active].height;
+                var yDiff = data.deltaY + initialDeltaYPercentage * data.deltaH;
+                boxes[box] = Object.assign({}, this.state.boxes[box], {
+                  x: boundingBoxPosition.x + this.startingPositions[box].x + xDiff,
+                  y: boundingBoxPosition.y + this.startingPositions[box].y + yDiff,
+                  left: boundingBoxPosition.left + this.startingPositions[box].left + xDiff,
+                  top: boundingBoxPosition.top + this.startingPositions[box].top + yDiff,
+                  width: this.startingPositions[box].width + widthDiff,
+                  height: this.startingPositions[box].height + heightDiff,
+                  deltaW: widthDiff,
+                  deltaH: heightDiff,
+                  deltaX: boundingBoxPosition.x + xDiff,
+                  deltaY: boundingBoxPosition.y + yDiff
+                });
+              } else {
+                boxes[box] = Object.assign({}, this.state.boxes[box], {
+                  x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+                  y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+                  left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+                  top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+                  width: this.startingPositions[box].width + data.deltaW,
+                  height: this.startingPositions[box].height + data.deltaH
+                });
+              }
+            } else if (this.state.activeBoxes.includes(box)) {
+              // Adding bounding box's starting position
+              // This is because it's added only to the group's box and not the individual members of the group
+              if (this.startingPositions['box-ms']) {
+                var _widthDiff = data.deltaW / Math.abs(this.startingPositions['box-ms'].width) * Math.abs(this.startingPositions[box].width);
+
+                var _heightDiff = data.deltaH / Math.abs(this.startingPositions['box-ms'].height) * Math.abs(this.startingPositions[box].height);
+
+                var _initialDeltaXPercentage = (this.startingPositions[box].x - this.startingPositions['box-ms'].x) / this.startingPositions['box-ms'].width;
+
+                var _xDiff = data.deltaX + _initialDeltaXPercentage * data.deltaW;
+
+                var _initialDeltaYPercentage = (this.startingPositions[box].y - this.startingPositions['box-ms'].y) / this.startingPositions['box-ms'].height;
+
+                var _yDiff = data.deltaY + _initialDeltaYPercentage * data.deltaH;
+
+                boxes[box] = Object.assign({}, this.state.boxes[box], {
+                  x: boundingBoxPosition.x + this.startingPositions[box].x + _xDiff,
+                  y: boundingBoxPosition.y + this.startingPositions[box].y + _yDiff,
+                  left: boundingBoxPosition.left + this.startingPositions[box].left + _xDiff,
+                  top: boundingBoxPosition.top + this.startingPositions[box].top + _yDiff,
+                  width: this.startingPositions[box].width + _widthDiff,
+                  height: this.startingPositions[box].height + _heightDiff,
+                  deltaW: _widthDiff,
+                  deltaH: _heightDiff,
+                  deltaX: boundingBoxPosition.x + _xDiff,
+                  deltaY: boundingBoxPosition.y + _yDiff
+                });
+              } else {
+                boxes[box] = Object.assign({}, this.state.boxes[box], {
+                  x: boundingBoxPosition.x + this.startingPositions[box].x + data.deltaX,
+                  y: boundingBoxPosition.y + this.startingPositions[box].y + data.deltaY,
+                  left: boundingBoxPosition.left + this.startingPositions[box].left + data.deltaX,
+                  top: boundingBoxPosition.top + this.startingPositions[box].top + data.deltaY,
+                  width: this.startingPositions[box].width + data.deltaW,
+                  height: this.startingPositions[box].height + data.deltaH,
+                  deltaX: boundingBoxPosition.x + data.deltaX,
+                  deltaY: boundingBoxPosition.y + data.deltaY
+                });
+              }
+            } else if (box === 'box-ms' || (box === null || box === void 0 ? void 0 : box.indexOf(GROUP_BOX_PREFIX)) >= 0) {
+              var _boxes$box3, _boxes$box4, _boxes$box5, _boxes$box6;
+
               boxes[box] = Object.assign({}, data);
-              delete boxes[box].deltaX;
-              delete boxes[box].deltaY;
-              delete boxes[box].deltaW;
-              delete boxes[box].deltaH;
+              (_boxes$box3 = boxes[box]) === null || _boxes$box3 === void 0 ? true : delete _boxes$box3.deltaX;
+              (_boxes$box4 = boxes[box]) === null || _boxes$box4 === void 0 ? true : delete _boxes$box4.deltaY;
+              (_boxes$box5 = boxes[box]) === null || _boxes$box5 === void 0 ? true : delete _boxes$box5.deltaW;
+              (_boxes$box6 = boxes[box]) === null || _boxes$box6 === void 0 ? true : delete _boxes$box6.deltaH;
             } else {
               boxes[box] = this.state.boxes[box];
             }
