@@ -122,7 +122,7 @@ class AlignmentGuides extends Component {
 						}
 					}
 					if (allElementsInsideGroupAreSelected) {
-						selections.map(sel => {
+						selections.forEach(sel => {
 							activeBoxes.splice(sel);
 						});
 						activeBoxes.push(`${GROUP_BOX_PREFIX}${index}`);
