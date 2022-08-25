@@ -111,19 +111,21 @@ class AlignmentGuides extends Component {
 					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
 					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
 					const selections = [];
+					const selectedIndexes = [];
 					let allElementsInsideGroupAreSelected = true;
 					// Checking for all the boxes present inside that group and storing them in selections
 					for (let box in boxes) {
 						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
 							selections.push(boxes[box]);
+							selectedIndexes.push(box);
 							if (boxes[box].active !== true) {
 								allElementsInsideGroupAreSelected = false;
 							}
 						}
 					}
 					if (allElementsInsideGroupAreSelected) {
-						selections.forEach(sel => {
-							activeBoxes.splice(sel);
+						selectedIndexes.forEach(index => {
+							activeBoxes.splice(index);
 						});
 						activeBoxes.push(`${GROUP_BOX_PREFIX}${index}`);
 					}
