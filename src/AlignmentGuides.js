@@ -273,10 +273,12 @@ class AlignmentGuides extends Component {
 
 		const reversedKeys = Object.keys(boxes).reverse();
 		Object.keys(captionGroupsToIndexMap).forEach(group => {
-			for (let i=0; i<reversedKeys.length; i++) {
-				if (captionGroupsToIndexMap[group].includes(boxes[reversedKeys[i]].identifier)) {
-					selectionBoxesWithHigherIndex[reversedKeys[i]] = group;
-					break;
+			if (boxes[group]) {
+				for (let i=0; i<reversedKeys.length; i++) {
+					if (captionGroupsToIndexMap[group].includes(boxes[reversedKeys[i]].identifier)) {
+						selectionBoxesWithHigherIndex[reversedKeys[i]] = group;
+						break;
+					}
 				}
 			}
 		});
