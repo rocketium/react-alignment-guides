@@ -124,8 +124,8 @@ class AlignmentGuides extends Component {
 						}
 					}
 					if (allElementsInsideGroupAreSelected) {
-						selectedIndexes.forEach(index => {
-							activeBoxes.splice(index);
+						selectedIndexes.forEach(val => {
+							activeBoxes.splice(activeBoxes.indexOf(val), 1);
 						});
 						activeBoxes.push(`${GROUP_BOX_PREFIX}${index}`);
 					}
