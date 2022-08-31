@@ -66,6 +66,7 @@ class AlignmentGuides extends Component {
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
 		this.updateBoxAfterCrop = this.updateBoxAfterCrop.bind(this);
 		this.addGuidelinesForSnapping = this.addGuidelinesForSnapping.bind(this);
+		this.getReorderedBoxes = this.getReorderedBoxes.bind(this);
 	}
 
 	componentDidMount() {
@@ -103,6 +104,43 @@ class AlignmentGuides extends Component {
 				}
 			});
 
+			// Checking if Groups are present and if the length of array of group > 0 then we create grouped boxes.
+			if (this.props?.groups?.length > 0) {
+				// for each group we are creating a new box starting with 'box-ms-'
+				this.props.groups.forEach((groupArray, index) => {
+					boxes[`${GROUP_BOX_PREFIX}${index}`] = getGroupCoordinates(boxes, groupArray);
+					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
+					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
+					const selections = [];
+					const selectedIndexes = [];
+					let allElementsInsideGroupAreSelected = true;
+					// Checking for all the boxes present inside that group and storing them in selections
+					for (let box in boxes) {
+						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
+							selections.push(boxes[box]);
+							selectedIndexes.push(box);
+							if (boxes[box].active !== true) {
+								allElementsInsideGroupAreSelected = false;
+							}
+						}
+					}
+					if (allElementsInsideGroupAreSelected) {
+						selectedIndexes.forEach(val => {
+							activeBoxes.splice(activeBoxes.indexOf(val), 1);
+						});
+						activeBoxes.push(`${GROUP_BOX_PREFIX}${index}`);
+					}
+					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
+					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
+					boxes[`${GROUP_BOX_PREFIX}${index}`].isLayerLocked = checkGroupChildElementsLocked(selections);
+					// storing all the indexes inside a particular group to map it later if we need
+					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
+					// active = `box-ms-${index}`;
+				});
+				delete boxes['box-ms'];
+			}
+
 			if (activeBoxes.length > 1) {
 				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
 				boxes['box-ms'].type = 'group';
@@ -119,31 +157,6 @@ class AlignmentGuides extends Component {
 			} else if (activeBoxes.length === 1) {
 				active = activeBoxes[0];
 			}
-			// Checking if Groups are present and if the length of array of group > 0 then we create grouped boxes.
-			if (this.props?.groups?.length > 0) {
-				// for each group we are creating a new box starting with 'box-ms-'
-				this.props.groups.forEach((groupArray, index) => {
-					boxes[`${GROUP_BOX_PREFIX}${index}`] = getGroupCoordinates(boxes, groupArray);
-					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
-					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
-					const selections = [];
-					// Checking for all the boxes present inside that group and storing them in selections
-					for (let box in boxes) {
-						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
-							selections.push(boxes[box]);
-						}
-					}
-					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
-					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
-					boxes[`${GROUP_BOX_PREFIX}${index}`].identifier = `${GROUP_BOX_PREFIX}${index}`;
-					boxes[`${GROUP_BOX_PREFIX}${index}`].isLayerLocked = checkGroupChildElementsLocked(selections);
-					// storing all the indexes inside a particular group to map it later if we need
-					captionGroupsToIndexMap[`${GROUP_BOX_PREFIX}${index}`] = groupArray;
-					// active = `box-ms-${index}`;
-				});
-				delete boxes['box-ms'];
-			}
-
 			// adding guidelines for snapping
 			this.addGuidelinesForSnapping(guides);
 
@@ -265,6 +278,37 @@ class AlignmentGuides extends Component {
 			x: userXGuidesPos.sort((x, y) => x - y),
 			y: userYGuidesPos.sort((x, y) => x - y),
 		}
+	}
+
+	// keeping the z-index of group box with the last element in group
+	getReorderedBoxes(boxes, captionGroupsToIndexMap) {
+		const selectionBoxesWithHigherIndex = {};
+
+		const reversedKeys = Object.keys(boxes).reverse();
+		Object.keys(captionGroupsToIndexMap).forEach(group => {
+			if (boxes[group]) {
+				for (let i=0; i<reversedKeys.length; i++) {
+					if (captionGroupsToIndexMap[group].includes(boxes[reversedKeys[i]].identifier)) {
+						selectionBoxesWithHigherIndex[reversedKeys[i]] = group;
+						break;
+					}
+				}
+			}
+		});
+
+		const reorderedBoxes = [];
+		Object.keys(boxes).forEach(key => {
+			if (!key.startsWith(GROUP_BOX_PREFIX)) {
+				reorderedBoxes.push(boxes[key]);
+				reorderedBoxes[reorderedBoxes.length - 1].id = key;
+			}
+			if (selectionBoxesWithHigherIndex[key]) {
+				reorderedBoxes.push(boxes[selectionBoxesWithHigherIndex[key]]);
+				reorderedBoxes[reorderedBoxes.length - 1].id = selectionBoxesWithHigherIndex[key];
+			}
+		});
+
+		return reorderedBoxes;
 	}
 
 	setShiftKeyState(e) {
@@ -1510,17 +1554,19 @@ class AlignmentGuides extends Component {
 		const areMultipleBoxesSelected = active?.startsWith(GROUP_BOX_PREFIX) || this.state.activeCaptionGroupCaptions.length > 0 || activeBoxes.length > 0;
 
 
+		const reorderedBoxes = this.getReorderedBoxes(boxes, this.state.captionGroupsToIndexMap);
+
 		// Create the draggable boxes from the position data
-		const draggableBoxes = Object.keys(boxes).map(box => {
-			const position = boxes[box];
-			const id = boxes[box].id || box;
-			const identifier = boxes[box].identifier;  // option index for caption
-			const isLayerLocked = boxes[box].isLayerLocked; 
+		const draggableBoxes = reorderedBoxes.map(box => {
+			const position = box;
+			const id = box.id;
+			const identifier = box.identifier;  // option index for caption
+			const isLayerLocked = box.isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
-			const url = boxes[box]?.metadata?.url;
-			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
-			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
-			const imageShape = boxes[box]?.metadata?.imageShape || 'fitImage';
+			const url = box?.metadata?.url;
+			const zoomScale = box?.metadata?.zoomScale || 1;
+			const objectPosition = box?.metadata?.objectPosition || {};
+			const imageShape = box?.metadata?.imageShape || 'fitImage';
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -1562,7 +1608,7 @@ class AlignmentGuides extends Component {
 				renderedResolution={this.props.renderedResolution}
 				cropActiveForElement={this.props.cropActiveForElement}
 				imageShape={imageShape}
-				metadata={boxes[box]?.metadata}
+				metadata={box?.metadata}
 				updateBoxAfterCrop={this.updateBoxAfterCrop}
 			/>;
 		});
