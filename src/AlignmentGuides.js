@@ -66,6 +66,7 @@ class AlignmentGuides extends Component {
 		this.createRectByDrag  = this.createRectByDrag.bind(this);
 		this.updateBoxAfterCrop = this.updateBoxAfterCrop.bind(this);
 		this.addGuidelinesForSnapping = this.addGuidelinesForSnapping.bind(this);
+		this.getReorderedBoxes = this.getReorderedBoxes.bind(this);
 	}
 
 	componentDidMount() {
@@ -273,6 +274,37 @@ class AlignmentGuides extends Component {
 				guides,
 			})
 		}
+	}
+
+	// keeping the z-index of group box with the last element in group
+	getReorderedBoxes(boxes, captionGroupsToIndexMap) {
+		const selectionBoxesWithHigherIndex = {};
+
+		const reversedKeys = Object.keys(boxes).reverse();
+		Object.keys(captionGroupsToIndexMap).forEach(group => {
+			if (boxes[group]) {
+				for (let i=0; i<reversedKeys.length; i++) {
+					if (captionGroupsToIndexMap[group].includes(boxes[reversedKeys[i]].identifier)) {
+						selectionBoxesWithHigherIndex[reversedKeys[i]] = group;
+						break;
+					}
+				}
+			}
+		});
+
+		const reorderedBoxes = [];
+		Object.keys(boxes).forEach(key => {
+			if (!key.startsWith(GROUP_BOX_PREFIX)) {
+				reorderedBoxes.push(boxes[key]);
+				reorderedBoxes[reorderedBoxes.length - 1].id = key;
+			}
+			if (selectionBoxesWithHigherIndex[key]) {
+				reorderedBoxes.push(boxes[selectionBoxesWithHigherIndex[key]]);
+				reorderedBoxes[reorderedBoxes.length - 1].id = selectionBoxesWithHigherIndex[key];
+			}
+		});
+
+		return reorderedBoxes;
 	}
 
 	addGuidelinesForSnapping(guides) {
@@ -1633,20 +1665,21 @@ class AlignmentGuides extends Component {
 	// drag select handler
 	render() {
 		const { active, boxes, activeBoxes, guides } = this.state;
-		const areMultipleBoxesSelected = active?.startsWith(GROUP_BOX_PREFIX) || this.state.activeCaptionGroupCaptions.length > 0 || activeBoxes.length > 0;
+		const areMultipleBoxesSelected = activeBoxes.length > 1 ||  (activeBoxes.length === 1 && activeBoxes[0].includes('box-ms-'));
 
+		const reorderedBoxes = this.getReorderedBoxes(boxes, this.state.captionGroupsToIndexMap);
 
 		// Create the draggable boxes from the position data
-		const draggableBoxes = Object.keys(boxes).map(box => {
-			const position = boxes[box];
-			const id = boxes[box].id || box;
-			const identifier = boxes[box].identifier;  // option index for caption
-			const isLayerLocked = boxes[box].isLayerLocked; 
+		const draggableBoxes = reorderedBoxes.map(box => {
+			const position = box;
+			const id = box.id;
+			const identifier = box.identifier;  // option index for caption
+			const isLayerLocked = box.isLayerLocked; 
 			const isSelected = (active === id || activeBoxes.includes(id));
-			const url = boxes[box]?.metadata?.url;
-			const zoomScale = boxes[box]?.metadata?.zoomScale || 1;
-			const objectPosition = boxes[box]?.metadata?.objectPosition || {};
-			const imageShape = boxes[box]?.metadata?.imageShape || 'fitImage';
+			const url = box?.metadata?.url;
+			const zoomScale = box?.metadata?.zoomScale || 1;
+			const objectPosition = box?.metadata?.objectPosition || {};
+			const imageShape = box?.metadata?.imageShape || 'fitImage';
 			return <Box
 				{...this.props}
 				areMultipleBoxesSelected={areMultipleBoxesSelected}
@@ -1688,7 +1721,7 @@ class AlignmentGuides extends Component {
 				renderedResolution={this.props.renderedResolution}
 				cropActiveForElement={this.props.cropActiveForElement}
 				imageShape={imageShape}
-				metadata={boxes[box]?.metadata}
+				metadata={box?.metadata}
 				updateBoxAfterCrop={this.updateBoxAfterCrop}
 			/>;
 		});
