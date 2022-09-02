@@ -127,11 +127,23 @@ class AlignmentGuides extends Component {
 					boxes[`${GROUP_BOX_PREFIX}${index}`].type = 'group';
 					boxes[`${GROUP_BOX_PREFIX}${index}`].zIndex = 12;
 					const selections = [];
+					const selectedIndexes = [];
+					let allElementsInsideGroupAreSelected = true;
 					// Checking for all the boxes present inside that group and storing them in selections
 					for (let box in boxes) {
 						if (boxes.hasOwnProperty(box) && groupArray.includes(boxes?.[box]?.metadata?.captionIndex)) {
 							selections.push(boxes[box]);
+							selectedIndexes.push(box);
+							if (boxes[box].active !== true) {
+								allElementsInsideGroupAreSelected = false;
+							}
 						}
+					}
+					if (allElementsInsideGroupAreSelected) {
+						selectedIndexes.forEach(val => {
+							activeBoxes.splice(activeBoxes.indexOf(val), 1);
+						});
+						activeBoxes.push(`${GROUP_BOX_PREFIX}${index}`);
 					}
 					boxes[`${GROUP_BOX_PREFIX}${index}`].metadata = {type:'group'};
 					boxes[`${GROUP_BOX_PREFIX}${index}`].selections = selections;
@@ -143,7 +155,22 @@ class AlignmentGuides extends Component {
 				});
 				delete boxes['box-ms'];
 			}
+			if (activeBoxes.length > 1) {
+				boxes['box-ms'] = getMultipleSelectionCoordinates(boxes, activeBoxes);
+				boxes['box-ms'].type = 'group';
+				boxes['box-ms'].zIndex = 12;
+				const selections = [];
+				for (let box in boxes) {
+					if (boxes.hasOwnProperty(box) && activeBoxes.includes(box)) {
+						selections.push(boxes[box]);
+					}
+				}
 
+				boxes['box-ms'].selections = selections;
+				active = 'box-ms';
+			} else if (activeBoxes.length === 1) {
+				active = activeBoxes[0];
+			}
 			// adding guidelines for snapping
 			this.addGuidelinesForSnapping(guides);
 
@@ -694,6 +721,10 @@ class AlignmentGuides extends Component {
 							this.startingPositions[box] = this.state.boxes[box];
 						}
 					});
+				} else if (this.state.activeBoxes.length === 1 && this.state.activeBoxes[0] !== 'box-ms' && this.state.activeBoxes[0].indexOf(GROUP_BOX_PREFIX) < 0) {
+					this.startingPositions = {};
+					const boxKey = this.state.activeBoxes[0];
+					this.startingPositions[boxKey] = Object.assign({}, this.state.boxes[boxKey]);
 				} else { // if multiple selection and only groups selected
 					this.state.activeCaptionGroupCaptions.forEach(box => {
 						this.startingPositions[box] = this.state.boxes[box];
@@ -744,6 +775,12 @@ class AlignmentGuides extends Component {
 								newData.selections.push(currentBox);
 							}
 						});
+					} else if (this.state.activeBoxes.length === 1 && this.state.activeBoxes[0] !== 'box-ms' && this.state.activeBoxes[0].indexOf(GROUP_BOX_PREFIX) < 0) {
+						const currentBox = Object.assign({}, this.state.boxes[this.state.activeBoxes[0]], {
+							deltaX: data.deltaX,
+							deltaY: data.deltaY,
+						});
+						newData.selections.push(currentBox);
 					} else { // if multiple selection and only groups selected
 						this.state.activeCaptionGroupCaptions.forEach(activeBox => {
 							const currentBox = Object.assign({}, this.state.boxes[activeBox], {
@@ -791,6 +828,8 @@ class AlignmentGuides extends Component {
 						hoverGroupedData.push(box);
 					}
 				});
+			} else if (this.state.activeBoxes.length === 1 && this.state.activeBoxes[0] !== 'box-ms' && this.state.activeBoxes[0].indexOf(GROUP_BOX_PREFIX) < 0) {
+				hoverGroupedData.push(this.state.activeBoxes[0]);
 			} else { // if multiple selection and only groups selected
 				this.state.activeCaptionGroupCaptions.forEach(activeBox => {
 					hoverGroupedData.push(activeBox);
@@ -1006,7 +1045,12 @@ class AlignmentGuides extends Component {
 							newData.selections.push(currentBox);
 						}
 					});
-					newData.selections = newData.selections.map(box => box);
+				} else if (this.state.activeBoxes.length === 1 && this.state.activeBoxes[0] !== 'box-ms' && this.state.activeBoxes[0].indexOf(GROUP_BOX_PREFIX) < 0) {
+					const currentBox = Object.assign({}, this.state.boxes[this.state.activeBoxes[0]], {
+						deltaX: data.deltaX,
+						deltaY: data.deltaY,
+					});
+					newData.selections.push(currentBox);
 				} else { // if multiple selection and only groups selected
 					this.state.activeCaptionGroupCaptions.forEach(activeBox => {
 						const currentBox = Object.assign({}, this.state.boxes[activeBox], {
@@ -1015,7 +1059,6 @@ class AlignmentGuides extends Component {
 						});
 						newData.selections.push(currentBox);
 					});
-					newData.selections = newData.selections.map(box => box);
 				}
 			} else if (data.node?.id?.indexOf(GROUP_BOX_PREFIX) >= 0) {
 				this.state.captionGroupsToIndexMap[data.node.id].forEach(captionIndex => {
@@ -1026,7 +1069,6 @@ class AlignmentGuides extends Component {
 					});
 					newData.selections.push(currentBox);
 				});
-				newData.selections = newData.selections.map(box => box);
 			} else {
 				this.state.activeBoxes.forEach(activeBox => {
 					const currentBox = Object.assign({}, this.state.boxes[activeBox], {
@@ -1035,7 +1077,6 @@ class AlignmentGuides extends Component {
 					});
 					newData.selections.push(currentBox);
 				});
-				newData.selections = newData.selections.map(box => box);
 			}
 		}
 
