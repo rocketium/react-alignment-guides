@@ -23,10 +23,10 @@ class AlignmentGuides extends Component {
 		super(props);
 		this.boundingBox = React.createRef();
 		this.state = {
-			active: '',
-			activeBoxes: [],
+			active: '', // stores the active box to be shown on preview
+			activeBoxes: [], // store all captions box which are currently selected in multiple selection state
 			boundingBox: null,
-			boxes: {},
+			boxes: {}, // store all data of each caption
 			dragging: false,
 			guides: {},
 			guidesActive: false,
@@ -36,8 +36,8 @@ class AlignmentGuides extends Component {
 			rotating: false,
 			activeBoxSnappedPosition: {},
 			preventShortcutEvents: false,
-			activeCaptionGroupCaptions: [],
-			captionGroupsToIndexMap:{}
+			activeCaptionGroupCaptions: [], // this is to store all the captions selected while selecting 1 group or multiple groups
+			captionGroupsToIndexMap:{} //  we store all the group and its map to the caption index that are inside it as it's selection
 		};
 		this.setShiftKeyState = this.setShiftKeyState.bind(this);
 		this.getBoundingBoxElement = this.getBoundingBoxElement.bind(this);
