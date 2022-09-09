@@ -14,7 +14,7 @@ import {
 	centerToTopLeft,
 	getResizeCursorCSS,
 } from './utils/helpers';
-import { RESIZE_CORNERS, RESIZE_CORNERS_FOR_NO_HEIGHT, RESIZE_CORNERS_FOR_NO_WIDTH, RESIZE_SIDES, ROTATE_HANDLES } from './utils/constants';
+import { RESIZE_CORNERS, RESIZE_CORNERS_FOR_NO_HEIGHT, GROUP_BOX_PREFIX, RESIZE_CORNERS_FOR_NO_WIDTH, RESIZE_SIDES, ROTATE_HANDLES } from './utils/constants';
 import styles from './styles.scss';
 const DRAG_THRESHOLD = 4;
 const DEFAULT_SIZE = 10;
@@ -723,8 +723,11 @@ class Box extends Component{
 			// 	boxStyles.zIndex = 99;
 			// }
 
-			if (position.type && position.type === 'group' && isShiftKeyActive) {
-				boxStyles.pointerEvents = 'none';
+			if (position.type && position.type === 'group' && isShiftKeyActive ) {
+				if (!areMultipleBoxesSelected) {
+					boxStyles.pointerEvents = 'none';
+				}
+				
 			}
 
 			if (cropActiveForElement !== undefined && !isCropModeActive)
