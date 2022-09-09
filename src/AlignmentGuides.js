@@ -1,4 +1,3 @@
-/* eslint-disable */
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Box from './Box';
@@ -456,10 +455,10 @@ class AlignmentGuides extends Component {
 						}
 						boxes['box-ms'] = data; // new temp box.
 						this.setState({
-							boxes,
-							active: 'box-ms',
-							activeBoxes: ['box-ms'],
-							activeCaptionGroupCaptions: allCaptionsForMultipleSelections
+							boxes, // stores all the caption data 
+							active: 'box-ms', // determine which box comes as active in preview, should be string always
+							activeBoxes: ['box-ms'], // we store all selected elements in a multiple selection in this state
+							activeCaptionGroupCaptions: allCaptionsForMultipleSelections // store all the captions from all the groups that are currently selected
 						});
 					} else if (this.state.activeBoxes.length > 0 && this.state.isShiftKeyActive) {
 						// when single element was selected and then we are selecting group
