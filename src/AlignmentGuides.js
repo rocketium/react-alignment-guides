@@ -1780,13 +1780,20 @@ class AlignmentGuides extends Component {
 			}, []);
 		}
 
-		return <div id={this.props.id} ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}>
+		return <div id={this.props.id} ref={this.boundingBox} className={`${styles.boundingBox} ${this.props.className} bounding-box-wrapper`} style={this.props.style}
+			onDrop={
+				e => {
+					this.unSelectBox(e);
+				}
+			}
+		>
 			{draggableBoxes}
 			{xAxisGuides}
 			{yAxisGuides}
 		</div>;
 	}
 }
+
 
 // Typechecking props for AlignmentGuides component
 AlignmentGuides.propTypes = {
