@@ -1794,6 +1794,7 @@ class AlignmentGuides extends Component {
 	}
 }
 
+
 // Typechecking props for AlignmentGuides component
 AlignmentGuides.propTypes = {
 	boundToParent: PropTypes.bool,
