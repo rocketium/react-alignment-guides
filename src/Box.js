@@ -134,7 +134,8 @@ class Box extends Component{
 				left: startingPosition.x - boundingBoxPosition.x,
 				width: startingPosition.width,
 				height: startingPosition.height,
-				node: target
+				node: target,
+				rotateAngle: position.rotateAngle
 			};
 			if (position.rotateAngle !== 0) {
 				data = {
@@ -144,7 +145,8 @@ class Box extends Component{
 					left: startingPosition.x,
 					width: startingPosition.width,
 					height: startingPosition.height,
-					node: target
+					node: target, 
+					rotateAngle: position.rotateAngle
 				};
 			}
 			this.didDragHappen = false;
@@ -194,7 +196,9 @@ class Box extends Component{
 					height: this.props.position.height,
 					node: this.box.current,
 					deltaX: currentPosition.left - startingPosition.left,
-					deltaY: currentPosition.top - startingPosition.top
+					deltaY: currentPosition.top - startingPosition.top,
+					rotateAngle: position.rotateAngle
+
 				};
 				if (this.props.position.type) {
 					data.type = this.props.position.type;
@@ -210,6 +214,7 @@ class Box extends Component{
 			};
 
 			const onDragEnd = (e) => {
+				data.rotateAngle = position.rotateAngle ;
 				if (this.didDragHappen) {
 					this.props.didDragOrResizeHappen && this.props.setDragOrResizeState && this.props.setDragOrResizeState(false);
 					this.callSelectBox = false;
