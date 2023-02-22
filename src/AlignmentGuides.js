@@ -1395,7 +1395,7 @@ class AlignmentGuides extends Component {
 			boxes = {};
 			for (let box in this.state.boxes) {
 				if (this.state.boxes.hasOwnProperty(box)) {
-					if (this.state.activeBoxes.includes(box) || (this.state.activeCaptionGroupCaptions.includes(box) && this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0)) {
+					if (this.state.activeBoxes.includes(box) || (this.state.activeCaptionGroupCaptions.includes(box) && (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0 || this.state.activeBoxes?.filter(box => box?.indexOf(GROUP_BOX_PREFIX) >= 0).length > 0))) {
 						boxes[box] = Object.assign({}, this.state.boxes[box], {
 							x: this.state.boxes[box].x + (data.changedValues.x || 0),
 							y: this.state.boxes[box].y + (data.changedValues.y || 0),
@@ -1470,11 +1470,18 @@ class AlignmentGuides extends Component {
 					});
 				} else {
 					newData.selections = this.state.activeBoxes.map(box => {
+						if (box?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+							return Object.assign({}, this.state.boxes[box], {
+								selections: this.state.activeCaptionGroupCaptions.map(innerBox => {
+									return Object.assign({}, this.state.boxes[innerBox]);
+								})
+							})
+						}
 						return Object.assign({}, this.state.boxes[box]);
 					});
 				}
 			}
-	
+
 			this.props.onKeyUp && this.props.onKeyUp(e, newData);
 		});
 	}
@@ -1488,7 +1495,7 @@ class AlignmentGuides extends Component {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
-		if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+		if (this.state.active?.indexOf(GROUP_BOX_PREFIX) >= 0 || this.state.activeBoxes?.filter(box => box?.indexOf(GROUP_BOX_PREFIX) >= 0).length > 0) {
 			delete newData.metadata;
 		}
 
@@ -1502,6 +1509,14 @@ class AlignmentGuides extends Component {
 			} else {
 				newData.selections = this.state.activeBoxes.map(box => {
 					this.startingPositions[box] = Object.assign({}, this.state.boxes[box]);
+					if (box?.indexOf(GROUP_BOX_PREFIX) >= 0) {
+						return Object.assign({}, this.state.boxes[box], {
+							selections: this.state.activeCaptionGroupCaptions.map(innerBox => {
+								this.startingPositions[innerBox] = Object.assign({}, this.state.boxes[innerBox]);
+								return Object.assign({}, this.state.boxes[innerBox]);
+							})
+						})
+					}
 					return Object.assign({}, this.state.boxes[box]);
 				});
 			}
