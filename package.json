@@ -27,8 +27,8 @@
 	"scripts": {
 		"build": "rollup -c",
 		"start": "rollup -c -w",
-		"prepare": "yarn run build",
-		"predeploy": "cd example && yarn install && yarn run build",
+		"prepare": "npm run build",
+		"predeploy": "cd example && npm install && npm run build",
 		"deploy": "gh-pages -d example/build"
 	},
 	"peerDependencies": {
@@ -43,7 +43,7 @@
 		"@babel/plugin-proposal-export-default-from": "^7.8.3",
 		"@babel/plugin-proposal-export-namespace-from": "^7.8.3",
 		"@babel/plugin-proposal-object-rest-spread": "^7.9.5",
-		"@babel/preset-env": "^7.9.5",
+		"@babel/preset-env": "^7.22.10",
 		"@babel/preset-react": "^7.9.4",
 		"@svgr/rollup": "^5.3.1",
 		"bl": "^4.0.2",
