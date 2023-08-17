@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import throttle from 'lodash.throttle';
+const throttle = require('lodash.throttle');
 import {
 	calculateBoundariesForDrag,
 	calculateBoundariesForResize,
