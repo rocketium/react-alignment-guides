@@ -11,11 +11,6 @@
 npm install --save react-alignment-guides
 ```
 
-### Yarn
-```bash
-yarn add react-alignment-guides
-```    
-
 ## Usage
 
 ```jsx
