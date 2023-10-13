@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
-function _typeof$2(obj) { "@babel/helpers - typeof"; return _typeof$2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof$2(obj); }
-function ownKeys$2(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread$2(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$2(Object(source), !0).forEach(function (key) { _defineProperty$2(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$2(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _typeof$2(o) { "@babel/helpers - typeof"; return _typeof$2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof$2(o); }
+function ownKeys$2(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread$2(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys$2(Object(t), !0).forEach(function (r) { _defineProperty$2(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$2(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty$2(obj, key, value) { key = _toPropertyKey$2(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _toPropertyKey$2(arg) { var key = _toPrimitive$2(arg, "string"); return _typeof$2(key) === "symbol" ? key : String(key); }
 function _toPrimitive$2(input, hint) { if (_typeof$2(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof$2(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
@@ -510,7 +510,7 @@ var getResizeCursorCSS = function getResizeCursorCSS(handle) {
 };
 var checkGroupChildElementsLocked = function checkGroupChildElementsLocked(captions) {
   var isLocked = true;
-  captions === null || captions === void 0 ? void 0 : captions.forEach(function (caption) {
+  captions === null || captions === void 0 || captions.forEach(function (caption) {
     if (!caption.isLayerLocked) {
       isLocked = false;
       return isLocked;
@@ -562,9 +562,9 @@ var css_248z = "* {\n  box-sizing: border-box;\n}\n\n.styles_boundingBox__OF4dz 
 var styles = {"boundingBox":"styles_boundingBox__OF4dz","box":"styles_box__TjCJX","selected":"styles_selected__9MAFU","boxGroup":"styles_boxGroup__6rQzd","groupElement":"styles_groupElement__R6IYM","guide":"styles_guide__wW5Ed","active":"styles_active__iXMde","xAxis":"styles_xAxis__WDYvZ","yAxis":"styles_yAxis__qab9e","coordinates":"styles_coordinates__UA7Yw","dimensions":"styles_dimensions__dMwfs","dimensions_style":"styles_dimensions_style__wEskO","resizeCorners":"styles_resizeCorners__Eb1Cz","rotateHandle":"styles_rotateHandle__rr0Oh","resizeEdges":"styles_resizeEdges__-BP6T","resize-tr":"styles_resize-tr__v7GwR","resize-tl":"styles_resize-tl__L32hh","resize-br":"styles_resize-br__mDSIR","resize-bl":"styles_resize-bl__RJVHJ","resize-cl":"styles_resize-cl__Fx5SZ","resize-cr":"styles_resize-cr__-EoCL","resize-ct":"styles_resize-ct__tq8KW","resize-cb":"styles_resize-cb__fS01v","stretchable-resize-cl":"styles_stretchable-resize-cl__yZuGs","stretchable-resize-cr":"styles_stretchable-resize-cr__Elov6","stretchable-resize-ct":"styles_stretchable-resize-ct__t3Xmj","stretchable-resize-cb":"styles_stretchable-resize-cb__iJCbT","rotate-tr":"styles_rotate-tr__AawTO","rotate-tl":"styles_rotate-tl__4p6BA","rotate-br":"styles_rotate-br__d9DRB","rotate-bl":"styles_rotate-bl__hA1u9","fadeOut":"styles_fadeOut__Re9rj","cropper_notch_lb":"styles_cropper_notch_lb__T3RaB","cropper_notch_lt":"styles_cropper_notch_lt__4JHI4","cropper_notch_rt":"styles_cropper_notch_rt__edHrT","cropper_notch_rb":"styles_cropper_notch_rb__4og9s","cropper_notch_lc":"styles_cropper_notch_lc__-jdUy","cropper_notch_tc":"styles_cropper_notch_tc__k-h8t","cropper_notch_rc":"styles_cropper_notch_rc__eSFko","cropper_notch_bc":"styles_cropper_notch_bc__uXhqB","cropper_border":"styles_cropper_border__1kp2o","hideBorders":"styles_hideBorders__IVUYS","zeroDimensionBox":"styles_zeroDimensionBox__3M2lf","zeroDimensionBoxSelected":"styles_zeroDimensionBoxSelected__u2YzN"};
 styleInject(css_248z);
 
-function _typeof$1(obj) { "@babel/helpers - typeof"; return _typeof$1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof$1(obj); }
-function ownKeys$1(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread$1(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys$1(Object(source), !0).forEach(function (key) { _defineProperty$1(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys$1(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function _typeof$1(o) { "@babel/helpers - typeof"; return _typeof$1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof$1(o); }
+function ownKeys$1(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread$1(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys$1(Object(t), !0).forEach(function (r) { _defineProperty$1(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$1(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _defineProperty$1(obj, key, value) { key = _toPropertyKey$1(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties$1(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey$1(descriptor.key), descriptor); } }
@@ -1464,10 +1464,10 @@ Box.propTypes = {
   rotate: PropTypes.bool
 };
 
-function _typeof(obj) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (obj) { return typeof obj; } : function (obj) { return obj && "function" == typeof Symbol && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }, _typeof(obj); }
+function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
 function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
+function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
@@ -1477,7 +1477,7 @@ function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArra
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
 function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
-function _iterableToArrayLimit(arr, i) { var _i = null == arr ? null : "undefined" != typeof Symbol && arr[Symbol.iterator] || arr["@@iterator"]; if (null != _i) { var _s, _e, _x, _r, _arr = [], _n = !0, _d = !1; try { if (_x = (_i = _i.call(arr)).next, 0 === i) { if (Object(_i) !== _i) return; _n = !1; } else for (; !(_n = (_s = _x.call(_i)).done) && (_arr.push(_s.value), _arr.length !== i); _n = !0); } catch (err) { _d = !0, _e = err; } finally { try { if (!_n && null != _i["return"] && (_r = _i["return"](), Object(_r) !== _r)) return; } finally { if (_d) throw _e; } } return _arr; } }
+function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
@@ -1728,7 +1728,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
         } else if (((_this$props4 = this.props) === null || _this$props4 === void 0 || (_this$props4 = _this$props4.groups) === null || _this$props4 === void 0 ? void 0 : _this$props4.length) > 0) {
           var _this$props5;
           var active = this.state.active;
-          (_this$props5 = this.props) === null || _this$props5 === void 0 || (_this$props5 = _this$props5.groups) === null || _this$props5 === void 0 ? void 0 : _this$props5.forEach(function (groupArray, index) {
+          (_this$props5 = this.props) === null || _this$props5 === void 0 || (_this$props5 = _this$props5.groups) === null || _this$props5 === void 0 || _this$props5.forEach(function (groupArray, index) {
             var _this2$props$groups, _prevProps$groups;
             boxes["".concat(GROUP_BOX_PREFIX).concat(index)] = getGroupCoordinates(boxes, groupArray);
             boxes["".concat(GROUP_BOX_PREFIX).concat(index)].type = 'group';
@@ -1937,7 +1937,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
               // first take all the previous selected data. 
               // store all the selections in an array, then add more.
               var allCaptionsForMultipleSelections = _toConsumableArray(this.state.activeCaptionGroupCaptions);
-              (_boxes3$e$target$id2 = _boxes3[e.target.id]) === null || _boxes3$e$target$id2 === void 0 || (_boxes3$e$target$id2 = _boxes3$e$target$id2.selections) === null || _boxes3$e$target$id2 === void 0 ? void 0 : _boxes3$e$target$id2.forEach(function (selection) {
+              (_boxes3$e$target$id2 = _boxes3[e.target.id]) === null || _boxes3$e$target$id2 === void 0 || (_boxes3$e$target$id2 = _boxes3$e$target$id2.selections) === null || _boxes3$e$target$id2 === void 0 || _boxes3$e$target$id2.forEach(function (selection) {
                 var currentBox = Object.keys(_this4.state.boxes).find(function (key) {
                   return _this4.state.boxes[key].identifier === selection.metadata.captionIndex;
                 });
@@ -1980,7 +1980,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
               var _boxes3$e$target$id3;
               // when single element was selected and then we are selecting group
               var _allCaptionsForMultipleSelections = _toConsumableArray(this.state.activeBoxes);
-              (_boxes3$e$target$id3 = _boxes3[e.target.id]) === null || _boxes3$e$target$id3 === void 0 || (_boxes3$e$target$id3 = _boxes3$e$target$id3.selections) === null || _boxes3$e$target$id3 === void 0 ? void 0 : _boxes3$e$target$id3.forEach(function (selection) {
+              (_boxes3$e$target$id3 = _boxes3[e.target.id]) === null || _boxes3$e$target$id3 === void 0 || (_boxes3$e$target$id3 = _boxes3$e$target$id3.selections) === null || _boxes3$e$target$id3 === void 0 || _boxes3$e$target$id3.forEach(function (selection) {
                 var currentBox = Object.keys(_this4.state.boxes).find(function (key) {
                   return _this4.state.boxes[key].identifier === selection.metadata.captionIndex;
                 });
@@ -2016,7 +2016,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
             } else {
               var tempActiveBoxes = [];
               if ((selections === null || selections === void 0 ? void 0 : selections.length) > 1) {
-                selections === null || selections === void 0 ? void 0 : selections.forEach(function (select) {
+                selections === null || selections === void 0 || selections.forEach(function (select) {
                   var currentBox = Object.keys(_this4.state.boxes).find(function (key) {
                     return _this4.state.boxes[key].identifier === select.metadata.captionIndex;
                   });
@@ -2262,7 +2262,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
               if (box.startsWith(GROUP_BOX_PREFIX) || box === 'box-ms') {
                 var _this5$state$activeCa;
                 // if more than 1 group is selected
-                (_this5$state$activeCa = _this5.state.activeCaptionGroupCaptions) === null || _this5$state$activeCa === void 0 ? void 0 : _this5$state$activeCa.forEach(function (activeBox) {
+                (_this5$state$activeCa = _this5.state.activeCaptionGroupCaptions) === null || _this5$state$activeCa === void 0 || _this5$state$activeCa.forEach(function (activeBox) {
                   _this5.startingPositions[activeBox] = _this5.state.boxes[activeBox];
                 });
               } else {
@@ -2319,7 +2319,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
               this.state.activeBoxes.forEach(function (box) {
                 if (box.startsWith(GROUP_BOX_PREFIX) || box === 'box-ms') {
                   var _this6$state$activeCa;
-                  (_this6$state$activeCa = _this6.state.activeCaptionGroupCaptions) === null || _this6$state$activeCa === void 0 ? void 0 : _this6$state$activeCa.forEach(function (activeBox) {
+                  (_this6$state$activeCa = _this6.state.activeCaptionGroupCaptions) === null || _this6$state$activeCa === void 0 || _this6$state$activeCa.forEach(function (activeBox) {
                     var currentBox = Object.assign({}, _this6.state.boxes[activeBox], {
                       deltaX: data.deltaX,
                       deltaY: data.deltaY
@@ -2385,7 +2385,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           this.state.activeBoxes.forEach(function (box) {
             if (box.startsWith(GROUP_BOX_PREFIX) || box === 'box-ms') {
               var _this6$state$activeCa2;
-              (_this6$state$activeCa2 = _this6.state.activeCaptionGroupCaptions) === null || _this6$state$activeCa2 === void 0 ? void 0 : _this6$state$activeCa2.forEach(function (activeBox) {
+              (_this6$state$activeCa2 = _this6.state.activeCaptionGroupCaptions) === null || _this6$state$activeCa2 === void 0 || _this6$state$activeCa2.forEach(function (activeBox) {
                 hoverGroupedData.push(activeBox);
               });
             } else {
@@ -2528,14 +2528,14 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
           };
           Object.keys(_guides).map(function (box) {
             var _guides$box, _guides$box2;
-            _guides === null || _guides === void 0 || (_guides$box = _guides[box]) === null || _guides$box === void 0 ? void 0 : _guides$box.x.map(function (position) {
+            _guides === null || _guides === void 0 || (_guides$box = _guides[box]) === null || _guides$box === void 0 || _guides$box.x.map(function (position) {
               var _match$x;
               if ((match === null || match === void 0 || (_match$x = match.x) === null || _match$x === void 0 ? void 0 : _match$x.intersection) === position) {
                 activeBox.left = newActiveBoxLeft;
                 activeBox.x = newActiveBoxLeft;
               }
             });
-            _guides === null || _guides === void 0 || (_guides$box2 = _guides[box]) === null || _guides$box2 === void 0 ? void 0 : _guides$box2.y.map(function (position) {
+            _guides === null || _guides === void 0 || (_guides$box2 = _guides[box]) === null || _guides$box2 === void 0 || _guides$box2.y.map(function (position) {
               var _match$y;
               if ((match === null || match === void 0 || (_match$y = match.y) === null || _match$y === void 0 ? void 0 : _match$y.intersection) === position) {
                 activeBox.top = newActiveBoxTop;
@@ -2589,7 +2589,7 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
             this.state.activeBoxes.forEach(function (box) {
               if (box.startsWith(GROUP_BOX_PREFIX) || box === 'box-ms') {
                 var _this7$state$activeCa;
-                (_this7$state$activeCa = _this7.state.activeCaptionGroupCaptions) === null || _this7$state$activeCa === void 0 ? void 0 : _this7$state$activeCa.forEach(function (activeBox) {
+                (_this7$state$activeCa = _this7.state.activeCaptionGroupCaptions) === null || _this7$state$activeCa === void 0 || _this7$state$activeCa.forEach(function (activeBox) {
                   var currentBox = Object.assign({}, _this7.state.boxes[activeBox], {
                     deltaX: data.deltaX,
                     deltaY: data.deltaY
