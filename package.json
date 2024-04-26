@@ -1,6 +1,6 @@
 {
 	"name": "react-alignment-guides",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
 	"keywords": [
 		"drag",
@@ -27,9 +27,7 @@
 	"scripts": {
 		"build": "rollup -c",
 		"start": "rollup -c -w",
-		"prepare": "npm run build",
-		"predeploy": "cd example && npm install && npm run build",
-		"deploy": "gh-pages -d example/build"
+		"prepare": "npm run build"
 	},
 	"peerDependencies": {
 		"prop-types": "^15.7.2",
@@ -53,7 +51,6 @@
 		"eslint-plugin-import": "^2.20.2",
 		"eslint-plugin-promise": "^4.2.1",
 		"eslint-plugin-standard": "^4.0.1",
-		"gh-pages": "^2.2.0",
 		"postcss": "^8.4.28",
 		"postcss-inline-svg": "^6.0.0",
 		"postcss-svgo": "^6.0.0",

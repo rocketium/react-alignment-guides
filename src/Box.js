@@ -729,7 +729,7 @@ class Box extends Component{
 			// }
 
 			if (position.type && position.type === 'group' && isShiftKeyActive ) {
-				if (!areMultipleBoxesSelected) {
+				if (!areMultipleBoxesSelected || id === 'box-ms') {
 					boxStyles.pointerEvents = 'none';
 				}
 				
