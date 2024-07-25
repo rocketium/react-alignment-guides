@@ -551,7 +551,7 @@ class AlignmentGuides extends Component {
 					this.setState({
 						active: 'box-ms',
 						activeBoxes,
-						boxes
+						boxes,
 					}, () => {
 						this.startingPositions = {};
 						this.state.activeBoxes.forEach(box => {
@@ -567,7 +567,8 @@ class AlignmentGuides extends Component {
 					activeBoxes: [
 						e.target.id
 					],
-					boxes
+					boxes,
+					activeCaptionGroupCaptions: [],
 				});
 			}
 			if (e.type === 'contextmenu') {
@@ -710,7 +711,7 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if (this.state.boxes?.[data.node.id]?.metadata && data.node?.id?.indexOf(GROUP_BOX_PREFIX) < 0 && (this.state.activeCaptionGroupCaptions.length <= 0 && this.state.active !== 'box-ms')) { // Just updating if the group is present then we skip metadata as we use to to update single captions
+		if (this.state.boxes?.[data.node.id]?.metadata && data.node?.id?.indexOf(GROUP_BOX_PREFIX) < 0 && (!(data.type && data.type === 'group') && this.state.active !== 'box-ms')) { // Just updating if the group is present then we skip metadata as we use to to update single captions
 			newData.metadata = this.state.boxes[data.node.id].metadata;
 		}
 		if (data.type && data.type === 'group') {
@@ -781,7 +782,7 @@ class AlignmentGuides extends Component {
 		let newData;
 		if (this.state.dragging) {
 			newData = Object.assign({}, data);
-			if ((this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) && (this.state.activeCaptionGroupCaptions.length <= 0 && this.state.active !== 'box-ms')) {
+			if ((this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) && (!(data.type && data.type === 'group') && this.state.active !== 'box-ms')) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			if (data.type && data.type === 'group') {
@@ -1051,7 +1052,7 @@ class AlignmentGuides extends Component {
 		});
 
 		let newData = Object.assign({}, data);
-		if ((this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) && (this.state.activeCaptionGroupCaptions.length <= 0 && this.state.active !== 'box-ms')) {
+		if ((this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0) && (!(data.type && data.type === 'group') && this.state.active !== 'box-ms')) {
 			newData.metadata = this.state.boxes[this.state.active].metadata;
 		}
 
@@ -1162,7 +1163,7 @@ class AlignmentGuides extends Component {
 	resizeHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0 && (this.state.activeCaptionGroupCaptions.length <= 0 && this.state.active !== 'box-ms')) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0 && (!(data.type && data.type === 'group') && this.state.active !== 'box-ms')) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 			this.props.onResize && this.props.onResize(e, newData);
@@ -1306,7 +1307,7 @@ class AlignmentGuides extends Component {
 	resizeEndHandler(e, data) {
 		if (this.state.resizing) {
 			let newData = Object.assign({}, data);
-			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0 && (this.state.activeCaptionGroupCaptions.length <= 0 && this.state.active !== 'box-ms')) {
+			if (this.state.boxes?.[this.state.active]?.metadata && this.state.active?.indexOf(GROUP_BOX_PREFIX) < 0 && (!(data.type && data.type === 'group') && this.state.active !== 'box-ms')) {
 				newData.metadata = this.state.boxes[this.state.active].metadata;
 			}
 
