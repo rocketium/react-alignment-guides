@@ -1,6 +1,6 @@
 {
 	"name": "react-alignment-guides",
-	"version": "1.0.4",
+	"version": "1.0.5",
 	"description": "React Alignment Guides is a guides system for draggable elements in an enclosed space",
 	"keywords": [
 		"drag",
@@ -56,7 +56,7 @@
 		"postcss-svgo": "^6.0.0",
 		"react": "^16.13.1",
 		"react-dom": "^16.13.1",
-		"rollup": "^2.3.4",
+		"rollup": "^2.79.2",
 		"rollup-plugin-babel": "^4.4.0",
 		"rollup-plugin-node-polyfills": "^0.2.1",
 		"rollup-plugin-peer-deps-external": "^2.2.2",
