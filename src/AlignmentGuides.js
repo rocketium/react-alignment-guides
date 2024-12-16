@@ -250,8 +250,7 @@ class AlignmentGuides extends Component {
 						active = `${GROUP_BOX_PREFIX}${index}`;
 					}
 				});
-				delete boxes['box-ms'];
-				
+
 				this.setState({
 					boxes,
 					captionGroupsToIndexMap,
