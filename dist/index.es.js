@@ -1331,7 +1331,7 @@ var Box = /*#__PURE__*/function (_Component) {
         // }
 
         if (position.type && position.type === 'group' && isShiftKeyActive) {
-          if (!areMultipleBoxesSelected) {
+          if (!areMultipleBoxesSelected || id === 'box-ms') {
             boxStyles.pointerEvents = 'none';
           }
         }
@@ -1753,7 +1753,6 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
               active = "".concat(GROUP_BOX_PREFIX).concat(index);
             }
           });
-          delete boxes['box-ms'];
           this.setState({
             boxes: boxes,
             captionGroupsToIndexMap: captionGroupsToIndexMap,
