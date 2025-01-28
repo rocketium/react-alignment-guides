@@ -4,9 +4,9 @@ import PropTypes from 'prop-types';
 function _typeof$2(o) { "@babel/helpers - typeof"; return _typeof$2 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof$2(o); }
 function ownKeys$2(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread$2(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys$2(Object(t), !0).forEach(function (r) { _defineProperty$2(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$2(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty$2(obj, key, value) { key = _toPropertyKey$2(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _toPropertyKey$2(arg) { var key = _toPrimitive$2(arg, "string"); return _typeof$2(key) === "symbol" ? key : String(key); }
-function _toPrimitive$2(input, hint) { if (_typeof$2(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof$2(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
+function _defineProperty$2(e, r, t) { return (r = _toPropertyKey$2(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _toPropertyKey$2(t) { var i = _toPrimitive$2(t, "string"); return "symbol" == _typeof$2(i) ? i : i + ""; }
+function _toPrimitive$2(t, r) { if ("object" != _typeof$2(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof$2(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 var calculateGuidePositions = function calculateGuidePositions(dimensions, axis) {
   if (axis === 'x') {
     var start = dimensions.left;
@@ -565,60 +565,59 @@ styleInject(css_248z);
 function _typeof$1(o) { "@babel/helpers - typeof"; return _typeof$1 = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof$1(o); }
 function ownKeys$1(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread$1(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys$1(Object(t), !0).forEach(function (r) { _defineProperty$1(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys$1(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _defineProperty$1(obj, key, value) { key = _toPropertyKey$1(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties$1(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey$1(descriptor.key), descriptor); } }
-function _createClass$1(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties$1(Constructor.prototype, protoProps); if (staticProps) _defineProperties$1(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey$1(arg) { var key = _toPrimitive$1(arg, "string"); return _typeof$1(key) === "symbol" ? key : String(key); }
-function _toPrimitive$1(input, hint) { if (_typeof$1(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof$1(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _inherits$1(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf$1(subClass, superClass); }
-function _setPrototypeOf$1(o, p) { _setPrototypeOf$1 = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf$1(o, p); }
-function _createSuper$1(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct$1(); return function _createSuperInternal() { var Super = _getPrototypeOf$1(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf$1(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn$1(this, result); }; }
-function _possibleConstructorReturn$1(self, call) { if (call && (_typeof$1(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized$1(self); }
-function _assertThisInitialized$1(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _isNativeReflectConstruct$1() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _getPrototypeOf$1(o) { _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf$1(o); }
+function _defineProperty$1(e, r, t) { return (r = _toPropertyKey$1(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _classCallCheck$1(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties$1(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey$1(o.key), o); } }
+function _createClass$1(e, r, t) { return r && _defineProperties$1(e.prototype, r), t && _defineProperties$1(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey$1(t) { var i = _toPrimitive$1(t, "string"); return "symbol" == _typeof$1(i) ? i : i + ""; }
+function _toPrimitive$1(t, r) { if ("object" != _typeof$1(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof$1(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper$1(t, o, e) { return o = _getPrototypeOf$1(o), _possibleConstructorReturn$1(t, _isNativeReflectConstruct$1() ? Reflect.construct(o, e || [], _getPrototypeOf$1(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn$1(t, e) { if (e && ("object" == _typeof$1(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized$1(t); }
+function _assertThisInitialized$1(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct$1() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct$1 = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf$1(t) { return _getPrototypeOf$1 = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf$1(t); }
+function _inherits$1(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf$1(t, e); }
+function _setPrototypeOf$1(t, e) { return _setPrototypeOf$1 = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf$1(t, e); }
 var throttle = require('lodash.throttle');
 var DRAG_THRESHOLD = 4;
 var DEFAULT_SIZE = 10;
 var PREVENT_DEFAULT_KEYS = ['ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown'];
 var Box = /*#__PURE__*/function (_Component) {
-  _inherits$1(Box, _Component);
-  var _super = _createSuper$1(Box);
   function Box(props) {
     var _this;
     _classCallCheck$1(this, Box);
-    _this = _super.call(this, props);
+    _this = _callSuper$1(this, Box, [props]);
     _this.box = /*#__PURE__*/React.createRef();
     _this.coordinates = /*#__PURE__*/React.createRef();
     _this.height = /*#__PURE__*/React.createRef();
     _this.callSelectBox = false;
     _this.didDragHappen = false;
     _this.didResizeHappen = false;
-    _this.selectBox = _this.selectBox.bind(_assertThisInitialized$1(_this));
-    _this.unHoverBox = _this.unHoverBox.bind(_assertThisInitialized$1(_this));
-    _this.hoverBox = _this.hoverBox.bind(_assertThisInitialized$1(_this));
-    _this.onDragStart = _this.onDragStart.bind(_assertThisInitialized$1(_this));
-    _this.shortcutHandler = _this.shortcutHandler.bind(_assertThisInitialized$1(_this));
-    _this.onShortcutKeyUp = _this.onShortcutKeyUp.bind(_assertThisInitialized$1(_this));
+    _this.selectBox = _this.selectBox.bind(_this);
+    _this.unHoverBox = _this.unHoverBox.bind(_this);
+    _this.hoverBox = _this.hoverBox.bind(_this);
+    _this.onDragStart = _this.onDragStart.bind(_this);
+    _this.shortcutHandler = _this.shortcutHandler.bind(_this);
+    _this.onShortcutKeyUp = _this.onShortcutKeyUp.bind(_this);
     _this.keyDownHandler = throttle(function (e) {
       _this.shortcutHandler(e);
     }, 300);
-    _this.onResizeStart = _this.onResizeStart.bind(_assertThisInitialized$1(_this));
-    _this.onRotateStart = _this.onRotateStart.bind(_assertThisInitialized$1(_this));
-    _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_assertThisInitialized$1(_this));
-    _this.handleDoubleClick = _this.handleDoubleClick.bind(_assertThisInitialized$1(_this));
-    _this.endCropMode = _this.endCropMode.bind(_assertThisInitialized$1(_this));
-    _this.dragOverBox = _this.dragOverBox.bind(_assertThisInitialized$1(_this));
-    _this.unDragOverBox = _this.unDragOverBox.bind(_assertThisInitialized$1(_this));
-    _this.onDropElementBox = _this.onDropElementBox.bind(_assertThisInitialized$1(_this));
-    _this.filterControls = _this.filterControls.bind(_assertThisInitialized$1(_this));
+    _this.onResizeStart = _this.onResizeStart.bind(_this);
+    _this.onRotateStart = _this.onRotateStart.bind(_this);
+    _this.getCoordinatesWrapperWidth = _this.getCoordinatesWrapperWidth.bind(_this);
+    _this.handleDoubleClick = _this.handleDoubleClick.bind(_this);
+    _this.endCropMode = _this.endCropMode.bind(_this);
+    _this.dragOverBox = _this.dragOverBox.bind(_this);
+    _this.unDragOverBox = _this.unDragOverBox.bind(_this);
+    _this.onDropElementBox = _this.onDropElementBox.bind(_this);
+    _this.filterControls = _this.filterControls.bind(_this);
     _this.state = {
       callKeyEnd: false
     };
     return _this;
   }
-  _createClass$1(Box, [{
+  _inherits$1(Box, _Component);
+  return _createClass$1(Box, [{
     key: "endCropMode",
     value: function endCropMode(data) {
       var _this$props = this.props,
@@ -637,7 +636,6 @@ var Box = /*#__PURE__*/function (_Component) {
         //currentPosition.left - startingPosition.left,
         deltaY: data.boxTranslateY // currentPosition.top - startingPosition.top						
       };
-
       this.props.updateBoxAfterCrop(data);
     }
   }, {
@@ -782,7 +780,7 @@ var Box = /*#__PURE__*/function (_Component) {
             }
           }
         };
-        var onDragEnd = function onDragEnd(e) {
+        var _onDragEnd = function onDragEnd(e) {
           data.rotateAngle = position.rotateAngle;
           if (_this2.didDragHappen) {
             _this2.props.didDragOrResizeHappen && _this2.props.setDragOrResizeState && _this2.props.setDragOrResizeState(false);
@@ -792,10 +790,10 @@ var Box = /*#__PURE__*/function (_Component) {
             }
           }
           document.removeEventListener('mousemove', onDrag);
-          document.removeEventListener('mouseup', onDragEnd);
+          document.removeEventListener('mouseup', _onDragEnd);
         };
         document.addEventListener('mousemove', onDrag);
-        document.addEventListener('mouseup', onDragEnd);
+        document.addEventListener('mouseup', _onDragEnd);
       }
     }
   }, {
@@ -900,7 +898,6 @@ var Box = /*#__PURE__*/function (_Component) {
         var data = Object.assign({}, position, newValues, {
           changedValues: changedValues // for group shortcut keys
         });
-
         if (this.props.dragDisabled === true) {
           if (typeof this.props.dragDisabledCallback === 'function') {
             this.props.dragDisabledCallback();
@@ -1133,7 +1130,7 @@ var Box = /*#__PURE__*/function (_Component) {
             _this3.props.dragDisabledCallback();
           }
         };
-        var onResizeEnd = function onResizeEnd(e) {
+        var _onResizeEnd = function onResizeEnd(e) {
           var _this3$box;
           if ((_this3$box = _this3.box) !== null && _this3$box !== void 0 && (_this3$box = _this3$box.current) !== null && _this3$box !== void 0 && _this3$box.style) {
             var _this3$props$position9;
@@ -1147,10 +1144,10 @@ var Box = /*#__PURE__*/function (_Component) {
             }
           }
           onResize && document.removeEventListener('mousemove', onResize);
-          onResizeEnd && document.removeEventListener('mouseup', onResizeEnd);
+          _onResizeEnd && document.removeEventListener('mouseup', _onResizeEnd);
         };
         onResize && document.addEventListener('mousemove', onResize);
-        onResizeEnd && document.addEventListener('mouseup', onResizeEnd);
+        _onResizeEnd && document.addEventListener('mouseup', _onResizeEnd);
       }
     }
   }, {
@@ -1223,15 +1220,15 @@ var Box = /*#__PURE__*/function (_Component) {
             _this4.props.dragDisabledCallback();
           }
         };
-        var onRotateEnd = function onRotateEnd(e) {
+        var _onRotateEnd = function onRotateEnd(e) {
           onRotate && document.removeEventListener('mousemove', onRotate);
-          onRotateEnd && document.removeEventListener('mouseup', onRotateEnd);
+          _onRotateEnd && document.removeEventListener('mouseup', _onRotateEnd);
           if (_this4.props.dragDisabled !== true) {
             _this4.props.onRotateEnd && _this4.props.onRotateEnd(e, data);
           }
         };
         onRotate && document.addEventListener('mousemove', onRotate);
-        onRotateEnd && document.addEventListener('mouseup', onRotateEnd);
+        _onRotateEnd && document.addEventListener('mouseup', _onRotateEnd);
       }
     }
   }, {
@@ -1437,7 +1434,6 @@ var Box = /*#__PURE__*/function (_Component) {
       return null;
     }
   }]);
-  return Box;
 }(Component);
 Box.propTypes = {
   areMultipleBoxesSelected: PropTypes.bool,
@@ -1465,32 +1461,32 @@ Box.propTypes = {
 };
 
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
-function _extends() { _extends = Object.assign ? Object.assign.bind() : function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; }; return _extends.apply(this, arguments); }
+function _extends() { return _extends = Object.assign ? Object.assign.bind() : function (n) { for (var e = 1; e < arguments.length; e++) { var t = arguments[e]; for (var r in t) ({}).hasOwnProperty.call(t, r) && (n[r] = t[r]); } return n; }, _extends.apply(null, arguments); }
 function ownKeys(e, r) { var t = Object.keys(e); if (Object.getOwnPropertySymbols) { var o = Object.getOwnPropertySymbols(e); r && (o = o.filter(function (r) { return Object.getOwnPropertyDescriptor(e, r).enumerable; })), t.push.apply(t, o); } return t; }
 function _objectSpread(e) { for (var r = 1; r < arguments.length; r++) { var t = null != arguments[r] ? arguments[r] : {}; r % 2 ? ownKeys(Object(t), !0).forEach(function (r) { _defineProperty(e, r, t[r]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(e, Object.getOwnPropertyDescriptors(t)) : ownKeys(Object(t)).forEach(function (r) { Object.defineProperty(e, r, Object.getOwnPropertyDescriptor(t, r)); }); } return e; }
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread(); }
+function _toConsumableArray(r) { return _arrayWithoutHoles(r) || _iterableToArray(r) || _unsupportedIterableToArray(r) || _nonIterableSpread(); }
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _iterableToArray(iter) { if (typeof Symbol !== "undefined" && iter[Symbol.iterator] != null || iter["@@iterator"] != null) return Array.from(iter); }
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToArray(arr); }
-function _defineProperty(obj, key, value) { key = _toPropertyKey(key); if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+function _iterableToArray(r) { if ("undefined" != typeof Symbol && null != r[Symbol.iterator] || null != r["@@iterator"]) return Array.from(r); }
+function _arrayWithoutHoles(r) { if (Array.isArray(r)) return _arrayLikeToArray(r); }
+function _defineProperty(e, r, t) { return (r = _toPropertyKey(r)) in e ? Object.defineProperty(e, r, { value: t, enumerable: !0, configurable: !0, writable: !0 }) : e[r] = t, e; }
+function _slicedToArray(r, e) { return _arrayWithHoles(r) || _iterableToArrayLimit(r, e) || _unsupportedIterableToArray(r, e) || _nonIterableRest(); }
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+function _unsupportedIterableToArray(r, a) { if (r) { if ("string" == typeof r) return _arrayLikeToArray(r, a); var t = {}.toString.call(r).slice(8, -1); return "Object" === t && r.constructor && (t = r.constructor.name), "Map" === t || "Set" === t ? Array.from(r) : "Arguments" === t || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(t) ? _arrayLikeToArray(r, a) : void 0; } }
+function _arrayLikeToArray(r, a) { (null == a || a > r.length) && (a = r.length); for (var e = 0, n = Array(a); e < a; e++) n[e] = r[e]; return n; }
 function _iterableToArrayLimit(r, l) { var t = null == r ? null : "undefined" != typeof Symbol && r[Symbol.iterator] || r["@@iterator"]; if (null != t) { var e, n, i, u, a = [], f = !0, o = !1; try { if (i = (t = t.call(r)).next, 0 === l) { if (Object(t) !== t) return; f = !1; } else for (; !(f = (e = i.call(t)).done) && (a.push(e.value), a.length !== l); f = !0); } catch (r) { o = !0, n = r; } finally { try { if (!f && null != t["return"] && (u = t["return"](), Object(u) !== u)) return; } finally { if (o) throw n; } } return a; } }
-function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, _toPropertyKey(descriptor.key), descriptor); } }
-function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); Object.defineProperty(Constructor, "prototype", { writable: false }); return Constructor; }
-function _toPropertyKey(arg) { var key = _toPrimitive(arg, "string"); return _typeof(key) === "symbol" ? key : String(key); }
-function _toPrimitive(input, hint) { if (_typeof(input) !== "object" || input === null) return input; var prim = input[Symbol.toPrimitive]; if (prim !== undefined) { var res = prim.call(input, hint || "default"); if (_typeof(res) !== "object") return res; throw new TypeError("@@toPrimitive must return a primitive value."); } return (hint === "string" ? String : Number)(input); }
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); Object.defineProperty(subClass, "prototype", { writable: false }); if (superClass) _setPrototypeOf(subClass, superClass); }
-function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
-function _createSuper(Derived) { var hasNativeReflectConstruct = _isNativeReflectConstruct(); return function _createSuperInternal() { var Super = _getPrototypeOf(Derived), result; if (hasNativeReflectConstruct) { var NewTarget = _getPrototypeOf(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else { result = Super.apply(this, arguments); } return _possibleConstructorReturn(this, result); }; }
-function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } else if (call !== void 0) { throw new TypeError("Derived constructors may only return object or undefined"); } return _assertThisInitialized(self); }
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return false; if (Reflect.construct.sham) return false; if (typeof Proxy === "function") return true; try { Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); return true; } catch (e) { return false; } }
-function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+function _arrayWithHoles(r) { if (Array.isArray(r)) return r; }
+function _classCallCheck(a, n) { if (!(a instanceof n)) throw new TypeError("Cannot call a class as a function"); }
+function _defineProperties(e, r) { for (var t = 0; t < r.length; t++) { var o = r[t]; o.enumerable = o.enumerable || !1, o.configurable = !0, "value" in o && (o.writable = !0), Object.defineProperty(e, _toPropertyKey(o.key), o); } }
+function _createClass(e, r, t) { return r && _defineProperties(e.prototype, r), t && _defineProperties(e, t), Object.defineProperty(e, "prototype", { writable: !1 }), e; }
+function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" == _typeof(i) ? i : i + ""; }
+function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
+function _callSuper(t, o, e) { return o = _getPrototypeOf(o), _possibleConstructorReturn(t, _isNativeReflectConstruct() ? Reflect.construct(o, e || [], _getPrototypeOf(t).constructor) : o.apply(t, e)); }
+function _possibleConstructorReturn(t, e) { if (e && ("object" == _typeof(e) || "function" == typeof e)) return e; if (void 0 !== e) throw new TypeError("Derived constructors may only return object or undefined"); return _assertThisInitialized(t); }
+function _assertThisInitialized(e) { if (void 0 === e) throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); return e; }
+function _isNativeReflectConstruct() { try { var t = !Boolean.prototype.valueOf.call(Reflect.construct(Boolean, [], function () {})); } catch (t) {} return (_isNativeReflectConstruct = function _isNativeReflectConstruct() { return !!t; })(); }
+function _getPrototypeOf(t) { return _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf.bind() : function (t) { return t.__proto__ || Object.getPrototypeOf(t); }, _getPrototypeOf(t); }
+function _inherits(t, e) { if ("function" != typeof e && null !== e) throw new TypeError("Super expression must either be null or a function"); t.prototype = Object.create(e && e.prototype, { constructor: { value: t, writable: !0, configurable: !0 } }), Object.defineProperty(t, "prototype", { writable: !1 }), e && _setPrototypeOf(t, e); }
+function _setPrototypeOf(t, e) { return _setPrototypeOf = Object.setPrototypeOf ? Object.setPrototypeOf.bind() : function (t, e) { return t.__proto__ = e, t; }, _setPrototypeOf(t, e); }
 var mousedown = false;
 var last_mousex = 0;
 var last_mousey = 0;
@@ -1498,12 +1494,10 @@ var posX = 0;
 var posY = 0;
 // let rect2 = null;
 var AlignmentGuides = /*#__PURE__*/function (_Component) {
-  _inherits(AlignmentGuides, _Component);
-  var _super = _createSuper(AlignmentGuides);
   function AlignmentGuides(props) {
     var _this;
     _classCallCheck(this, AlignmentGuides);
-    _this = _super.call(this, props);
+    _this = _callSuper(this, AlignmentGuides, [props]);
     _this.boundingBox = /*#__PURE__*/React.createRef();
     _this.state = {
       active: '',
@@ -1526,37 +1520,37 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       // this is to store all the captions selected while selecting 1 group or multiple groups
       captionGroupsToIndexMap: {} //  we store all the group and its map to the caption index that are inside it as it's selection
     };
-
-    _this.setShiftKeyState = _this.setShiftKeyState.bind(_assertThisInitialized(_this));
-    _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_assertThisInitialized(_this));
-    _this.setDragOrResizeState = _this.setDragOrResizeState.bind(_assertThisInitialized(_this));
-    _this.selectBox = _this.selectBox.bind(_assertThisInitialized(_this));
-    _this.unSelectBox = _this.unSelectBox.bind(_assertThisInitialized(_this));
-    _this.dragStartHandler = _this.dragStartHandler.bind(_assertThisInitialized(_this));
-    _this.dragHandler = _this.dragHandler.bind(_assertThisInitialized(_this));
-    _this.dragEndHandler = _this.dragEndHandler.bind(_assertThisInitialized(_this));
-    _this.resizeStartHandler = _this.resizeStartHandler.bind(_assertThisInitialized(_this));
-    _this.resizeHandler = _this.resizeHandler.bind(_assertThisInitialized(_this));
-    _this.resizeEndHandler = _this.resizeEndHandler.bind(_assertThisInitialized(_this));
-    _this.rotateStartHandler = _this.rotateStartHandler.bind(_assertThisInitialized(_this));
-    _this.rotateHandler = _this.rotateHandler.bind(_assertThisInitialized(_this));
-    _this.rotateEndHandler = _this.rotateEndHandler.bind(_assertThisInitialized(_this));
-    _this.keyUpHandler = _this.keyUpHandler.bind(_assertThisInitialized(_this));
-    _this.keyEndHandler = _this.keyEndHandler.bind(_assertThisInitialized(_this));
-    _this.setPreventShortcutEvents = _this.setPreventShortcutEvents.bind(_assertThisInitialized(_this));
+    _this.setShiftKeyState = _this.setShiftKeyState.bind(_this);
+    _this.getBoundingBoxElement = _this.getBoundingBoxElement.bind(_this);
+    _this.setDragOrResizeState = _this.setDragOrResizeState.bind(_this);
+    _this.selectBox = _this.selectBox.bind(_this);
+    _this.unSelectBox = _this.unSelectBox.bind(_this);
+    _this.dragStartHandler = _this.dragStartHandler.bind(_this);
+    _this.dragHandler = _this.dragHandler.bind(_this);
+    _this.dragEndHandler = _this.dragEndHandler.bind(_this);
+    _this.resizeStartHandler = _this.resizeStartHandler.bind(_this);
+    _this.resizeHandler = _this.resizeHandler.bind(_this);
+    _this.resizeEndHandler = _this.resizeEndHandler.bind(_this);
+    _this.rotateStartHandler = _this.rotateStartHandler.bind(_this);
+    _this.rotateHandler = _this.rotateHandler.bind(_this);
+    _this.rotateEndHandler = _this.rotateEndHandler.bind(_this);
+    _this.keyUpHandler = _this.keyUpHandler.bind(_this);
+    _this.keyEndHandler = _this.keyEndHandler.bind(_this);
+    _this.setPreventShortcutEvents = _this.setPreventShortcutEvents.bind(_this);
     _this.startingPositions = null;
     _this.didDragOrResizeHappen = false;
     _this.didResizeHappen = false;
     _this.didRotateHappen = false;
-    _this.mouseDragHandler = _this.mouseDragHandler.bind(_assertThisInitialized(_this));
-    _this.boxSelectByDrag = _this.boxSelectByDrag.bind(_assertThisInitialized(_this));
-    _this.createRectByDrag = _this.createRectByDrag.bind(_assertThisInitialized(_this));
-    _this.updateBoxAfterCrop = _this.updateBoxAfterCrop.bind(_assertThisInitialized(_this));
-    _this.addGuidelinesForSnapping = _this.addGuidelinesForSnapping.bind(_assertThisInitialized(_this));
-    _this.getReorderedBoxes = _this.getReorderedBoxes.bind(_assertThisInitialized(_this));
+    _this.mouseDragHandler = _this.mouseDragHandler.bind(_this);
+    _this.boxSelectByDrag = _this.boxSelectByDrag.bind(_this);
+    _this.createRectByDrag = _this.createRectByDrag.bind(_this);
+    _this.updateBoxAfterCrop = _this.updateBoxAfterCrop.bind(_this);
+    _this.addGuidelinesForSnapping = _this.addGuidelinesForSnapping.bind(_this);
+    _this.getReorderedBoxes = _this.getReorderedBoxes.bind(_this);
     return _this;
   }
-  _createClass(AlignmentGuides, [{
+  _inherits(AlignmentGuides, _Component);
+  return _createClass(AlignmentGuides, [{
     key: "componentDidMount",
     value: function componentDidMount() {
       // Set the dimensions of the bounding box and the draggable boxes when the component mounts.
@@ -1648,7 +1642,6 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
             captionGroupsToIndexMap["".concat(GROUP_BOX_PREFIX).concat(index)] = groupArray;
             // active = `box-ms-${index}`;
           });
-
           delete boxes['box-ms'];
         }
         if (activeBoxes.length > 1) {
@@ -2373,7 +2366,6 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
 
         // this.props.onDrag && this.props.onDrag(e, newData);
       }
-
       var boxes = null;
       var guides = null;
       var hoverGroupedData = [];
@@ -3328,7 +3320,6 @@ var AlignmentGuides = /*#__PURE__*/function (_Component) {
       }, draggableBoxes, xAxisGuides, yAxisGuides);
     }
   }]);
-  return AlignmentGuides;
 }(Component); // Typechecking props for AlignmentGuides component
 AlignmentGuides.propTypes = {
   boundToParent: PropTypes.bool,
